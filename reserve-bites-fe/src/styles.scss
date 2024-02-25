@@ -1,0 +1,94 @@
+/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;800;900&display=swap');
+//
+@import "/src/app/scss/variables.scss";
+@import "/src/app/scss/common.scss";
+
+/* Importing Bootstrap SCSS file. */
+@import "./node_modules/bootstrap/scss/bootstrap";
+/* Importing Bootstrap SCSS file. */
+@import "bootstrap/scss/bootstrap";
+
+/* Importing Datepicker SCSS file. */
+@import "node_modules/ngx-bootstrap/datepicker/bs-datepicker";
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+  scroll-behavior: smooth;
+  // transition: .3s;
+}
+
+html,
+body {
+  margin: 0;
+  // height: 100%;
+}
+body {
+  color: #333;
+  margin: 0;
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
+}
+
+router-outlet {
+  display: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+  line-height: normal;
+}
+
+a {
+  color: #ee7421;
+  text-decoration: none;
+}
+
+ul {
+  padding: 0;
+  list-style-type: none;
+  li {
+    margin: 0;
+  }
+}
+
+.mdc-button {
+  font-size: 16px;
+  padding: 20px !important;
+}
+
+.mdc-button.mdc-button--raised.mat-mdc-raised-button.mat-main {
+  background-color: $primary;
+  color: #fff;
+}
+
+.mat-mdc-tab-body,
+.mat-mdc-tab-body-content {
+  overflow-y: hidden !important;
+}
+.mat-horizontal-stepper-header {
+  pointer-events: none !important;
+}
+
+[_nghost-ng-c1598661843] {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+
+.container {
+  background: #fff;
+  padding: 20px;
+  border-radius: 4px;
+  @include shadow;
+}
