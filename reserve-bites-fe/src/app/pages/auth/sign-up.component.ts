@@ -17,7 +17,7 @@ import { MatChipInputEvent } from '@angular/material/chips';
 
       button {
         width: 100%;
-        margin-top: 16px;
+        margin-top: 10px;
       }
 
       .title {
@@ -47,7 +47,7 @@ import { MatChipInputEvent } from '@angular/material/chips';
 
       @include tablet {
         form {
-          padding: 40px 30px;
+          padding: 25px;
         }
 
         .field-name {
@@ -74,7 +74,7 @@ import { MatChipInputEvent } from '@angular/material/chips';
       <div style="margin-bottom: 10px;"></div>
       
       <h1 class="title">Sign Up</h1>
-      <p style="margin-bottom: 10px;">
+      <p>
         You are a restaurant owner?
         <a [routerLink]="'/restaurant-register'">Create your restaurant.</a>
       </p>
@@ -174,7 +174,7 @@ import { MatChipInputEvent } from '@angular/material/chips';
           </div>
         </mat-step>
       </mat-stepper>
-      <p style="margin-top: 10px; text-align: center">
+      <p style="text-align: center">
         Have an account? <a [routerLink]="'/auth/sign-in'">Sign in.</a>
       </p>
     </form>
