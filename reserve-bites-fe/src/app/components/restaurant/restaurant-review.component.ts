@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { IReview } from 'src/app/types/restaurant.type';
 
 @Component({
   selector: 'restaurant-review',
@@ -50,21 +51,38 @@ import { Component } from '@angular/core';
     <div class="wrapper">
       <div class="user-info">
         <ng-icon size="40" name="heroUserCircleSolid" />
-        <p>Phat Nguyen</p>
+        <p>
+          {{ review.diner.firstName + ' ' + review.diner.lastName }}
+        </p>
       </div>
       <div class="body">
-        <p class="date">November 23, 2023</p>
+        <p class="date">
+          {{ review.createdAt | date: 'MMM dd, yyyy'}}
+        </p>
         <div class="point">
-          <p><span>Food</span>5</p>
-          <p><span>Service</span>5</p>
-          <p><span>Ambiance</span>5</p>
-          <p><span>Overall</span>5</p>
+          <p>
+            <span>Food</span>
+            {{review.food}}
+          </p>
+          <p>
+            <span>Service</span>
+            {{review.service}}
+          </p>
+          <p>
+            <span>Ambiance</span>
+            {{review.ambiance}}
+          </p>
+          <!-- <p>
+            <span>Overall</span>
+            {{review.food}}
+          </p> -->
         </div>
         <p class="content" [ngClass]="{ less: !showFull }">
-          The food is great. The same with service The food is great. The same
+          <!-- The food is great. The same with service The food is great. The same
           with service The food is great. The same with service The food is
           great. The same with service The food is great. The same with service
-          The food is great. The same with service
+          The food is great. The same with service -->
+          {{ review.content }}
         </p>
         <span class="toggle-content" (click)="showFull = !showFull">
           {{ showFull ? 'Show less' : 'Read more' }}
@@ -74,5 +92,6 @@ import { Component } from '@angular/core';
   `,
 })
 export class RestaurantReviewComponent {
+  @Input() review!: IReview;
   showFull = false;
 }

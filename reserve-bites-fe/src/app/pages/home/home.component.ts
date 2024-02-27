@@ -268,7 +268,7 @@ import { AuthService } from 'src/app/services/auth.service';
       </div>
     </div>
 
-    <div class="footer">
+    <!-- <div class="footer">
       <div>
         <logo color="white" text class="logo-lg" />
         <logo color="white" [width]="80" class="logo-sm" />
@@ -290,7 +290,7 @@ import { AuthService } from 'src/app/services/auth.service';
           </p>
         </div>
       </div>
-    </div>
+    </div> -->
   `,
 })
 export class HomeComponent implements OnInit {

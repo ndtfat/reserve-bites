@@ -1,7 +1,9 @@
-import { Component, Input } from '@angular/core';
+import { Component, HostListener, Input, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { RestaurantService } from 'src/app/services/restaurant.service';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 import { IReview } from 'src/app/types/restaurant.type';
 
 @Component({
@@ -23,9 +25,9 @@ import { IReview } from 'src/app/types/restaurant.type';
       }
       .review-box {
         position: relative;
-        padding: 20px;
+        padding: 10px;
         margin-bottom: 30px;
-        border: 20px solid $primary--blur;
+        border: 10px solid $primary--blur;
         .point {
           display: flex;
           gap: 20px;
@@ -49,71 +51,125 @@ import { IReview } from 'src/app/types/restaurant.type';
   template: `
     <div class="wrapper">
       <h2>Reviews</h2>
-      <h6>What are your feeling about this restaurant?</h6>
-      <form class="review-box" (ngSubmit)="handlePostReview()">
-        <div [formGroup]="form" class="point">
+      <h6>
+        {{ userReview ? 'Your review for this restaurant' : 'What are your feeling about this restaurant?' }}
+      </h6>
+      <div class="review-box">
+        <form (ngSubmit)="handlePostReview()" *ngIf="!userReview">
+          <div [formGroup]="form" class="point">
+            <form-input
+              label="Food"
+              type="number"
+              name="food"
+              [formGroup]="form"
+              [errors]="form.controls['food'].errors"
+            />
+            <form-input
+              label="Service"
+              type="number"
+              name="service"
+              [formGroup]="form"
+              [errors]="form.controls['service'].errors"
+            />
+            <form-input
+              label="Ambiance"
+              type="number"
+              name="ambiance"
+              [formGroup]="form"
+              [errors]="form.controls['ambiance'].errors"
+            />
+          </div>
           <form-input
-            label="Food"
-            type="number"
-            name="food"
+            textarea
+            label="Your review"
+            name="content"
             [formGroup]="form"
-            [errors]="form.controls['food'].errors"
+            [errors]="form.controls['content'].errors"
           />
-          <form-input
-            label="Service"
-            type="number"
-            name="service"
-            [formGroup]="form"
-            [errors]="form.controls['service'].errors"
-          />
-          <form-input
-            label="Ambiance"
-            type="number"
-            name="ambiance"
-            [formGroup]="form"
-            [errors]="form.controls['ambiance'].errors"
-          />
-        </div>
-        <form-input
-          textarea
-          label="Your review"
-          name="content"
-          [formGroup]="form"
-          [errors]="form.controls['content'].errors"
-        />
-        <div style="display: flex; justify-content: flex-end;">
-          <button mat-raised-button color="primary" type="sub">Post</button>
-        </div>
+          <div style="display: flex; justify-content: flex-end;">
+            <button mat-raised-button color="primary" type="sub">Post</button>
+          </div>
 
-        <!-- <div class="overlay">Reviews can only be made by diners who have eaten at this restaurant</div> -->
-      </form>
+          <!-- <div class="overlay">Reviews can only be made by diners who have eaten at this restaurant</div> -->
+        </form>
 
-      <div
-        style="display: flex; justify-content: space-between; align-items: center"
-      >
-        <h6>What other diners said about this restaurant:</h6>
-        <select style="margin-bottom: 20px">
-          <option value="desc">Newest</option>
-          <option value="asc">Oldest</option>
-        </select>
+        <restaurant-review *ngIf="userReview" [review]="userReview" />
       </div>
-      <restaurant-review />
-      <mat-divider style="margin:20px 10px;" />
-      <restaurant-review />
-      <mat-divider style="margin:20px 10px;" />
-      <restaurant-review />
-      <mat-divider style="margin:20px 10px;" />
+
+      <div *ngIf="reviews.length > 0">
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <h6>What other diners said about this restaurant:</h6>
+          <select style="margin: 0" (change)="handleSortChange($event)">
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+          </select>
+        </div>
+        <ul *ngIf="!loading">
+          <li *ngFor="let r of reviews">
+            <restaurant-review [review]="r" />
+            <mat-divider style="margin:20px 10px;" />
+          </li>
+
+          <mat-spinner *ngIf="loadingMore" />
+        </ul>
+        <mat-spinner *ngIf="loading" />
+      </div>
+      <h6 *ngIf="reviews.length === 0">There is no review for this restaurant</h6>
     </div>
   `,
 })
-export class RestaurantTabReviewsComponent {
+export class RestaurantTabReviewsComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
+    private auth: AuthService,
+    private _snackbar: SnackbarService,
     private restaurantSv: RestaurantService,
-    private auth: AuthService
-  ) { }
+  ) {}
+
   @Input() rid!: string;
+  loading = false;
+  loadingMore = false;
+  reviews: IReview[] = [];
+  totalPages = 0;
   userReview: IReview | null = null;
+  pageOption = new BehaviorSubject({
+    page: 1,
+    sortBy: 'desc',
+  });
+
+  @HostListener('window:scroll', []) // for window scroll events
+  onScroll() {
+    const headerHeight = 90;
+    const windowHeight = window.innerHeight; // Height of the viewport
+    const documentHeight = document.body.offsetHeight; // Total height of the document
+    const scrollTop = (window.scrollY || document.documentElement.scrollTop) - headerHeight; // Current scroll position
+
+    const isBottom = documentHeight - windowHeight - scrollTop <= 0;
+    const currentReviewPage = this.pageOption.value.page;
+
+    if (isBottom && currentReviewPage < this.totalPages) {
+      this.loadingMore = true;
+      this.pageOption.next({
+        ...this.pageOption.value,
+        page: currentReviewPage + 1,
+      });
+    }
+  }
+
+  ngOnInit() {
+    this.pageOption.subscribe(async ({ page, sortBy }) => {
+      const { itemsList, userItem, totalPages } = await this.restaurantSv.getReviews(this.rid, page, sortBy);
+      this.userReview = userItem;
+      this.totalPages = totalPages;
+      if (this.loadingMore) {
+        this.reviews = [...this.reviews, ...itemsList];
+        this.loadingMore = false;
+      } else {
+        this.reviews = itemsList;
+        this.loading = false;
+      }
+    });
+  }
 
   form = this.fb.group({
     food: [0, [Validators.required, Validators.min(0), Validators.max(5)]],
@@ -121,21 +177,29 @@ export class RestaurantTabReviewsComponent {
     ambiance: [0, [Validators.required, Validators.min(0), Validators.max(5)]],
     content: ['', Validators.required],
   });
+
   async handlePostReview() {
     this.form.markAllAsTouched();
     if (this.form.valid) {
-      console.log(this.form.value);
       const values = this.form.value;
       const payload = {
         rid: this.rid,
         dinerId: this.auth.user.value?.id as string,
-        food: values.food as number,
-        service: values.service as number,
-        ambiance: values.ambiance as number,
+        food: Number(values.food),
+        service: Number(values.service),
+        ambiance: Number(values.ambiance),
         content: values.content as string,
       };
-      const respsonse = await this.restaurantSv.review(payload);
-      console.log(respsonse);
+      const response = await this.restaurantSv.review(payload);
+      if (response) {
+        this.userReview = response;
+        this._snackbar.open('success', 'Your review has been posted successfully');
+      }
     }
+  }
+
+  handleSortChange(event: Event) {
+    this.loading = true;
+    this.pageOption.next({ ...this.pageOption.value, sortBy: (event.target as HTMLSelectElement).value });
   }
 }

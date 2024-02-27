@@ -1,16 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
 @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;800;900&display=swap');
 //
-@import "/src/app/scss/variables.scss";
-@import "/src/app/scss/common.scss";
+@import '/src/app/scss/variables.scss';
+@import '/src/app/scss/common.scss';
 
 /* Importing Bootstrap SCSS file. */
-@import "./node_modules/bootstrap/scss/bootstrap";
+@import './node_modules/bootstrap/scss/bootstrap';
 /* Importing Bootstrap SCSS file. */
-@import "bootstrap/scss/bootstrap";
+@import 'bootstrap/scss/bootstrap';
 
 /* Importing Datepicker SCSS file. */
-@import "node_modules/ngx-bootstrap/datepicker/bs-datepicker";
+@import 'node_modules/ngx-bootstrap/datepicker/bs-datepicker';
 
 * {
   margin: 0;
@@ -29,7 +29,7 @@ body {
 body {
   color: #333;
   margin: 0;
-  font-family: "Raleway", sans-serif;
+  font-family: 'Raleway', sans-serif;
   font-weight: 500;
 }
 
@@ -84,7 +84,6 @@ ul {
   align-items: center !important;
   justify-content: center !important;
 }
-
 
 .container {
   background: #fff;

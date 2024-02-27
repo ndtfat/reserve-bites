@@ -47,41 +47,47 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
       <img [src]="restaurant.mainImage.url" [alt]="restaurant.mainImage.name" />
       <div class="body">
         <div class="info">
-          <mat-tab-group>
+          <mat-tab-group (selectedIndexChange)="handleTabChange($event)">
             <mat-tab label="Overview">
               <restaurant-tab-overview [restaurant]="restaurant" />
             </mat-tab>
             <mat-tab label="Reviews">
-              <restaurant-tab-reviews />
+              <restaurant-tab-reviews [rid]="rid" *ngIf="currentTabIndex === 1" />
             </mat-tab>
           </mat-tab-group>
         </div>
 
-        <form-reservation class="reservation" [restaurant]="restaurant" [rid]="rid"/>
+        <form-reservation class="reservation" [restaurant]="restaurant" [rid]="rid" />
       </div>
     </div>
   `,
 })
 export class RestaurantComponent {
-  restaurant!: IRestaurant
+  rid!: string;
   fetching = true;
-  rid!: string
+  restaurant!: IRestaurant;
+  currentTabIndex = 0;
 
   constructor(private route: ActivatedRoute, private restaurantSv: RestaurantService, private router: Router) {
     if (this.route.snapshot.paramMap.has('id')) {
       const id = route.snapshot.paramMap.get('id');
       if (id) {
-        this.rid = id
+        this.rid = id;
         this.fetching = true;
-        this.restaurantSv.getRestaurant(id).subscribe((response) => {
-          this.restaurant = response;
-          this.fetching = false;
-        }, (error) => {
-          this.router.navigateByUrl('/404')
-        });
+        this.restaurantSv.getRestaurant(id).subscribe(
+          (response) => {
+            this.restaurant = response;
+            this.fetching = false;
+          },
+          (error) => {
+            this.router.navigateByUrl('/404');
+          },
+        );
       }
     }
   }
 
-
+  handleTabChange(index: number) {
+    this.currentTabIndex = index;
+  }
 }
