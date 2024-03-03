@@ -37,7 +37,9 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
             font-weight: 500;
             color: $snackbar-success-color;
             margin-bottom: 6px;
-            &:first-letter { text-transform: uppercase; }
+            &:first-letter {
+              text-transform: uppercase;
+            }
           }
         }
         .close-button {
@@ -46,7 +48,9 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
           align-self: flex-start;
           @include flex(row, center, center);
           margin-left: 60px;
-          .close-icon { font-size: 22px; }
+          .close-icon {
+            font-size: 22px;
+          }
         }
       }
       .wrapper.open {

@@ -29,10 +29,10 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
 import { TimepickerModule } from 'ngx-bootstrap/timepicker';
-import { MatChipsModule } from '@angular/material/chips'
-import { MatAutocompleteModule } from '@angular/material/autocomplete'
+import { MatChipsModule } from '@angular/material/chips';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
-import { heroClock } from '@ng-icons/heroicons/outline';
+import { heroClock, heroTrash } from '@ng-icons/heroicons/outline';
 import { heroUserCircleSolid, heroXMarkSolid } from '@ng-icons/heroicons/solid';
 import {
   ionClose,
@@ -152,6 +152,7 @@ import { AddHeaderInterceptor } from './utils/token.interceptor';
       ionClose,
       ionImage,
       heroClock,
+      heroTrash,
       ionArrowRedo,
       ionBugOutline,
       ionCashOutline,
@@ -188,7 +189,7 @@ import { AddHeaderInterceptor } from './utils/token.interceptor';
     MatDialogModule,
     MatSelectModule,
     MatDividerModule,
-    MatStepperModule, 
+    MatStepperModule,
     MatGridListModule,
     MatExpansionModule,
     MatPaginatorModule,
@@ -208,4 +209,4 @@ import { AddHeaderInterceptor } from './utils/token.interceptor';
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

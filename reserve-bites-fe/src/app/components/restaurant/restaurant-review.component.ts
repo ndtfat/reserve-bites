@@ -1,4 +1,10 @@
-import { Component, Input } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  booleanAttribute,
+} from '@angular/core';
 import { IReview } from 'src/app/types/restaurant.type';
 
 @Component({
@@ -37,7 +43,9 @@ import { IReview } from 'src/app/types/restaurant.type';
             margin-right: 4px;
           }
         }
-        .content.less { @include ellipsis(2); }
+        .content.less {
+          @include ellipsis(2);
+        }
         .toggle-content {
           @include cursor;
           color: $primary;
@@ -57,20 +65,20 @@ import { IReview } from 'src/app/types/restaurant.type';
       </div>
       <div class="body">
         <p class="date">
-          {{ review.createdAt | date: 'MMM dd, yyyy'}}
+          {{ review.createdAt | date : 'MMM dd, yyyy' }}
         </p>
         <div class="point">
           <p>
             <span>Food</span>
-            {{review.food}}
+            {{ review.food }}
           </p>
           <p>
             <span>Service</span>
-            {{review.service}}
+            {{ review.service }}
           </p>
           <p>
             <span>Ambiance</span>
-            {{review.ambiance}}
+            {{ review.ambiance }}
           </p>
           <!-- <p>
             <span>Overall</span>
@@ -88,10 +96,24 @@ import { IReview } from 'src/app/types/restaurant.type';
           {{ showFull ? 'Show less' : 'Read more' }}
         </span>
       </div>
+      <button
+        *ngIf="review && deleteIcon"
+        mat-icon-button
+        (click)="handleDelete(review.id)"
+      >
+        <ng-icon size="20" name="heroTrash" />
+      </button>
     </div>
   `,
 })
 export class RestaurantReviewComponent {
   @Input() review!: IReview;
+  @Input({ transform: booleanAttribute }) deleteIcon = false;
+  @Output() delete = new EventEmitter<string>();
+
+  handleDelete(id: string) {
+    this.delete.emit(id);
+  }
+
   showFull = false;
 }

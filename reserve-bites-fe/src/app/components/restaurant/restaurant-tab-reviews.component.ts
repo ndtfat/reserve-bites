@@ -52,7 +52,11 @@ import { IReview } from 'src/app/types/restaurant.type';
     <div class="wrapper">
       <h2>Reviews</h2>
       <h6>
-        {{ userReview ? 'Your review for this restaurant' : 'What are your feeling about this restaurant?' }}
+        {{
+          userReview
+            ? 'Your review for this restaurant'
+            : 'What are your feeling about this restaurant?'
+        }}
       </h6>
       <div class="review-box">
         <form (ngSubmit)="handlePostReview()" *ngIf="!userReview">
@@ -93,11 +97,18 @@ import { IReview } from 'src/app/types/restaurant.type';
           <!-- <div class="overlay">Reviews can only be made by diners who have eaten at this restaurant</div> -->
         </form>
 
-        <restaurant-review *ngIf="userReview" [review]="userReview" />
+        <restaurant-review
+          *ngIf="userReview"
+          [review]="userReview"
+          deleteIcon
+          (delete)="handleDeleteReview($event)"
+        />
       </div>
 
       <div *ngIf="reviews.length > 0">
-        <div style="display: flex; justify-content: space-between; align-items: center">
+        <div
+          style="display: flex; justify-content: space-between; align-items: center"
+        >
           <h6>What other diners said about this restaurant:</h6>
           <select style="margin: 0" (change)="handleSortChange($event)">
             <option value="newest">Newest</option>
@@ -114,7 +125,9 @@ import { IReview } from 'src/app/types/restaurant.type';
         </ul>
         <mat-spinner *ngIf="loading" />
       </div>
-      <h6 *ngIf="reviews.length === 0">There is no review for this restaurant</h6>
+      <h6 *ngIf="reviews.length === 0">
+        There is no review for this restaurant
+      </h6>
     </div>
   `,
 })
@@ -142,7 +155,8 @@ export class RestaurantTabReviewsComponent implements OnInit {
     const headerHeight = 90;
     const windowHeight = window.innerHeight; // Height of the viewport
     const documentHeight = document.body.offsetHeight; // Total height of the document
-    const scrollTop = (window.scrollY || document.documentElement.scrollTop) - headerHeight; // Current scroll position
+    const scrollTop =
+      (window.scrollY || document.documentElement.scrollTop) - headerHeight; // Current scroll position
 
     const isBottom = documentHeight - windowHeight - scrollTop <= 0;
     const currentReviewPage = this.pageOption.value.page;
@@ -158,7 +172,8 @@ export class RestaurantTabReviewsComponent implements OnInit {
 
   ngOnInit() {
     this.pageOption.subscribe(async ({ page, sortBy }) => {
-      const { itemsList, userItem, totalPages } = await this.restaurantSv.getReviews(this.rid, page, sortBy);
+      const { itemsList, userItem, totalPages } =
+        await this.restaurantSv.getReviews(this.rid, page, sortBy);
       this.userReview = userItem;
       this.totalPages = totalPages;
       if (this.loadingMore) {
@@ -193,13 +208,20 @@ export class RestaurantTabReviewsComponent implements OnInit {
       const response = await this.restaurantSv.review(payload);
       if (response) {
         this.userReview = response;
-        this._snackbar.open('success', 'Your review has been posted successfully');
       }
     }
   }
 
   handleSortChange(event: Event) {
     this.loading = true;
-    this.pageOption.next({ ...this.pageOption.value, sortBy: (event.target as HTMLSelectElement).value });
+    this.pageOption.next({
+      ...this.pageOption.value,
+      sortBy: (event.target as HTMLSelectElement).value,
+    });
+  }
+
+  async handleDeleteReview(reviewId: string) {
+    await this.restaurantSv.deleteReview(reviewId);
+    this.userReview = null;
   }
 }
