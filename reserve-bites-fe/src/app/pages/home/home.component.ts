@@ -22,7 +22,7 @@ import { AuthService } from 'src/app/services/auth.service';
           transform: translateX(10px);
         }
       }
-      h4 {
+      h3 {
         font-weight: 600;
         margin-bottom: 10px;
       }

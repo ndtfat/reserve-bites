@@ -59,7 +59,7 @@ import { RestaurantService } from 'src/app/services/restaurant.service';
         }}
       </h6>
       <div class="review-box">
-        <form (ngSubmit)="handlePostReview()" *ngIf="!userReview">
+        <form (ngSubmit)="handleSubmit()" *ngIf="!userReview || editting">
           <div [formGroup]="form" class="point">
             <form-input
               label="Food"
@@ -91,17 +91,28 @@ import { RestaurantService } from 'src/app/services/restaurant.service';
             [errors]="form.controls['content'].errors"
           />
           <div style="display: flex; justify-content: flex-end;">
-            <button mat-raised-button color="primary" type="sub">Post</button>
+            <button
+              mat-raised-button
+              type="button"
+              style="margin-right: 10px;"
+              (click)="editting = false"
+            >
+              Cancel
+            </button>
+            <button mat-raised-button color="primary">
+              {{ editting ? 'Update' : 'Post' }}
+            </button>
           </div>
 
           <!-- <div class="overlay">Reviews can only be made by diners who have eaten at this restaurant</div> -->
         </form>
 
         <restaurant-review
-          *ngIf="userReview"
+          *ngIf="userReview && !editting"
+          setting
           [review]="userReview"
-          deleteIcon
           (delete)="handleDeleteReview($event)"
+          (edit)="editting = true"
         />
       </div>
 
@@ -140,14 +151,22 @@ export class RestaurantTabReviewsComponent implements OnInit {
   ) {}
 
   @Input() rid!: string;
-  loading = false;
+  loading = true;
+  editting = false;
   loadingMore = false;
   reviews: IReview[] = [];
   totalPages = 0;
-  userReview: IReview | null = null;
+  userReview: (IReview & { id: string }) | null = null;
   pageOption = new BehaviorSubject({
     page: 1,
     sortBy: 'desc',
+  });
+
+  form = this.fb.group({
+    food: [0, [Validators.required, Validators.min(0), Validators.max(5)]],
+    service: [0, [Validators.required, Validators.min(0), Validators.max(5)]],
+    ambiance: [0, [Validators.required, Validators.min(0), Validators.max(5)]],
+    content: ['', Validators.required],
   });
 
   @HostListener('window:scroll', []) // for window scroll events
@@ -175,6 +194,12 @@ export class RestaurantTabReviewsComponent implements OnInit {
       const { itemsList, userItem, totalPages } =
         await this.restaurantSv.getReviews(this.rid, page, sortBy);
       this.userReview = userItem;
+      this.form.setValue({
+        food: userItem?.food || null,
+        service: userItem?.service || null,
+        ambiance: userItem?.ambiance || null,
+        content: userItem?.content || '',
+      });
       this.totalPages = totalPages;
       if (this.loadingMore) {
         this.reviews = [...this.reviews, ...itemsList];
@@ -186,14 +211,7 @@ export class RestaurantTabReviewsComponent implements OnInit {
     });
   }
 
-  form = this.fb.group({
-    food: [0, [Validators.required, Validators.min(0), Validators.max(5)]],
-    service: [0, [Validators.required, Validators.min(0), Validators.max(5)]],
-    ambiance: [0, [Validators.required, Validators.min(0), Validators.max(5)]],
-    content: ['', Validators.required],
-  });
-
-  async handlePostReview() {
+  async handleSubmit() {
     this.form.markAllAsTouched();
     if (this.form.valid) {
       const values = this.form.value;
@@ -205,9 +223,20 @@ export class RestaurantTabReviewsComponent implements OnInit {
         ambiance: Number(values.ambiance),
         content: values.content as string,
       };
-      const response = await this.userSv.review(payload);
-      if (response) {
-        this.userReview = response;
+      if (this.editting) {
+        const response = await this.userSv.updateReview(
+          this.userReview?.id as string,
+          payload,
+        );
+        if (response) {
+          this.userReview = response;
+          this.editting = false;
+        }
+      } else {
+        const response = await this.userSv.review(payload);
+        if (response) {
+          this.userReview = response;
+        }
       }
     }
   }

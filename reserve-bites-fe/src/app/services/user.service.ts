@@ -123,6 +123,29 @@ export class UserService {
     return response;
   }
 
+  async updateReview(
+    id: string,
+    payload: {
+      food: number;
+      service: number;
+      ambiance: number;
+      content: string;
+    },
+  ) {
+    const response = await lastValueFrom(
+      this.http
+        .put<IReview>(this.SERVER_URL + '/user/review/' + id, payload)
+        .pipe(
+          map((res) => {
+            res.overall = (res.ambiance + res.food + res.service) / 3;
+            return res;
+          }),
+        ),
+    );
+    this._snackbar.open('success', 'Your review has been updated successfully');
+    return response;
+  }
+
   async deleteReview(id: string) {
     try {
       await lastValueFrom(

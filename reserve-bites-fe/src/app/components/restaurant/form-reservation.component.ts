@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
 import { UserService } from 'src/app/services/user.service';
@@ -69,7 +69,7 @@ import { IRestaurant } from 'src/app/types/restaurant.type';
     `,
   ],
 })
-export class FormReservationComponent {
+export class FormReservationComponent implements OnInit {
   @Input() restaurant!: IRestaurant;
   @Input() rid!: string;
 
@@ -86,6 +86,12 @@ export class FormReservationComponent {
   });
   reserving = false;
   alertMessage = '';
+
+  ngOnInit() {
+    this.form.valueChanges.subscribe(() => {
+      this.alertMessage = '';
+    });
+  }
 
   async handleSubmitReservation() {
     this.alertMessage = '';
@@ -115,7 +121,7 @@ export class FormReservationComponent {
       this.restaurant.operationTime.closeTime,
     ).getMinutes();
 
-    console.table({ openHour, openMinute });
+    // console.table({ openHour, openMinute });
 
     const isHourInRange =
       reserveHour > openHour ||
@@ -127,10 +133,11 @@ export class FormReservationComponent {
     const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
     const reserveDay =
       daysOfWeek[new Date(this.form.get('date')?.value as Date).getDay()];
-    console.log(
-      reserveDay,
-      this.restaurant.operationTime.openDay.includes(reserveDay),
-    );
+
+    // console.log(
+    //   reserveDay,
+    //   this.restaurant.operationTime.openDay.includes(reserveDay),
+    // );
 
     if (size > this.restaurant.maxReservationSize) {
       this.alertMessage = `Max party size is ${this.restaurant.maxReservationSize}`;

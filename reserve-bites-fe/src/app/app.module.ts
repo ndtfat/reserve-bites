@@ -35,7 +35,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 // icons
-import { heroClock, heroTrash } from '@ng-icons/heroicons/outline';
+import { heroClock, heroTrash, heroPencil } from '@ng-icons/heroicons/outline';
 import { heroUserCircleSolid, heroXMarkSolid } from '@ng-icons/heroicons/solid';
 import {
   ionClose,
@@ -158,6 +158,7 @@ import { AccountTabReservationsManagementComponent } from './components/account/
       ionImage,
       heroClock,
       heroTrash,
+      heroPencil,
       ionArrowRedo,
       ionBugOutline,
       ionCashOutline,

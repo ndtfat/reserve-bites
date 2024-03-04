@@ -42,6 +42,7 @@ function routes(app) {
     verifyAccessToken,
     userControler.putChangePassword,
   );
+  app.put('/user/review/:id', verifyAccessToken, userControler.updateReview);
   app.post('/user/review', verifyAccessToken, userControler.postReview);
   app.delete('/user/review/:id', verifyAccessToken, userControler.deleteReview);
 

@@ -92,27 +92,38 @@ import { IReview } from 'src/app/types/restaurant.type';
           The food is great. The same with service -->
           {{ review.content }}
         </p>
-        <span class="toggle-content" (click)="showFull = !showFull">
+        <span
+          *ngIf="review.content.length > 150"
+          class="toggle-content"
+          (click)="showFull = !showFull"
+        >
           {{ showFull ? 'Show less' : 'Read more' }}
         </span>
       </div>
-      <button
-        *ngIf="review && deleteIcon"
-        mat-icon-button
-        (click)="handleDelete(review.id)"
-      >
-        <ng-icon size="20" name="heroTrash" />
-      </button>
+
+      <div *ngIf="review && setting">
+        <button mat-icon-button (click)="handleEdit()">
+          <ng-icon size="20" name="heroPencil" />
+        </button>
+        <button mat-icon-button (click)="handleDelete(review.id)">
+          <ng-icon size="20" name="heroTrash" />
+        </button>
+      </div>
     </div>
   `,
 })
 export class RestaurantReviewComponent {
   @Input() review!: IReview;
-  @Input({ transform: booleanAttribute }) deleteIcon = false;
+  @Input({ transform: booleanAttribute }) setting = false;
   @Output() delete = new EventEmitter<string>();
+  @Output() edit = new EventEmitter<boolean>();
 
   handleDelete(id: string) {
     this.delete.emit(id);
+  }
+
+  handleEdit() {
+    this.edit.emit(true);
   }
 
   showFull = false;

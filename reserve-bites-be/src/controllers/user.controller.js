@@ -165,6 +165,41 @@ export default {
         .send({ message: 'Something wrong with review restaurant', error });
     }
   },
+  async updateReview(req, res) {
+    try {
+      const { id } = req.params;
+      const { rid, food, service, ambiance, content, dinerId } = req.body;
+      const review = await Review.findById(id);
+      const restaurant = await Restaurant.findById(rid);
+      const numberOfReviewsOfRestaurant = await Review.countDocuments({ rid });
+
+      const prevAvarageRate =
+        (review.food + review.service + review.ambiance) / 3;
+      const userAvarageRate = (food + service + ambiance) / 3;
+
+      restaurant.rate = (
+        (restaurant.rate * numberOfReviewsOfRestaurant +
+          userAvarageRate -
+          prevAvarageRate) /
+        numberOfReviewsOfRestaurant
+      ).toFixed(2);
+
+      review.food = food;
+      review.service = service;
+      review.ambiance = ambiance;
+      review.content = content;
+      await review.save();
+      await restaurant.save();
+      console.log('Review updated');
+
+      let resData = await review.populate('dinerId');
+      resData = resData.toObject();
+      resData.diner = resData.dinerId;
+      delete resData.dinerId;
+
+      return res.status(200).send(resData);
+    } catch (error) {}
+  },
   async deleteReview(req, res) {
     try {
       const user = req.user;
