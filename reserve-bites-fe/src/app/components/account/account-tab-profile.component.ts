@@ -1,16 +1,16 @@
 import { Component, Input, OnInit } from '@angular/core';
 import {
-  AbstractControl,
-  FormBuilder,
-  FormControl,
   FormGroup,
-  ValidationErrors,
-  ValidatorFn,
   Validators,
+  FormControl,
+  FormBuilder,
+  ValidatorFn,
+  AbstractControl,
+  ValidationErrors,
 } from '@angular/forms';
-import { AccountService } from 'src/app/services/account.service';
-import { SnackbarService } from 'src/app/services/snackbar.service';
 import { IUser } from 'src/app/types/auth.type';
+import { UserService } from 'src/app/services/user.service';
+import { SnackbarService } from 'src/app/services/snackbar.service';
 
 @Component({
   selector: 'account-tab-profile',
@@ -22,7 +22,9 @@ import { IUser } from 'src/app/types/auth.type';
         margin: 20px 0;
         background: #fff;
       }
-      .avatar-icon { margin-right: 20px; }
+      .avatar-icon {
+        margin-right: 20px;
+      }
       .oserview {
         margin-bottom: 20px;
         p {
@@ -42,7 +44,9 @@ import { IUser } from 'src/app/types/auth.type';
       }
       form {
         margin-top: 20px;
-        h3 { margin-bottom: 14px; }
+        h3 {
+          margin-bottom: 14px;
+        }
         .alert {
           display: block;
           margin-bottom: 20px;
@@ -210,8 +214,8 @@ export class AccountTabProfileComponent implements OnInit {
 
   constructor(
     private _snackbar: SnackbarService,
-    private account: AccountService,
-    private formBuilder: FormBuilder
+    private userSv: UserService,
+    private formBuilder: FormBuilder,
   ) {
     this.changePasswordForm = this.formBuilder.group(
       {
@@ -221,7 +225,7 @@ export class AccountTabProfileComponent implements OnInit {
             Validators.required,
             Validators.minLength(8),
             Validators.pattern(
-              /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*#?&^_-]).{8,}/
+              /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*#?&^_-]).{8,}/,
             ),
           ],
         }),
@@ -229,12 +233,12 @@ export class AccountTabProfileComponent implements OnInit {
           validators: [Validators.required, this.checkPasswords],
         }),
       },
-      { validator: this.checkPasswords }
+      { validator: this.checkPasswords },
     );
   }
 
   checkPasswords: ValidatorFn = (
-    group: AbstractControl
+    group: AbstractControl,
   ): ValidationErrors | null => {
     let pass = group.get('newPassword');
     let confirmPass = group.get('confirmPassword');
@@ -272,8 +276,8 @@ export class AccountTabProfileComponent implements OnInit {
     try {
       this.editProfileForm.markAllAsTouched();
       if (this.editProfileForm.valid) {
-        const newInfo = await this.account.editProfile(
-          this.editProfileForm.value
+        const newInfo = await this.userSv.editProfile(
+          this.editProfileForm.value,
         );
 
         this.editProfileForm.setValue({
@@ -297,9 +301,9 @@ export class AccountTabProfileComponent implements OnInit {
 
       if (this.changePasswordForm.valid) {
         const { oldPassword, newPassword } = this.changePasswordForm.value;
-        await this.account.changePassword(
+        await this.userSv.changePassword(
           oldPassword as string,
-          newPassword as string
+          newPassword as string,
         );
 
         this.changePasswordForm.setValue({

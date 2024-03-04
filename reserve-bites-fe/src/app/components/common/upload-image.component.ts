@@ -1,8 +1,8 @@
 import {
-  Component,
-  EventEmitter,
   Input,
   Output,
+  Component,
+  EventEmitter,
   booleanAttribute,
 } from '@angular/core';
 
@@ -16,7 +16,9 @@ import {
         border: 1px dashed #ccc;
         padding: 32px 0;
         cursor: pointer;
-        & > * { font-weight: normal; }
+        & > * {
+          font-weight: normal;
+        }
         .sub-text {
           margin-top: 6px;
           color: #aaa;
@@ -24,15 +26,26 @@ import {
       }
       .wrapper.error {
         background-color: #fbe9e8;
-        .sub-text { color: red; }
+        .sub-text {
+          color: red;
+        }
       }
     `,
   ],
   template: `
     <label class="wrapper" [ngClass]="{ error: errorMessage }">
       <div style="margin-bottom: 10px;">
-        <ng-icon *ngIf="errorMessage" name="ionBugOutline" size="50" color="red" />
-        <ng-icon *ngIf="!errorMessage" name="ionDocumentTextOutline" size="50" />
+        <ng-icon
+          *ngIf="errorMessage"
+          name="ionBugOutline"
+          size="50"
+          color="red"
+        />
+        <ng-icon
+          *ngIf="!errorMessage"
+          name="ionDocumentTextOutline"
+          size="50"
+        />
       </div>
       <input
         type="file"

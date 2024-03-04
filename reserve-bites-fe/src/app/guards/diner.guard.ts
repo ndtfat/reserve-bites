@@ -12,11 +12,11 @@ import { AuthService } from '../services/auth.service';
   providedIn: 'root',
 })
 export class DinerGuard implements CanActivate {
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(private authService: AuthService, private router: Router) {}
 
   async canActivate(
     route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
+    state: RouterStateSnapshot,
   ): Promise<boolean> {
     await this.authService.getUser();
     if (!this.authService.user.value?.isOwner) {

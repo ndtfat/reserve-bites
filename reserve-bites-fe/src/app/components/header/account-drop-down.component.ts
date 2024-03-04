@@ -6,7 +6,9 @@ import { AuthService } from 'src/app/services/auth.service';
   styles: [],
   template: `
     <button mat-icon-button [matMenuTriggerFor]="menu">
-      <mat-icon style="font-size: 30px; width: 30px; height: 30px;">account_circle</mat-icon>
+      <mat-icon style="font-size: 30px; width: 30px; height: 30px;"
+        >account_circle
+      </mat-icon>
     </button>
     <mat-menu #menu="matMenu" xPosition="before">
       <span *ngIf="isAuthenticated">

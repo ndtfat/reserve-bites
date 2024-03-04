@@ -7,18 +7,14 @@ import { environment } from 'src/environments/environment';
 })
 export class ImageService {
   private SERVER_URL = environment.SERVER_URL;
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   uploadSingle(file: File) {
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post(
-      this.SERVER_URL + '/upload-image/single',
-      formData,
-      {
-        reportProgress: true,
-        observe: 'events',
-      }
-    );
+    return this.http.post(this.SERVER_URL + '/upload-image/single', formData, {
+      reportProgress: true,
+      observe: 'events',
+    });
   }
 }

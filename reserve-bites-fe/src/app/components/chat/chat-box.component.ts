@@ -1,11 +1,10 @@
+import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  Input,
-  ViewChild,
-} from '@angular/core';
-import { ChatRole, ChatTab, IChatHistory, IMessage } from 'src/app/types/chat.type';
+  ChatTab,
+  ChatRole,
+  IMessage,
+  IChatHistory,
+} from 'src/app/types/chat.type';
 
 @Component({
   selector: 'chat-box',
@@ -19,18 +18,21 @@ import { ChatRole, ChatTab, IChatHistory, IMessage } from 'src/app/types/chat.ty
         border-radius: 4px;
         overflow: hidden;
         width: $window-width;
-        &.chat-box .content { transform: translateX(-$window-width/2); }
+        &.chat-box .content {
+          transform: translateX(-$window-width/2);
+        }
 
-        .content { 
+        .content {
           width: calc($window-width * 2);
           height: 100%;
           @include flex(row, flex-start, flex-start);
           background: #fff;
-          transition: .2s;
+          transition: 0.2s;
         }
-        .chat-box, .chat-list { 
-          width: $window-width; 
-          height: 70vh; 
+        .chat-box,
+        .chat-list {
+          width: $window-width;
+          height: 70vh;
           .header {
             height: 70px;
             padding: 10px 14px;
@@ -42,7 +44,9 @@ import { ChatRole, ChatTab, IChatHistory, IMessage } from 'src/app/types/chat.ty
 
       // Chat LIST
       .chat-list {
-        & .header { justify-content: center !important; }
+        & .header {
+          justify-content: center !important;
+        }
         .body > li > div {
           padding: 14px 20px;
           @include flex(row, center, flex-start);
@@ -51,10 +55,16 @@ import { ChatRole, ChatTab, IChatHistory, IMessage } from 'src/app/types/chat.ty
             background: #f8f7f7;
             @include cursor;
           }
-          img { @include img-fit(40px, 40px); border-radius: 50%; }
+          img {
+            @include img-fit(40px, 40px);
+            border-radius: 50%;
+          }
           .history-content {
             flex: 1;
-            h6, .not-seen { font-weight: bold; }
+            h6,
+            .not-seen {
+              font-weight: bold;
+            }
             p {
               font-size: 14px;
               margin-top: 2px;
@@ -72,8 +82,13 @@ import { ChatRole, ChatTab, IChatHistory, IMessage } from 'src/app/types/chat.ty
       // CHAT BOx
       .chat-box {
         @include flex(column, center, center);
-        & > * { width: 100%; }
-        .header .back-btn { font-size: 20px; margin-right: 10px; }
+        & > * {
+          width: 100%;
+        }
+        .header .back-btn {
+          font-size: 20px;
+          margin-right: 10px;
+        }
         .body {
           flex: 1;
           padding: 10px 14px 0;
@@ -94,7 +109,10 @@ import { ChatRole, ChatTab, IChatHistory, IMessage } from 'src/app/types/chat.ty
           }
           .chat-bubble {
             margin-bottom: 10px;
-            p { max-width: 80%; word-wrap: break-word; }
+            p {
+              max-width: 80%;
+              word-wrap: break-word;
+            }
           }
           .chat-bubble.left {
             @include flex(row, flex-end, flex-start);
@@ -129,11 +147,13 @@ import { ChatRole, ChatTab, IChatHistory, IMessage } from 'src/app/types/chat.ty
           }
         }
       }
-      
     `,
   ],
   template: `
-    <div class="wrapper" [ngClass]="{history: tab === 'history', 'chat-box': tab === 'chat-box'}">
+    <div
+      class="wrapper"
+      [ngClass]="{ history: tab === 'history', 'chat-box': tab === 'chat-box' }"
+    >
       <div class="content">
         <!-- Chat list -->
         <div class="chat-list">
@@ -141,14 +161,23 @@ import { ChatRole, ChatTab, IChatHistory, IMessage } from 'src/app/types/chat.ty
             <h4>Messages</h4>
           </div>
           <ul class="body">
-            <li *ngFor="let mess of chatHistory;" (click)="handleOpenChatBox(mess.id)">
+            <li
+              *ngFor="let mess of chatHistory"
+              (click)="handleOpenChatBox(mess.id)"
+            >
               <div>
                 <img *ngIf="mess.avatarUrl" [src]="mess.avatarUrl" />
-                <ng-icon *ngIf="!mess.avatarUrl" name="heroUserCircleSolid" size="40"/>
+                <ng-icon
+                  *ngIf="!mess.avatarUrl"
+                  name="heroUserCircleSolid"
+                  size="40"
+                />
 
                 <div class="history-content">
-                  <h6>{{mess.name}}</h6>
-                  <p [ngClass]="{'not-seen': !mess.seen}">{{mess.lastMessage}}</p>
+                  <h6>{{ mess.name }}</h6>
+                  <p [ngClass]="{ 'not-seen': !mess.seen }">
+                    {{ mess.lastMessage }}
+                  </p>
                 </div>
 
                 <div *ngIf="!mess.seen" class="point"></div>
@@ -161,7 +190,11 @@ import { ChatRole, ChatTab, IChatHistory, IMessage } from 'src/app/types/chat.ty
         <!-- Chat box  -->
         <div class="chat-box">
           <div class="header">
-            <button mat-icon-button class="back-btn" (click)="handleBackHistory()">
+            <button
+              mat-icon-button
+              class="back-btn"
+              (click)="handleBackHistory()"
+            >
               <mat-icon>keyboard_arrow_left</mat-icon>
             </button>
             <h4>Bun bo di 2</h4>
@@ -172,9 +205,21 @@ import { ChatRole, ChatTab, IChatHistory, IMessage } from 'src/app/types/chat.ty
                 <mat-divider />
                 <span>{{ mess.createdAt | date }}</span>
               </div>
-              <div class="chat-bubble" [ngClass]="{left: mess.sender === 'you', right: mess.sender === 'me'}">
+              <div
+                class="chat-bubble"
+                [ngClass]="{
+                  left: mess.sender === 'you',
+                  right: mess.sender === 'me'
+                }"
+              >
                 <p>{{ mess.content }}</p>
-                <span>{{ mess.createdAt.toLocaleString([], { hour: '2-digit', minute: '2-digit', hour12: false }) }}</span>
+                <span>{{
+                  mess.createdAt.toLocaleString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                  })
+                }}</span>
               </div>
             </div>
           </div>
@@ -199,29 +244,60 @@ import { ChatRole, ChatTab, IChatHistory, IMessage } from 'src/app/types/chat.ty
 export class ChatBoxComponent implements AfterViewInit {
   tab: ChatTab = ChatTab.HISTORY;
   messages: IMessage[] = [
-    { sender: ChatRole.YOU, content: 'Hello', createdAt: new Date(1703496013010), },
+    {
+      sender: ChatRole.YOU,
+      content: 'Hello',
+      createdAt: new Date(1703496013010),
+    },
     { sender: ChatRole.ME, content: 'Hi', createdAt: new Date(1703496013010) },
-    { sender: ChatRole.ME, content: 'Whats up', createdAt: new Date(1703496013010), },
-    { sender: ChatRole.YOU, content: 'Can you lend me a pencil', createdAt: new Date(1703496113010), },
-    { sender: ChatRole.ME, content: 'Of course', createdAt: new Date(1703496224010), },
+    {
+      sender: ChatRole.ME,
+      content: 'Whats up',
+      createdAt: new Date(1703496013010),
+    },
+    {
+      sender: ChatRole.YOU,
+      content: 'Can you lend me a pencil',
+      createdAt: new Date(1703496113010),
+    },
+    {
+      sender: ChatRole.ME,
+      content: 'Of course',
+      createdAt: new Date(1703496224010),
+    },
     { sender: ChatRole.ME, content: 'No', createdAt: new Date(1703496224010) },
   ];
   chatHistory: IChatHistory[] = [
-    { id: '', name: 'Bun bo`', seen: false, lastMessage: 'Ăn mấy tô con?', avatarUrl: '' },
-    { id: '', name: 'Bun rieu`', seen: true, lastMessage: 'Mấy giờ con qua?', avatarUrl: 'https://resizer.otstatic.com/v2/photos/wide-medium/1/25229489.webp' }
-  ]
-  @ViewChild('chatboxBody', { static: false }) chatboxBody: ElementRef | undefined;
+    {
+      id: '',
+      name: 'Bun bo`',
+      seen: false,
+      lastMessage: 'Ăn mấy tô con?',
+      avatarUrl: '',
+    },
+    {
+      id: '',
+      name: 'Bun rieu`',
+      seen: true,
+      lastMessage: 'Mấy giờ con qua?',
+      avatarUrl:
+        'https://resizer.otstatic.com/v2/photos/wide-medium/1/25229489.webp',
+    },
+  ];
+  @ViewChild('chatboxBody', { static: false }) chatboxBody:
+    | ElementRef
+    | undefined;
 
   // chat list handlers-------------------------------------------------------------------------------------------
   handleOpenChatBox(id: string) {
     this.tab = ChatTab.CHATBOX;
   }
 
-
   // chat box handlers-------------------------------------------------------------------------------------------
   scrollToBottom(): void {
     if (this.chatboxBody) {
-      this.chatboxBody.nativeElement.scrollTop = this.chatboxBody.nativeElement.scrollHeight;
+      this.chatboxBody.nativeElement.scrollTop =
+        this.chatboxBody.nativeElement.scrollHeight;
     }
   }
   adjustTextareaHeight(textarea: HTMLTextAreaElement): void {
@@ -234,8 +310,12 @@ export class ChatBoxComponent implements AfterViewInit {
     if (index === 0) {
       return true; // Show the date for the first message
     }
-    const currentMessageDate = new Date(messages[index].createdAt).toDateString();
-    const previousMessageDate = new Date(messages[index - 1].createdAt).toDateString();
+    const currentMessageDate = new Date(
+      messages[index].createdAt,
+    ).toDateString();
+    const previousMessageDate = new Date(
+      messages[index - 1].createdAt,
+    ).toDateString();
     return currentMessageDate !== previousMessageDate;
   }
   ngAfterViewInit() {
@@ -250,7 +330,11 @@ export class ChatBoxComponent implements AfterViewInit {
   sendMessage(textarea: HTMLTextAreaElement) {
     const value = textarea.value.trim();
     if (this.chatboxBody && value) {
-      this.messages.push({ sender: ChatRole.ME, content: value, createdAt: new Date(), });
+      this.messages.push({
+        sender: ChatRole.ME,
+        content: value,
+        createdAt: new Date(),
+      });
       textarea.value = '';
       textarea.focus();
 

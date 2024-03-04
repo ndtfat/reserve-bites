@@ -26,7 +26,8 @@ import { Component } from '@angular/core';
           border-radius: 4px;
           padding: 14px 8px;
           cursor: pointer;
-          &:hover, &.readed {
+          &:hover,
+          &.readed {
             background: rgba(0, 0, 0, 0.03);
           }
           .title {
@@ -49,33 +50,45 @@ import { Component } from '@angular/core';
           margin: 0 auto;
         }
       }
-    `
+    `,
   ],
   template: `
     <div class="wrapper">
       <div class="container">
         <h3 style="margin-bottom: 30px;">Notifications</h3>
-        
+
         <div style="display: flex;">
-          <ng-icon name="ionInformationCircleOutline" size="36" color="#3E82F7"/>
-          <ng-icon name="ionCheckmarkCircleOutline" size="36" color="#38BF37"/>
-          <ng-icon name="ionWarningOutline" size="36" color="#f24642"/>
+          <ng-icon
+            name="ionInformationCircleOutline"
+            size="36"
+            color="#3E82F7"
+          />
+          <ng-icon name="ionCheckmarkCircleOutline" size="36" color="#38BF37" />
+          <ng-icon name="ionWarningOutline" size="36" color="#f24642" />
         </div>
 
         <ul class="list">
           <li class="readed">
-            <ng-icon name="ionCheckmarkCircleOutline" size="36" color="#38BF37"/>
+            <ng-icon
+              name="ionCheckmarkCircleOutline"
+              size="36"
+              color="#38BF37"
+            />
             <div style="flex: 1">
               <p class="title">Confirm reservation</p>
-              <p class="message">Your reservation at Bun bo di 3 was confirmed</p>
+              <p class="message">
+                Your reservation at Bun bo di 3 was confirmed
+              </p>
             </div>
             <!-- <span class="dot"></span> -->
           </li>
           <li class="">
-            <ng-icon name="ionWarningOutline" size="36" color="#f24642"/>
+            <ng-icon name="ionWarningOutline" size="36" color="#f24642" />
             <div style="flex: 1">
               <p class="title">Cancel reservation</p>
-              <p class="message">Your reservation at Bun bo di 3 was canceled</p>
+              <p class="message">
+                Your reservation at Bun bo di 3 was canceled
+              </p>
             </div>
             <span class="dot"></span>
           </li>
@@ -84,6 +97,4 @@ import { Component } from '@angular/core';
     </div>
   `,
 })
-export class NotificationComponent {
-
-}
+export class NotificationComponent {}

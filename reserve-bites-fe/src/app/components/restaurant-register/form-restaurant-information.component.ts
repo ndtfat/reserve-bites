@@ -1,8 +1,11 @@
 import { HttpEvent, HttpEventType } from '@angular/common/http';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ImageService } from 'src/app/services/image.service';
-import { IFormRestaurantInformationType, IRestaurant } from 'src/app/types/restaurant.type';
+import {
+  IFormRestaurantInformationType,
+  IRestaurant,
+} from 'src/app/types/restaurant.type';
 
 @Component({
   selector: 'form-restaurant-information',
@@ -20,7 +23,9 @@ import { IFormRestaurantInformationType, IRestaurant } from 'src/app/types/resta
         display: flex;
         justify-content: flex-end;
         margin-top: 20px;
-        button:first-child { margin-right: 20px; }
+        button:first-child {
+          margin-right: 20px;
+        }
       }
       .address-group {
         width: 100%;
@@ -40,14 +45,21 @@ import { IFormRestaurantInformationType, IRestaurant } from 'src/app/types/resta
           width: 100%;
           display: flex;
           gap: 10px;
-          & > *:not(& button) { flex: 2; }
+          & > *:not(& button) {
+            flex: 2;
+          }
         }
       }
-      .operation-time span{ margin-right: 10px; }
+      .operation-time span {
+        margin-right: 10px;
+      }
       .time-pickers {
         width: 100%;
         margin-bottom: 20px;
-        &, & > div { @include flex(row, center, flex-start); }
+        &,
+        & > div {
+          @include flex(row, center, flex-start);
+        }
       }
       @include mobile {
         .address-group {
@@ -232,7 +244,9 @@ import { IFormRestaurantInformationType, IRestaurant } from 'src/app/types/resta
       <!-- Main image -->
       <h4>
         Main image
-        <span style="color:red; font-weight: normal;">(Restaurant must have main image)</span>
+        <span style="color:red; font-weight: normal;"
+          >(Restaurant must have main image)</span
+        >
       </h4>
       <upload-image
         *ngIf="!form.get('mainImage')?.value"
@@ -250,7 +264,10 @@ import { IFormRestaurantInformationType, IRestaurant } from 'src/app/types/resta
       <h4>Gallery</h4>
       <upload-image multiple (onUploadFiles)="handleUploadGallery($event)" />
       <div style="margin-top: 20px;"></div>
-      <div *ngFor="let item of form.get('gallery')?.value" style="margin-bottom: 16px;">
+      <div
+        *ngFor="let item of form.get('gallery')?.value"
+        style="margin-bottom: 16px;"
+      >
         <image-status
           [error]="item?.error"
           [file]="item.file"
@@ -261,11 +278,22 @@ import { IFormRestaurantInformationType, IRestaurant } from 'src/app/types/resta
 
       <!-- Buttons -->
       <div class="button-wrapper">
-        <button *ngIf="backButton" type="button" mat-raised-button (click)="back.emit()">
+        <button
+          *ngIf="backButton"
+          type="button"
+          mat-raised-button
+          (click)="back.emit()"
+        >
           Back
         </button>
-        <button type="button" mat-raised-button color="main" [disabled]="loading" (click)="handleSubmit()">
-          {{submitButtonName}}
+        <button
+          type="button"
+          mat-raised-button
+          color="main"
+          [disabled]="loading"
+          (click)="handleSubmit()"
+        >
+          {{ submitButtonName }}
         </button>
       </div>
     </form>
@@ -277,10 +305,20 @@ export class FormRestaurantInformationComponent implements OnInit {
   @Input() submitButtonName: string = 'submit';
   @Input() restaurantInfo?: IRestaurant;
   @Output() back = new EventEmitter();
-  @Output() submit = new EventEmitter<IFormRestaurantInformationType & { deletedImageIds?: string[] }>();
+  @Output() submit = new EventEmitter<
+    IFormRestaurantInformationType & { deletedImageIds?: string[] }
+  >();
 
   deletedImageIds: string[] = [];
-  dayOptions = ['Monday', 'Tuesday', 'Wendsday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day) => {
+  dayOptions = [
+    'Monday',
+    'Tuesday',
+    'Wendsday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
+  ].map((day) => {
     return { value: day.substring(0, 3), content: day };
   });
 
@@ -320,7 +358,7 @@ export class FormRestaurantInformationComponent implements OnInit {
     gallery: [this.initialGallery],
   });
 
-  constructor(private fb: FormBuilder, private imageSv: ImageService) { }
+  constructor(private fb: FormBuilder, private imageSv: ImageService) {}
 
   ngOnInit() {
     if (this.restaurantInfo) {
@@ -332,18 +370,20 @@ export class FormRestaurantInformationComponent implements OnInit {
 
       this.menuArray.clear();
       this.restaurantInfo.menu.map((category) =>
-        this.menuArray.push(this.fb.group({
-          category: category.category,
-          dishes: this.fb.array(
-            category.dishes.map((dish) =>
-              this.fb.group({
-                name: dish.name,
-                price: dish.price,
-              })
-            )
-          ),
-        }))
-      )
+        this.menuArray.push(
+          this.fb.group({
+            category: category.category,
+            dishes: this.fb.array(
+              category.dishes.map((dish) =>
+                this.fb.group({
+                  name: dish.name,
+                  price: dish.price,
+                }),
+              ),
+            ),
+          }),
+        ),
+      );
 
       this.form.patchValue({
         name: this.restaurantInfo.name,
@@ -361,8 +401,8 @@ export class FormRestaurantInformationComponent implements OnInit {
         },
         maxReservationSize: this.restaurantInfo.maxReservationSize,
         mainImage: { file: this.restaurantInfo.mainImage, progress: 100 },
-        gallery: this.restaurantInfo.gallery.map(item => {
-          return { file: item, progress: 100 }
+        gallery: this.restaurantInfo.gallery.map((item) => {
+          return { file: item, progress: 100 };
         }),
       });
     }
@@ -385,7 +425,7 @@ export class FormRestaurantInformationComponent implements OnInit {
             price: ['', Validators.required],
           }),
         ]),
-      })
+      }),
     );
   }
   handleAddDish(category: FormGroup) {
@@ -393,7 +433,7 @@ export class FormRestaurantInformationComponent implements OnInit {
       this.fb.group({
         name: ['', Validators.required],
         price: ['', Validators.required],
-      })
+      }),
     );
   }
   handleRemoveDish(categoryId: number, dishId: number) {
@@ -413,31 +453,33 @@ export class FormRestaurantInformationComponent implements OnInit {
   handleUPloadMainImage(file: File) {
     const mainImageControl = this.form.controls.mainImage;
     mainImageControl.setValue({ progress: 0, file });
-    this.imageSv.uploadSingle(file).subscribe((event: HttpEvent<any>) => {
-      switch (event.type) {
-        case HttpEventType.UploadProgress:
-          if (event.total)
+    this.imageSv.uploadSingle(file).subscribe(
+      (event: HttpEvent<any>) => {
+        switch (event.type) {
+          case HttpEventType.UploadProgress:
+            if (event.total)
+              mainImageControl.setValue({
+                progress: Math.round((event.loaded / event.total) * 100) - 10,
+                file,
+              });
+            break;
+          case HttpEventType.Response:
             mainImageControl.setValue({
-              progress: Math.round((event.loaded / event.total) * 100) - 10,
-              file,
+              progress: 100,
+              file: event.body,
             });
-          break;
-        case HttpEventType.Response:
-          mainImageControl.setValue({
-            progress: 100,
-            file: event.body,
-          });
-          break;
-      }
-    },
+            break;
+        }
+      },
       (error) => {
-        console.log(error)
+        console.log(error);
         mainImageControl.setValue({
           progress: 100,
           file,
           error,
         });
-      });
+      },
+    );
   }
 
   handleUploadGallery(files: File[]) {
@@ -449,9 +491,8 @@ export class FormRestaurantInformationComponent implements OnInit {
 
     for (let item of gallery.value) {
       if (item.file.type.includes('image')) {
-        this.imageSv
-          .uploadSingle(item.file)
-          .subscribe((event: HttpEvent<any>) => {
+        this.imageSv.uploadSingle(item.file).subscribe(
+          (event: HttpEvent<any>) => {
             switch (event.type) {
               case HttpEventType.UploadProgress:
                 gallery.setValue(
@@ -461,7 +502,7 @@ export class FormRestaurantInformationComponent implements OnInit {
                         Math.round((event.loaded / event.total) * 100) - 10;
                     }
                     return { ...el };
-                  })
+                  }),
                 );
                 break;
               case HttpEventType.Response:
@@ -472,21 +513,22 @@ export class FormRestaurantInformationComponent implements OnInit {
                       el.file = event.body;
                     }
                     return { ...el };
-                  })
+                  }),
                 );
             }
           },
-            (error) => {
-              console.log(error)
-              gallery.value.map((el: any) => {
-                if (el.file.name === item.file.name) {
-                  el.progress = 100;
-                  el.file = item.file;
-                  el.error = error;
-                }
-                return { ...el };
-              })
+          (error) => {
+            console.log(error);
+            gallery.value.map((el: any) => {
+              if (el.file.name === item.file.name) {
+                el.progress = 100;
+                el.file = item.file;
+                el.error = error;
+              }
+              return { ...el };
             });
+          },
+        );
       }
     }
   }
@@ -497,7 +539,7 @@ export class FormRestaurantInformationComponent implements OnInit {
   handleDeleteItemInGallery(deletedFile: any) {
     const gallery = this.form.controls.gallery;
     const newGalleryValue = gallery.value.filter(
-      (item: any) => item.file.name !== deletedFile.name
+      (item: any) => item.file.name !== deletedFile.name,
     );
     this.deletedImageIds.push(deletedFile.id);
     gallery.setValue(newGalleryValue);
@@ -516,7 +558,9 @@ export class FormRestaurantInformationComponent implements OnInit {
       }
       this.submit.emit({
         ...(values as IFormRestaurantInformationType),
-        ...(this.restaurantInfo ? { deletedImageIds: this.deletedImageIds } : {})
+        ...(this.restaurantInfo
+          ? { deletedImageIds: this.deletedImageIds }
+          : {}),
       });
     }
   }

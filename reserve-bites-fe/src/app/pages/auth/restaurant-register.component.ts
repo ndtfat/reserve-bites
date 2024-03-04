@@ -78,14 +78,14 @@ import {
   `,
 })
 export class RestaurantRegisterComponent {
-  constructor(private restaurantSv: RestaurantService) { }
+  constructor(private restaurantSv: RestaurantService) {}
 
   step: number = 0;
   ownerInformation: IFormOwnerInformationType | undefined;
   restaurantInformation: IFormRestaurantInformationType | undefined;
 
   handleNextStep(
-    data?: IFormOwnerInformationType | IFormRestaurantInformationType
+    data?: IFormOwnerInformationType | IFormRestaurantInformationType,
   ) {
     switch (this.step) {
       case 0:

@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { format } from 'date-fns';
 import {
   IFormOwnerInformationType,
   IFormRestaurantInformationType,
@@ -100,7 +99,8 @@ import {
         <div>
           <p class="field">Address</p>
           <p class="value">
-            {{ resInfo.address.detail }} - {{ resInfo.address.province }} - {{ resInfo.address.country }}
+            {{ resInfo.address.detail }} - {{ resInfo.address.province }} -
+            {{ resInfo.address.country }}
           </p>
         </div>
       </div>
@@ -108,13 +108,18 @@ import {
         <div>
           <p class="field">Operation time</p>
           <p class="value">
-            {{ resInfo.operationTime.openTime | time }} ~ {{ resInfo.operationTime.closeTime | time }}
+            {{ resInfo.operationTime.openTime | time }} ~
+            {{ resInfo.operationTime.closeTime | time }}
           </p>
         </div>
         <div>
           <p class="field">Operation day(s)</p>
           <p class="value">
-            {{ resInfo.operationTime.openDay.length === 7 ? 'All day of week' : resInfo.operationTime.openDay.join(', ') }}
+            {{
+              resInfo.operationTime.openDay.length === 7
+                ? 'All day of week'
+                : resInfo.operationTime.openDay.join(', ')
+            }}
           </p>
         </div>
       </div>
@@ -172,5 +177,5 @@ export class ConfirmationRestaurantRegisterComponent implements OnInit {
   @Output() back = new EventEmitter();
   @Output() confirm = new EventEmitter();
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 }

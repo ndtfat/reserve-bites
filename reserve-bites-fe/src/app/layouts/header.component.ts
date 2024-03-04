@@ -117,17 +117,11 @@ import { AuthService } from '../services/auth.service';
         </span>
 
         <div *ngIf="!isAuthenticated" class="buttons">
-          <button 
-            mat-stroked-button
-            routerLink="/auth/sign-in"
-          >
+          <button mat-stroked-button routerLink="/auth/sign-in">
             <span>SIGN IN</span>
             <ng-icon class="icon" name="ionLogInOutline" />
           </button>
-          <button 
-            mat-raised-button
-            routerLink="/auth/sign-up"
-          >
+          <button mat-raised-button routerLink="/auth/sign-up">
             <span>SIGN UP</span>
             <ng-icon class="icon" name="ionLogOutOutline" />
           </button>

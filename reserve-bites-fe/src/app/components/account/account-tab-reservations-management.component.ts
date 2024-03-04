@@ -1,12 +1,9 @@
-import { AuthService } from 'src/app/services/auth.service';
+import { PageEvent } from '@angular/material/paginator';
 import { Component, OnInit } from '@angular/core';
-import { RestaurantService } from 'src/app/services/restaurant.service';
-import { IReservation } from 'src/app/types/restaurant.type';
 import { MatTableDataSource } from '@angular/material/table';
 import { BehaviorSubject, Subject, debounceTime } from 'rxjs';
-import { MatSelectChange } from '@angular/material/select';
-import { PageEvent } from '@angular/material/paginator';
-import { AccountService } from 'src/app/services/account.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'account-tab-reservations-management',
@@ -74,103 +71,103 @@ import { AccountService } from 'src/app/services/account.service';
     `,
   ],
   template: `
-  <div class="wrapper container">
-    <div class="filter">
-      <mat-form-field class="input" appearance="outline">
-        <mat-label>Filter</mat-label>
-        <input autocomplete="off" matInput (input)="handleSearch($event)" />
-      </mat-form-field>
-      <app-select
-        label="State"
-        (selectionChange)="handleStatusChange($event)"
-        [options]="[
-          { value: 'canceled', content: 'Canceled' },
-          { value: 'rejected', content: 'Rejected' },
-          { value: 'confirmed', content: 'Confirmed' },
-          { value: 'completed', content: 'Completed' },
-          { value: 'responsing', content: 'Responsing' }
-        ]"
+    <div class="wrapper container">
+      <div class="filter">
+        <mat-form-field class="input" appearance="outline">
+          <mat-label>Filter</mat-label>
+          <input autocomplete="off" matInput (input)="handleSearch($event)" />
+        </mat-form-field>
+        <app-select
+          label="State"
+          (selectionChange)="handleStatusChange($event)"
+          [options]="[
+            { value: 'canceled', content: 'Canceled' },
+            { value: 'rejected', content: 'Rejected' },
+            { value: 'confirmed', content: 'Confirmed' },
+            { value: 'completed', content: 'Completed' },
+            { value: 'responsing', content: 'Responsing' }
+          ]"
+        />
+      </div>
+
+      <div *ngIf="dataSource && !fetching">
+        <table mat-table class="mat-elevation-z8" [dataSource]="dataSource">
+          <ng-container *ngIf="isOwner" matColumnDef="diner">
+            <th mat-header-cell *matHeaderCellDef>Diner</th>
+            <td mat-cell *matCellDef="let element">
+              <p>
+                {{ element.diner }}
+              </p>
+            </td>
+          </ng-container>
+
+          <ng-container *ngIf="isOwner" matColumnDef="email">
+            <th mat-header-cell *matHeaderCellDef>Email</th>
+            <td mat-cell *matCellDef="let element">
+              <p>
+                {{ element.email }}
+              </p>
+            </td>
+          </ng-container>
+
+          <ng-container *ngIf="!isOwner" matColumnDef="restaurant">
+            <th mat-header-cell *matHeaderCellDef>Restaurant</th>
+            <td mat-cell *matCellDef="let element">
+              <p>
+                {{ element.restaurant }}
+              </p>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="size">
+            <th mat-header-cell *matHeaderCellDef>Party size</th>
+            <td mat-cell *matCellDef="let element">{{ element.size }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef>Date</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.date | date : 'MMM dd, yyyy' }}
+            </td>
+          </ng-container>
+
+          <!-- Symbol Column -->
+          <ng-container matColumnDef="time">
+            <th mat-header-cell *matHeaderCellDef>Time</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.time | time }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let element">
+              <p [class]="'status ' + element.status">
+                {{ element.status }}
+              </p>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="columns"></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: columns"
+            class="element-row"
+            [routerLink]="'/reservation/' + row.id"
+          ></tr>
+        </table>
+      </div>
+
+      <div *ngIf="!dataSource && !fetching">There aren't any reservations.</div>
+      <mat-spinner *ngIf="fetching" />
+      <mat-paginator
+        *ngIf="dataSource && totalItems / 10 > 1"
+        showFirstLastButtons
+        [length]="totalItems"
+        [pageSize]="10"
+        (page)="handlePageChange($event)"
       />
     </div>
-
-    <div *ngIf="dataSource && !fetching">
-      <table mat-table class="mat-elevation-z8" [dataSource]="dataSource">
-        <ng-container *ngIf="isOwner" matColumnDef="diner">
-          <th mat-header-cell *matHeaderCellDef>Diner</th>
-          <td mat-cell *matCellDef="let element">
-            <p>
-              {{ element.diner }}
-            </p>
-          </td>
-        </ng-container>
-
-        <ng-container *ngIf="isOwner" matColumnDef="email">
-          <th mat-header-cell *matHeaderCellDef>Email</th>
-          <td mat-cell *matCellDef="let element">
-            <p>
-              {{ element.email }}
-            </p>
-          </td>
-        </ng-container>
-
-        <ng-container *ngIf="!isOwner" matColumnDef="restaurant">
-          <th mat-header-cell *matHeaderCellDef>Restaurant</th>
-          <td mat-cell *matCellDef="let element">
-            <p>
-              {{ element.restaurant }}
-            </p>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="size">
-          <th mat-header-cell *matHeaderCellDef>Party size</th>
-          <td mat-cell *matCellDef="let element">{{ element.size }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="date">
-          <th mat-header-cell *matHeaderCellDef>Date</th>
-          <td mat-cell *matCellDef="let element">
-            {{ element.date | date : 'MMM dd, yyyy' }}
-          </td>
-        </ng-container>
-
-        <!-- Symbol Column -->
-        <ng-container matColumnDef="time">
-          <th mat-header-cell *matHeaderCellDef>Time</th>
-          <td mat-cell *matCellDef="let element">
-            {{ element.time | time }}
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef>Status</th>
-          <td mat-cell *matCellDef="let element">
-            <p [class]="'status ' + element.status">
-              {{ element.status }}
-            </p>
-          </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="columns"></tr>
-        <tr
-          mat-row
-          *matRowDef="let row; columns: columns"
-          class="element-row"
-          [routerLink]="'/reservation/' + row.id"
-        ></tr>
-      </table>
-    </div>
-    
-    <div *ngIf="!dataSource && !fetching">There aren't any reservations.</div>
-    <mat-spinner *ngIf="fetching" />
-    <mat-paginator
-      *ngIf="dataSource && (totalItems / 10 > 1)" 
-      showFirstLastButtons
-      [length]="totalItems" 
-      [pageSize]="10" 
-      (page)="handlePageChange($event)"
-    />
-  </div>
   `,
 })
 export class AccountTabReservationsManagementComponent implements OnInit {
@@ -182,24 +179,29 @@ export class AccountTabReservationsManagementComponent implements OnInit {
   $searchText = new Subject<string>();
   $filterOptions = new BehaviorSubject({ text: '', status: '', page: 1 });
 
-  constructor(private auth: AuthService, private accountSv: AccountService) { }
+  constructor(private auth: AuthService, private userSv: UserService) {}
 
   ngOnInit() {
-    this.auth.user.subscribe(u => {
-      this.isOwner = u?.isOwner as boolean
+    this.auth.user.subscribe((u) => {
+      this.isOwner = u?.isOwner as boolean;
       if (u?.isOwner) {
         this.columns = ['diner', 'email', 'size', 'date', 'time', 'status'];
       }
-    })
+    });
 
-    this.$searchText.pipe(debounceTime(500)).subscribe((value) =>
-      this.$filterOptions.next({ ...this.$filterOptions.value, text: value })
-    );
+    this.$searchText
+      .pipe(debounceTime(500))
+      .subscribe((value) =>
+        this.$filterOptions.next({ ...this.$filterOptions.value, text: value }),
+      );
     this.$filterOptions.subscribe(async (options) => {
       this.fetching = true;
-      const { page, totalItems, itemsList } = await this.accountSv.getReservations(options);
+      const { page, totalItems, itemsList } = await this.userSv.getReservations(
+        options,
+      );
       this.totalItems = totalItems;
-      this.dataSource = itemsList.length > 0 ? new MatTableDataSource(itemsList) : null;
+      this.dataSource =
+        itemsList.length > 0 ? new MatTableDataSource(itemsList) : null;
       this.fetching = false;
     });
   }
@@ -209,10 +211,16 @@ export class AccountTabReservationsManagementComponent implements OnInit {
   }
 
   handleStatusChange(status: string | string[]) {
-    this.$filterOptions.next({ ...this.$filterOptions.value, status: status as string });
+    this.$filterOptions.next({
+      ...this.$filterOptions.value,
+      status: status as string,
+    });
   }
 
   handlePageChange(event: PageEvent) {
-    this.$filterOptions.next({ ...this.$filterOptions.value, page: event.pageIndex + 1 });
+    this.$filterOptions.next({
+      ...this.$filterOptions.value,
+      page: event.pageIndex + 1,
+    });
   }
 }

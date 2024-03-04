@@ -1,10 +1,10 @@
 import {
-  Component,
   Input,
   OnChanges,
+  Component,
   SimpleChanges,
-  ViewEncapsulation,
   booleanAttribute,
+  ViewEncapsulation,
 } from '@angular/core';
 
 @Component({

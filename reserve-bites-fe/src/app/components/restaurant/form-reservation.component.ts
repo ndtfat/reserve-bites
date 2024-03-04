@@ -1,8 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
-import { RestaurantService } from 'src/app/services/restaurant.service';
-import { SnackbarService } from 'src/app/services/snackbar.service';
+import { UserService } from 'src/app/services/user.service';
 import { IRestaurant } from 'src/app/types/restaurant.type';
 
 @Component({
@@ -29,7 +28,12 @@ import { IRestaurant } from 'src/app/types/restaurant.type';
 
       <span style="display:flex; align-items: center">
         <h6 style="margin-right: 10px; font-weight: 600">Time:</h6>
-        <timepicker formControlName="time" [hourStep]="1" [minuteStep]="1" [showMeridian]="false"/>
+        <timepicker
+          formControlName="time"
+          [hourStep]="1"
+          [minuteStep]="1"
+          [showMeridian]="false"
+        />
       </span>
 
       <button
@@ -72,8 +76,8 @@ export class FormReservationComponent {
   constructor(
     private fb: FormBuilder,
     private auth: AuthService,
-    private _snackbar: SnackbarService,
-    private restaurantSv: RestaurantService,) { }
+    private userSv: UserService,
+  ) {}
 
   form = this.fb.group({
     size: [1, Validators.required],
@@ -87,25 +91,46 @@ export class FormReservationComponent {
     this.alertMessage = '';
     const size = Number(this.form.get('size')?.value);
     const today = new Date().getTime();
-    const reserveDate = new Date(this.form.get('date')?.value as Date).getTime();
+    const reserveDate = new Date(
+      this.form.get('date')?.value as Date,
+    ).getTime();
 
-    const reserveHour = new Date(this.form.get('time')?.value as Date).getHours();
-    const reserveMinute = new Date(this.form.get('time')?.value as Date).getMinutes();
+    const reserveHour = new Date(
+      this.form.get('time')?.value as Date,
+    ).getHours();
+    const reserveMinute = new Date(
+      this.form.get('time')?.value as Date,
+    ).getMinutes();
 
-    const openHour = new Date(this.restaurant.operationTime.openTime).getHours();
-    const closeHour = new Date(this.restaurant.operationTime.closeTime).getHours();
-    const openMinute = new Date(this.restaurant.operationTime.openTime).getMinutes();
-    const closeMinute = new Date(this.restaurant.operationTime.closeTime).getMinutes();
+    const openHour = new Date(
+      this.restaurant.operationTime.openTime,
+    ).getHours();
+    const closeHour = new Date(
+      this.restaurant.operationTime.closeTime,
+    ).getHours();
+    const openMinute = new Date(
+      this.restaurant.operationTime.openTime,
+    ).getMinutes();
+    const closeMinute = new Date(
+      this.restaurant.operationTime.closeTime,
+    ).getMinutes();
 
-    console.table({ openHour, openMinute })
+    console.table({ openHour, openMinute });
 
-    const isHourInRange = reserveHour > openHour || (reserveHour === openHour && reserveMinute >= openMinute);
-    const isMinuteInRange = reserveHour < closeHour || (reserveHour === closeHour && reserveMinute <= closeMinute);
+    const isHourInRange =
+      reserveHour > openHour ||
+      (reserveHour === openHour && reserveMinute >= openMinute);
+    const isMinuteInRange =
+      reserveHour < closeHour ||
+      (reserveHour === closeHour && reserveMinute <= closeMinute);
 
-    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday',];
-    const reserveDay = daysOfWeek[new Date(this.form.get('date')?.value as Date).getDay()];
-    console.log(this.restaurant.operationTime.openDay.includes(reserveDay));
-
+    const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
+    const reserveDay =
+      daysOfWeek[new Date(this.form.get('date')?.value as Date).getDay()];
+    console.log(
+      reserveDay,
+      this.restaurant.operationTime.openDay.includes(reserveDay),
+    );
 
     if (size > this.restaurant.maxReservationSize) {
       this.alertMessage = `Max party size is ${this.restaurant.maxReservationSize}`;
@@ -130,10 +155,10 @@ export class FormReservationComponent {
       dinerId: this.auth.user.value?.id as string,
       size,
       date: this.form.value.date as Date,
-      time: this.form.value.time as Date
-    }
+      time: this.form.value.time as Date,
+    };
     this.reserving = true;
-    await this.restaurantSv.reserve(payload);
+    await this.userSv.reserve(payload);
     this.reserving = false;
   }
 }

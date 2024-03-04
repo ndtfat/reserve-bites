@@ -43,7 +43,7 @@ const routes: Routes = [
       { path: 'reset-password', component: ResetPasswordPage },
     ],
   },
-  { path: 'restaurant-register', component: RestaurantRegisterComponent, },
+  { path: 'restaurant-register', component: RestaurantRegisterComponent },
   {
     path: 'account',
     component: HeaderLayout,
@@ -72,8 +72,8 @@ const routes: Routes = [
     children: [{ path: '', component: NotificationComponent }],
   },
 
-  { path: '**', component: Page404Component, },
-  { path: '404', component: Page404Component, },
+  { path: '**', component: Page404Component },
+  { path: '404', component: Page404Component },
 ];
 
 export default routes;

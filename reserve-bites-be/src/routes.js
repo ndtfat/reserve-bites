@@ -42,6 +42,8 @@ function routes(app) {
     verifyAccessToken,
     userControler.putChangePassword,
   );
+  app.post('/user/review', verifyAccessToken, userControler.postReview);
+  app.delete('/user/review/:id', verifyAccessToken, userControler.deleteReview);
 
   // upload image
   app.post(
@@ -52,16 +54,6 @@ function routes(app) {
 
   // restaurant
   app.post('/restaurant/register', restaurantController.postRegister);
-  app.post(
-    '/restaurant/review',
-    verifyAccessToken,
-    restaurantController.postReview,
-  );
-  app.delete(
-    '/restaurant/review/:id',
-    verifyAccessToken,
-    restaurantController.deleteReview,
-  );
   app.get('/restaurant/locations', restaurantController.getLocations);
   app.get('/restaurant/top-rate', restaurantController.getTopRestaurant);
   app.get(

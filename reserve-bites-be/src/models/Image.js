@@ -1,7 +1,6 @@
-import mongoose from "../config/mongo.config.js";
+import mongoose from '../config/mongo.config.js';
 
 const Schema = mongoose.Schema;
-
 const ImageSchema = new Schema(
   {
     name: { type: String, required: true },
@@ -11,7 +10,7 @@ const ImageSchema = new Schema(
   {
     timestamps: true,
     versionKey: false,
-  }
+  },
 );
 
-export default mongoose.model("image", ImageSchema);
+export default mongoose.model('image', ImageSchema);

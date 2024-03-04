@@ -29,7 +29,10 @@ import { IUser } from 'src/app/types/auth.type';
         <mat-tab *ngIf="user.isOwner" label="My Restaurant">
           <account-tab-restaurant />
         </mat-tab>
-        <mat-tab *ngIf="user" [label]="user.isOwner ? 'Reservations Management' : 'Dining History'">
+        <mat-tab
+          *ngIf="user"
+          [label]="user.isOwner ? 'Reservations Management' : 'Dining History'"
+        >
           <account-tab-reservations-management />
         </mat-tab>
       </mat-tab-group>
@@ -48,5 +51,5 @@ export class AccountComponent implements OnInit {
     }
   }
 
-  ngOnInit() { }
+  ngOnInit() {}
 }

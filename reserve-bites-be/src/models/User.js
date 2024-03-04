@@ -1,4 +1,4 @@
-import mongoose from "../config/mongo.config.js";
+import mongoose from '../config/mongo.config.js';
 
 const Schema = mongoose.Schema;
 
@@ -15,7 +15,7 @@ const UserSchema = new Schema(
   {
     timestamps: true,
     versionKey: false,
-  }
+  },
 );
 
-export default mongoose.model("user", UserSchema);
+export default mongoose.model('user', UserSchema);

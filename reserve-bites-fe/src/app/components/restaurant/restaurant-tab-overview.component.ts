@@ -8,7 +8,9 @@ import { findMaxPrice, findMinPrice } from 'src/app/utils/find';
     `
       @import '../../scss/common.scss';
       @import '../../scss/variables.scss';
-      .wrapper { padding: 20px 0 10px; }
+      .wrapper {
+        padding: 20px 0 10px;
+      }
       h2 {
         font-weight: 600;
         margin-bottom: 20px;
@@ -26,7 +28,9 @@ import { findMaxPrice, findMinPrice } from 'src/app/utils/find';
         font-weight: 600;
         margin-bottom: 16px;
       }
-      .description.less { @include ellipsis(4); }
+      .description.less {
+        @include ellipsis(4);
+      }
       .toggle-description {
         color: $primary;
         margin-bottom: 20px;
@@ -59,12 +63,13 @@ import { findMaxPrice, findMinPrice } from 'src/app/utils/find';
       <h2>
         {{ restaurant.name }}
         <span class="rate">
-          <span>{{ restaurant.rate }}</span>/5
+          <span>{{ restaurant.rate }}</span
+          >/5
         </span>
       </h2>
 
       <!-- Description -->
-      <p class="description" [ngClass]="{less: !showFullDesc}">
+      <p class="description" [ngClass]="{ less: !showFullDesc }">
         {{ restaurant.description }}
       </p>
       <p class="toggle-description" (click)="showFullDesc = !showFullDesc">
@@ -86,7 +91,13 @@ import { findMaxPrice, findMinPrice } from 'src/app/utils/find';
           <span class="icon">
             <ng-icon size="18" name="ionLocationOutline" />
           </span>
-          {{ restaurant.address.detail + ', ' + restaurant.address.province + ', ' + restaurant.address.country }}
+          {{
+            restaurant.address.detail +
+              ', ' +
+              restaurant.address.province +
+              ', ' +
+              restaurant.address.country
+          }}
         </p>
         <p>
           <span class="icon">
@@ -102,7 +113,11 @@ import { findMaxPrice, findMinPrice } from 'src/app/utils/find';
           {{ ' ~ ' }}
           {{ restaurant.operationTime.closeTime | time }}
           on
-          {{ restaurant.operationTime.openDay.length === 7 ? 'daily' : restaurant.operationTime.openDay.join(', ') }}
+          {{
+            restaurant.operationTime.openDay.length === 7
+              ? 'daily'
+              : restaurant.operationTime.openDay.join(', ')
+          }}
         </p>
       </div>
 
@@ -132,8 +147,8 @@ import { findMaxPrice, findMinPrice } from 'src/app/utils/find';
 export class RestaurantTabOverviewComponent implements OnInit {
   @Input() restaurant!: IRestaurant;
   showFullDesc = false;
-  minPrice: string = ''
-  maxPrice: string = ''
+  minPrice: string = '';
+  maxPrice: string = '';
 
   ngOnInit() {
     this.minPrice = findMinPrice(this.restaurant.menu).toLocaleString('en-US');

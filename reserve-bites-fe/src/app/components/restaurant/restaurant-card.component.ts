@@ -1,5 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { format } from 'date-fns';
+import { Component, Input } from '@angular/core';
 import { IRestaurantCard } from 'src/app/types/restaurant.type';
 
 @Component({
@@ -64,7 +63,7 @@ import { IRestaurantCard } from 'src/app/types/restaurant.type';
           {{ restaurant.address.province + ', ' + restaurant.address.country }}
         </p>
         <h6 class="name">
-          {{ restaurant.name }} 
+          {{ restaurant.name }}
           <!-- <span>{{ restaurant.rate }}</span> -->
         </h6>
         <p class="operation-time">
@@ -73,7 +72,11 @@ import { IRestaurantCard } from 'src/app/types/restaurant.type';
           {{ restaurant.operationTime.closeTime | time }}
         </p>
         <p class="open-day">
-          {{ restaurant.operationTime.openDay.length === 7 ? 'All day in week' :restaurant.operationTime.openDay.join(', ') }}
+          {{
+            restaurant.operationTime.openDay.length === 7
+              ? 'All day in week'
+              : restaurant.operationTime.openDay.join(', ')
+          }}
         </p>
         <p class="price">
           {{ restaurant.minPrice | price }}

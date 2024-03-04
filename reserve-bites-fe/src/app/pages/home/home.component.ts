@@ -38,7 +38,7 @@ import { AuthService } from 'src/app/services/auth.service';
           background-position: right 40%;
           // filter: blur(2px);
         }
-        
+
         .search-body {
           position: absolute;
           left: 50%;
@@ -198,24 +198,28 @@ import { AuthService } from 'src/app/services/auth.service';
     <div class="search">
       <div class="search-bg"></div>
       <div class="search-body">
-        <h1 class="search-slogan">Reserve your bites at the best restaurants</h1>
+        <h1 class="search-slogan">
+          Reserve your bites at the best restaurants
+        </h1>
         <div class="form">
           <form>
             <mat-form-field class="form-field-size">
               <mat-label>Size</mat-label>
-              <input matInput type="number"><mat-hint style="display: none;">asdas</mat-hint>
+              <input matInput type="number" /><mat-hint style="display: none;"
+                >asdas</mat-hint
+              >
             </mat-form-field>
-            
+
             <app-select
               class="form-field-select"
               label="Open day"
               appearance="fill"
               [options]="dayOptions"
             />
-            <button 
+            <button
               class="form-button"
-              mat-raised-button 
-              color="primary" 
+              mat-raised-button
+              color="primary"
               style="height: 56px;"
             >
               Find a table
@@ -294,10 +298,14 @@ import { AuthService } from 'src/app/services/auth.service';
   `,
 })
 export class HomeComponent implements OnInit {
-  constructor(private router: Router, private restaurntSv: RestaurantService, private auth: AuthService) { }
+  constructor(
+    private router: Router,
+    private restaurntSv: RestaurantService,
+    private auth: AuthService,
+  ) {}
 
   isAuthenicated = false;
-  errorLocalRestaurants = "";
+  errorLocalRestaurants = '';
   errorTopRateRestaurants = '';
   errorSuggestRestaurants = '';
   localRestaurants!: IRestaurantCard[];
@@ -317,35 +325,30 @@ export class HomeComponent implements OnInit {
   });
 
   async ngOnInit() {
-    this.auth.isAuthenticated.subscribe(value => this.isAuthenicated = value)
+    this.auth.isAuthenticated.subscribe(
+      (value) => (this.isAuthenicated = value),
+    );
 
     const [topRateRes, suggestRes, localRes] = await Promise.all([
       this.restaurntSv.getTopRateRestaurants(),
       this.restaurntSv.getSuggestRestaurants(),
       this.restaurntSv.getLocalRestaurants(),
-    ])
+    ]);
 
-    console.log({ topRateRes, suggestRes, localRes })
+    console.log({ topRateRes, suggestRes, localRes });
 
-    const {
-      itemsList: topRateRestaurants,
-      error: topRateRestaurantsError
-    } = topRateRes;
+    const { itemsList: topRateRestaurants, error: topRateRestaurantsError } =
+      topRateRes;
     this.topRateRestaurants = topRateRestaurants;
     this.errorTopRateRestaurants = topRateRestaurantsError || '';
 
-    const {
-      itemsList: suggestRestaurants,
-      error: suggestRestaurantsError,
-    } = suggestRes;
+    const { itemsList: suggestRestaurants, error: suggestRestaurantsError } =
+      suggestRes;
     this.suggestRestaurants = suggestRestaurants;
     this.errorSuggestRestaurants = suggestRestaurantsError || '';
 
-
-    const {
-      itemsList: localRestaurants,
-      error: localRestaurantsError,
-    } = localRes;
+    const { itemsList: localRestaurants, error: localRestaurantsError } =
+      localRes;
     this.localRestaurants = localRestaurants;
     this.errorLocalRestaurants = localRestaurantsError || '';
   }

@@ -1,16 +1,15 @@
 import {
-  Component,
   Input,
   Output,
+  Component,
   EventEmitter,
   booleanAttribute,
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-
+import { MatFormFieldAppearance } from '@angular/material/form-field';
 import validationMessages, {
   ValidationMessages,
 } from '../../utils/validationMessages';
-import { MatFormFieldAppearance } from '@angular/material/form-field';
 
 @Component({
   selector: 'form-input',
@@ -79,7 +78,7 @@ export class FormInputComponent {
   @Input() type: string = 'text';
   @Input() min: number = 0;
   @Input() max: number = 5;
-  @Input() formGroup: FormGroup = new FormGroup({ name: new FormControl('')});
+  @Input() formGroup: FormGroup = new FormGroup({ name: new FormControl('') });
   @Input() name: string = '';
   @Input() errors?: any;
   @Input() onValueChange: (event: Event) => any = () => {};

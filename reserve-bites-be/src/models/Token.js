@@ -1,14 +1,17 @@
-import mongoose from "../config/mongo.config.js";
+import mongoose from '../config/mongo.config.js';
 
 const Schema = mongoose.Schema;
 
-const TokenSchema = new Schema({
-  uid: { type: String, required: true },
-  accessToken: { type: String, required: true },
-  refreshToken: { type: String, required: true },
-  resetPasswordToken: { type: String },
-}, {
-  versionKey: false,
-});
+const TokenSchema = new Schema(
+  {
+    uid: { type: String, required: true },
+    accessToken: { type: String, required: true },
+    refreshToken: { type: String, required: true },
+    resetPasswordToken: { type: String },
+  },
+  {
+    versionKey: false,
+  },
+);
 
-export default mongoose.model("token", TokenSchema);
+export default mongoose.model('token', TokenSchema);

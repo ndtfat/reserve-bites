@@ -13,11 +13,13 @@ export class AuthService {
   isAuthenticated = new BehaviorSubject<boolean>(false);
   user = new BehaviorSubject<IUser | undefined>(undefined);
   private SERVER_URL = environment.SERVER_URL;
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient, private router: Router) {}
 
   async getUser() {
     try {
-      const userInfo = await lastValueFrom(this.http.get<IUser>(this.SERVER_URL + '/user/me'));
+      const userInfo = await lastValueFrom(
+        this.http.get<IUser>(this.SERVER_URL + '/user/me'),
+      );
       this.user.next(userInfo);
       this.isAuthenticated.next(true);
     } catch (error) {
@@ -32,7 +34,7 @@ export class AuthService {
     email: string,
     password: string,
     address: string,
-    favoriteCuisines: string[]
+    favoriteCuisines: string[],
   ) {
     try {
       const response = await lastValueFrom(
@@ -42,8 +44,8 @@ export class AuthService {
           email,
           password,
           address,
-          favoriteCuisines
-        })
+          favoriteCuisines,
+        }),
       );
       this.router.navigateByUrl('/auth/sign-in');
       return { response, error: null };
@@ -58,7 +60,7 @@ export class AuthService {
         this.http.post<ILoginResponse>(this.SERVER_URL + '/auth/sign-in', {
           email,
           password,
-        })
+        }),
       );
 
       localStorage.setItem('accessToken', response.accessToken);
@@ -66,16 +68,18 @@ export class AuthService {
 
       this.isAuthenticated.next(true);
       this.router.navigateByUrl('/');
-      return { response, error: null }
+      return { response, error: null };
     } catch (error: any) {
-      console.log(error)
-      return { response: null, error: error.error.message }
+      console.log(error);
+      return { response: null, error: error.error.message };
     }
   }
 
   async signOut() {
     try {
-      const response = await lastValueFrom(this.http.post(this.SERVER_URL + '/auth/sign-out', {}));
+      const response = await lastValueFrom(
+        this.http.post(this.SERVER_URL + '/auth/sign-out', {}),
+      );
       this.isAuthenticated.next(false);
       this.router.navigateByUrl('/auth/sign-in');
       localStorage.clear();
@@ -89,8 +93,10 @@ export class AuthService {
   async sendResetPasswordMail(email: string) {
     try {
       const res = await lastValueFrom(
-        this.http.post(this.SERVER_URL + '/auth/send-reset-password-mail', { email })
-      )
+        this.http.post(this.SERVER_URL + '/auth/send-reset-password-mail', {
+          email,
+        }),
+      );
       return { response: res, error: null };
     } catch (error: any) {
       console.log(error);
@@ -101,8 +107,11 @@ export class AuthService {
   async resetPassword(uid: string, token: string, newPw: string) {
     try {
       const res = await lastValueFrom(
-        this.http.post(this.SERVER_URL + `/auth/reset-password/${uid}/${token}`, { password: newPw })
-      )
+        this.http.post(
+          this.SERVER_URL + `/auth/reset-password/${uid}/${token}`,
+          { password: newPw },
+        ),
+      );
       return { response: res, error: null };
     } catch (error: any) {
       return { response: null, error: error.error.message };

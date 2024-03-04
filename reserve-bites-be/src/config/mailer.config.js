@@ -1,10 +1,9 @@
-import nodemailer from 'nodemailer'
-import dotenv from 'dotenv'
+import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
 dotenv.config();
 
-
 export const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
+  host: 'smtp.gmail.com',
   port: 465,
   secure: true,
   auth: {
@@ -14,15 +13,14 @@ export const transporter = nodemailer.createTransport({
   },
 });
 
-
 export const sendMail = async (maiInfo) => {
   try {
     const info = await transporter.sendMail({
       from: '"Book a Bite" <bookabite@fakeemail.com>', // sender address
-      ...maiInfo
+      ...maiInfo,
     });
-    console.log("Message sent: %s", info.messageId);
+    console.log('Message sent: %s', info.messageId);
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};

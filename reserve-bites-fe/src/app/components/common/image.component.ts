@@ -19,7 +19,9 @@ import { Component, Input } from '@angular/core';
         animation: 1.5s shine linear infinite;
       }
       @keyframes shine {
-        to { background-position-x: -200%; }  
+        to {
+          background-position-x: -200%;
+        }
       }
     `,
   ],
@@ -29,5 +31,5 @@ import { Component, Input } from '@angular/core';
   `,
 })
 export class ImageComponent {
-  @Input() src?: string
+  @Input() src?: string;
 }

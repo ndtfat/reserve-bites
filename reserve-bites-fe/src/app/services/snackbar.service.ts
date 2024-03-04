@@ -14,7 +14,7 @@ export class SnackbarService {
   openSnackbar = new BehaviorSubject<boolean>(false);
   timeoutId: any;
 
-  constructor() { }
+  constructor() {}
 
   open(type: SnackbarType, message: string) {
     clearTimeout(this.timeoutId);

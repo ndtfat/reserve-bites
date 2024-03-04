@@ -1,8 +1,8 @@
 import {
-  Component,
-  EventEmitter,
   Input,
   Output,
+  Component,
+  EventEmitter,
   booleanAttribute,
 } from '@angular/core';
 import { IReview } from 'src/app/types/restaurant.type';

@@ -72,7 +72,7 @@ import { MatChipInputEvent } from '@angular/material/chips';
     <form [formGroup]="form">
       <logo class="logo" [text]="true" width="140px" />
       <div style="margin-bottom: 10px;"></div>
-      
+
       <h1 class="title">Sign Up</h1>
       <p>
         You are a restaurant owner?
@@ -81,7 +81,6 @@ import { MatChipInputEvent } from '@angular/material/chips';
       <alert *ngIf="alertMessage" class="alert">
         {{ alertMessage }}
       </alert>
-
 
       <mat-stepper linear [selectedIndex]="step">
         <mat-step>
@@ -129,19 +128,21 @@ import { MatChipInputEvent } from '@angular/material/chips';
         </mat-step>
         <mat-step>
           <ng-template matStepLabel>Favorite cuisines</ng-template>
-          <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 20px;">
+          <div
+            style="display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 20px;"
+          >
             <h5>Your favorite cuisines</h5>
             <mat-form-field style="width: 100%;">
               <mat-label>Favorite Cuisines</mat-label>
               <mat-chip-grid #chipGrid>
-                <mat-chip-row 
-                  *ngFor="let cuisine of cuisines" 
+                <mat-chip-row
+                  *ngFor="let cuisine of cuisines"
                   (click)="removeCuisine(cuisine)"
                 >
                   {{ cuisine }}
                 </mat-chip-row>
               </mat-chip-grid>
-              <input 
+              <input
                 #favoriteInput
                 placeholder="New cuisine..."
                 [matChipInputFor]="chipGrid"
@@ -159,9 +160,10 @@ import { MatChipInputEvent } from '@angular/material/chips';
             </mat-chip-set>
           </div>
 
-          
           <div style="display: flex; gap: 10px">
-            <button type="button" mat-button (click)="handleBack()">Back</button>
+            <button type="button" mat-button (click)="handleBack()">
+              Back
+            </button>
             <button
               mat-raised-button
               color="primary"
@@ -181,7 +183,7 @@ import { MatChipInputEvent } from '@angular/material/chips';
   `,
 })
 export class SignUpComponent {
-  constructor(private auth: AuthService, private router: Router) { }
+  constructor(private auth: AuthService, private router: Router) {}
 
   // @ViewChild('favoriteInput') favoriteInput: ElementRef;
 
@@ -203,7 +205,7 @@ export class SignUpComponent {
         Validators.required,
         Validators.minLength(8),
         Validators.pattern(
-          /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*#?&^_-]).{8,}/
+          /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*#?&^_-]).{8,}/,
         ),
       ],
     }),
@@ -223,7 +225,7 @@ export class SignUpComponent {
   handleNext() {
     this.form.markAllAsTouched();
     if (this.form.valid) {
-      this.step = 1
+      this.step = 1;
     }
   }
 
@@ -240,7 +242,7 @@ export class SignUpComponent {
   }
 
   removeCuisine(cuisine: string) {
-    this.cuisines = this.cuisines.filter(c => c !== cuisine);
+    this.cuisines = this.cuisines.filter((c) => c !== cuisine);
   }
 
   async handleSubmit() {
@@ -255,7 +257,7 @@ export class SignUpComponent {
           email,
           password,
           address,
-          this.cuisines
+          this.cuisines,
         );
       }
     } catch (error: any) {

@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output, booleanAttribute } from '@angular/core';
+import {
+  Input,
+  OnInit,
+  Output,
+  Component,
+  EventEmitter,
+  booleanAttribute,
+} from '@angular/core';
 
 @Component({
   selector: 'image-status',
@@ -12,14 +19,18 @@ import { Component, EventEmitter, Input, OnInit, Output, booleanAttribute } from
         font-size: 30px;
         margin-right: 20px;
       }
-      .delete-icon { @include flex(row, center, center); }
+      .delete-icon {
+        @include flex(row, center, center);
+      }
       .content {
         flex: 1;
         p {
           color: #aaa;
           font-size: 14px;
         }
-        .progress-bar { width: 160px; }
+        .progress-bar {
+          width: 160px;
+        }
       }
     `,
   ],
@@ -30,7 +41,13 @@ import { Component, EventEmitter, Input, OnInit, Output, booleanAttribute } from
         <h6>{{ file.name }}</h6>
         <div style="margin: 4px 0 0;">
           <p style="margin-bottom: 2px;">
-            {{ progress === 100 ? (error || errorMessage ? 'Failed' : 'Finished') : 'Uploading...' }}
+            {{
+              progress === 100
+                ? error || errorMessage
+                  ? 'Failed'
+                  : 'Finished'
+                : 'Uploading...'
+            }}
           </p>
           <p *ngIf="errorMessage || error" style="color: red">
             {{ errorMessage ? errorMessage : 'Upload file failed' }}
@@ -69,7 +86,7 @@ import { Component, EventEmitter, Input, OnInit, Output, booleanAttribute } from
 export class ImageStatusComponent implements OnInit {
   @Input() progress = 60;
   @Input() file!: any;
-  @Input({transform: booleanAttribute}) error = false;
+  @Input({ transform: booleanAttribute }) error = false;
   @Output() onDelete = new EventEmitter();
 
   errorMessage = '';

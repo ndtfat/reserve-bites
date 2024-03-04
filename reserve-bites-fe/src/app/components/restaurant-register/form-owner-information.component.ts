@@ -82,7 +82,7 @@ export class FormOwnerInformationComponent {
         Validators.required,
         Validators.minLength(8),
         Validators.pattern(
-          /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*#?&^_-]).{8,}/
+          /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*#?&^_-]).{8,}/,
         ),
       ],
     }),

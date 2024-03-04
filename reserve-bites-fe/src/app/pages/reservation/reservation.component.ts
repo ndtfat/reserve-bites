@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 import { TimepickerModule } from 'ngx-bootstrap/timepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IRestaurant } from 'src/app/types/restaurant.type';
 
 @Component({
@@ -27,7 +27,9 @@ import { IRestaurant } from 'src/app/types/restaurant.type';
       }
       .restaurant-name {
         @include flex(row, center, space-between);
-        h2 { font-weight: bold; }
+        h2 {
+          font-weight: bold;
+        }
         p {
           @include flex(row, center, space-between);
           &:hover {
@@ -36,16 +38,21 @@ import { IRestaurant } from 'src/app/types/restaurant.type';
           }
         }
       }
-      .detail, .reservation, .user { @include flex(row, flex-start, flex-start); }
-      .detail { 
+      .detail,
+      .reservation,
+      .user {
+        @include flex(row, flex-start, flex-start);
+      }
+      .detail {
         gap: 70px;
         padding: 0 40px;
       }
-      .reservation, .user {
+      .reservation,
+      .user {
         gap: 30px;
         font-size: 18px;
-        .field p { 
-          font-weight: bold; 
+        .field p {
+          font-weight: bold;
           margin-bottom: 10px;
         }
         .value p {
@@ -92,7 +99,9 @@ import { IRestaurant } from 'src/app/types/restaurant.type';
     <div class="body">
       <div class="restaurant-name">
         <h2>{{ restaurant.name }}</h2>
-        <p *ngIf="!isOwner" [routerLink]="'/restaurant/' + restaurant.id">Restaurant detail <mat-icon>keyboard_arrow_right</mat-icon></p>
+        <p *ngIf="!isOwner" [routerLink]="'/restaurant/' + restaurant.id">
+          Restaurant detail <mat-icon>keyboard_arrow_right</mat-icon>
+        </p>
       </div>
       <mat-divider style="margin-top: 10px; margin-bottom: 20px;" />
       <div class="sub-text-wrapper">
@@ -112,7 +121,15 @@ import { IRestaurant } from 'src/app/types/restaurant.type';
             <p>2</p>
             <p>August, 26th 2002</p>
             <p>19:00</p>
-            <p>{{restaurant.address.detail + ', ' + restaurant.address.province + ', ' + restaurant.address.country}}</p>
+            <p>
+              {{
+                restaurant.address.detail +
+                  ', ' +
+                  restaurant.address.province +
+                  ', ' +
+                  restaurant.address.country
+              }}
+            </p>
           </div>
         </div>
         <div class="user">
@@ -131,13 +148,15 @@ import { IRestaurant } from 'src/app/types/restaurant.type';
 
       <div class="btns">
         <button mat-raised-button (click)="openEditDialog()">Edit</button>
-        <button mat-raised-button color="warn" (click)="openCancelDialog()">Cancel</button>
+        <button mat-raised-button color="warn" (click)="openCancelDialog()">
+          Cancel
+        </button>
       </div>
     </div>
   `,
 })
 export class ReservationComponent {
-  constructor(public dialog: MatDialog) { }
+  constructor(public dialog: MatDialog) {}
 
   isOwner = false;
   restaurant: IRestaurant = {
@@ -215,87 +234,108 @@ export class ReservationComponent {
   }
 }
 
-
 @Component({
   selector: 'cancel-reservation-dialog',
   standalone: true,
   imports: [MatButtonModule, MatFormFieldModule, MatInputModule],
-  styles: [`
-    @import '../../scss/common.scss';
-    .wrapper {
-      min-height: 10px;
-      min-width: 600px;
-      padding: 20px;
-    }
-    h2 {
-      font-weight: bold;
-      margin-bottom: 20px;
-    }
-    p { margin-bottom: 10px; }
-    .btns {
-      gap: 10px;
-      margin-top: 20px;
-      @include flex(row, flex-end, flex-end);
-    }
-  `],
+  styles: [
+    `
+      @import '../../scss/common.scss';
+      .wrapper {
+        min-height: 10px;
+        min-width: 600px;
+        padding: 20px;
+      }
+      h2 {
+        font-weight: bold;
+        margin-bottom: 20px;
+      }
+      p {
+        margin-bottom: 10px;
+      }
+      .btns {
+        gap: 10px;
+        margin-top: 20px;
+        @include flex(row, flex-end, flex-end);
+      }
+    `,
+  ],
   template: `
     <div class="wrapper">
       <h2>Cancel reservation</h2>
       <p>Why you want to cancel this reservation?</p>
       <mat-form-field style="width: 100%;" appearance="outline">
         <mat-label>Message to restaurant</mat-label>
-        <textarea #textarea matInput rows="3" (input)="message = textarea.value"></textarea>
+        <textarea
+          #textarea
+          matInput
+          rows="3"
+          (input)="message = textarea.value"
+        ></textarea>
       </mat-form-field>
-      <p style="color: red;">{{errorMessage}}</p>
+      <p style="color: red;">{{ errorMessage }}</p>
       <div class="btns">
         <button mat-raised-button (click)="handleClose()">Cancel</button>
-        <button mat-raised-button color="warn" (click)="handleSend()">Send</button>
+        <button mat-raised-button color="warn" (click)="handleSend()">
+          Send
+        </button>
       </div>
     </div>
-  `
+  `,
 })
 class CancelDialog {
-  constructor(public dialogRef: MatDialogRef<CancelDialog>) { }
-  message: string = ''
-  errorMessage = ''
+  constructor(public dialogRef: MatDialogRef<CancelDialog>) {}
+  message: string = '';
+  errorMessage = '';
 
   handleClose() {
-    this.dialogRef.close()
+    this.dialogRef.close();
   }
   handleSend() {
     if (this.message) {
       this.handleClose();
       console.log(this.message);
     } else {
-      this.errorMessage = 'Please type your reason'
+      this.errorMessage = 'Please type your reason';
     }
   }
-
 }
 
-// 
+//
 @Component({
   selector: 'edit-reservation-dialog',
   standalone: true,
-  imports: [MatButtonModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, TimepickerModule, FormsModule, ReactiveFormsModule],
-  styles: [`
-    @import '../../scss/common.scss';
-    .wrapper {
-      min-height: 10px;
-      min-width: 600px;
-      padding: 20px;
-    }
-    h2 {
-      font-weight: bold;
-      margin-bottom: 20px;
-    }
-    p { margin-bottom: 10px; }
-    .btns {
-      gap: 10px;
-      margin-top: 10px;
-      @include flex(row, flex-end, flex-end);
-    }
-  `],
+  imports: [
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDatepickerModule,
+    TimepickerModule,
+    FormsModule,
+    ReactiveFormsModule,
+  ],
+  styles: [
+    `
+      @import '../../scss/common.scss';
+      .wrapper {
+        min-height: 10px;
+        min-width: 600px;
+        padding: 20px;
+      }
+      h2 {
+        font-weight: bold;
+        margin-bottom: 20px;
+      }
+      p {
+        margin-bottom: 10px;
+      }
+      .btns {
+        gap: 10px;
+        margin-top: 10px;
+        @include flex(row, flex-end, flex-end);
+      }
+    `,
+  ],
   template: `
     <div class="wrapper">
       <h2>Edit reservation</h2>
@@ -303,7 +343,7 @@ class CancelDialog {
       <form [formGroup]="form">
         <mat-form-field style="width: 100%;" appearance="outline">
           <mat-label>Size</mat-label>
-          <input matInput formControlName="size"/>
+          <input matInput formControlName="size" />
         </mat-form-field>
 
         <mat-form-field style="width: 100%" appearance="outline">
@@ -315,31 +355,40 @@ class CancelDialog {
 
         <span style="display:flex; align-items: center">
           <h6 style="margin-right: 10px; font-weight: 600">Time:</h6>
-          <timepicker [hourStep]="1" [minuteStep]="1" [showMeridian]="false" formControlName="time"/>
+          <timepicker
+            [hourStep]="1"
+            [minuteStep]="1"
+            [showMeridian]="false"
+            formControlName="time"
+          />
         </span>
       </form>
 
       <div class="btns">
         <button mat-raised-button (click)="handleClose()">Cancel</button>
-        <button mat-raised-button color="primary" (click)="handleEdit()">Edit</button>
+        <button mat-raised-button color="primary" (click)="handleEdit()">
+          Edit
+        </button>
       </div>
     </div>
-  `
+  `,
 })
 class EditDialog {
-  constructor(public dialogRef: MatDialogRef<EditDialog>, private fb: FormBuilder) { }
+  constructor(
+    public dialogRef: MatDialogRef<EditDialog>,
+    private fb: FormBuilder,
+  ) {}
   form = this.fb.group({
     size: [1],
     time: [new Date()],
     date: [new Date()],
-  })
+  });
 
   handleClose() {
-    this.dialogRef.close()
+    this.dialogRef.close();
   }
   handleEdit() {
     // this.handleClose();
     console.log(this.form.value);
   }
-
 }

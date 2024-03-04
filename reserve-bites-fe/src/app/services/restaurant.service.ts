@@ -151,42 +151,6 @@ export class RestaurantService {
     }
   }
 
-  async reserve(payload: {
-    rid: string;
-    dinerId: string;
-    size: number;
-    date: Date;
-    time: Date;
-  }) {
-    const res = await lastValueFrom(
-      this.http.post<any>(this.SERVER_URL + '/restaurant/reserve', payload),
-    );
-    this._snackbar.open('success', 'You have maked a reservation successfully');
-    this.router.navigateByUrl('/reservation/' + res?.reservationId);
-  }
-
-  async review(payload: {
-    rid: string;
-    dinerId: string;
-    food: number;
-    service: number;
-    ambiance: number;
-    content: string;
-  }) {
-    const response = await lastValueFrom(
-      this.http
-        .post<IReview>(this.SERVER_URL + '/restaurant/review', payload)
-        .pipe(
-          map((res) => {
-            res.overall = (res.ambiance + res.food + res.service) / 3;
-            return res;
-          }),
-        ),
-    );
-    this._snackbar.open('success', 'Your review has been posted successfully');
-    return response;
-  }
-
   async getReviews(rid: string, page = 1, sortBy = 'desc') {
     const params = new HttpParams()
       .set('sortBy', sortBy)
@@ -201,22 +165,6 @@ export class RestaurantService {
         userItem: IReview | null;
       }>(this.SERVER_URL + `/restaurant/${rid}/reviews`, { params }),
     );
-  }
-
-  async deleteReview(id: string) {
-    try {
-      await lastValueFrom(
-        this.http.delete(this.SERVER_URL + '/restaurant/review/' + id),
-      );
-
-      this._snackbar.open(
-        'success',
-        'You have deleted your review successfully',
-      );
-    } catch (error) {
-      console.log(error);
-      this._snackbar.open('error', 'You have failed to delete your review');
-    }
   }
 
   async search(

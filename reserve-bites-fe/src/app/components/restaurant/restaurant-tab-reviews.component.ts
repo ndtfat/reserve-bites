@@ -1,10 +1,10 @@
-import { Component, HostListener, Input, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
-import { AuthService } from 'src/app/services/auth.service';
-import { RestaurantService } from 'src/app/services/restaurant.service';
-import { SnackbarService } from 'src/app/services/snackbar.service';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Component, HostListener, Input, OnInit } from '@angular/core';
 import { IReview } from 'src/app/types/restaurant.type';
+import { AuthService } from 'src/app/services/auth.service';
+import { UserService } from 'src/app/services/user.service';
+import { RestaurantService } from 'src/app/services/restaurant.service';
 
 @Component({
   selector: 'restaurant-tab-reviews',
@@ -135,7 +135,7 @@ export class RestaurantTabReviewsComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private auth: AuthService,
-    private _snackbar: SnackbarService,
+    private userSv: UserService,
     private restaurantSv: RestaurantService,
   ) {}
 
@@ -205,7 +205,7 @@ export class RestaurantTabReviewsComponent implements OnInit {
         ambiance: Number(values.ambiance),
         content: values.content as string,
       };
-      const response = await this.restaurantSv.review(payload);
+      const response = await this.userSv.review(payload);
       if (response) {
         this.userReview = response;
       }
@@ -221,7 +221,7 @@ export class RestaurantTabReviewsComponent implements OnInit {
   }
 
   async handleDeleteReview(reviewId: string) {
-    await this.restaurantSv.deleteReview(reviewId);
+    await this.userSv.deleteReview(reviewId);
     this.userReview = null;
   }
 }

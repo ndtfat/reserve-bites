@@ -93,7 +93,7 @@ import { AuthService } from 'src/app/services/auth.service';
   `,
 })
 export class SignInComponent {
-  constructor(private auth: AuthService) { }
+  constructor(private auth: AuthService) {}
 
   form: FormGroup = new FormGroup({
     email: new FormControl('phatnguyen@gmail.com', {

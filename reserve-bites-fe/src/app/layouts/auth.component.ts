@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'auth',
@@ -20,7 +20,8 @@ import { Component, HostListener } from '@angular/core';
         }
       }
 
-      @include desktop {}
+      @include desktop {
+      }
 
       @include tablet {
         .wrapper div {

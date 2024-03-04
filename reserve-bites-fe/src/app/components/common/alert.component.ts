@@ -37,10 +37,18 @@ import { AlertType } from 'src/app/types/notification';
   ],
   template: `
     <div [className]="type">
-      <ng-icon *ngIf="type === 'error'" name="ionWarningOutline" size="26"/>
-      <ng-icon *ngIf="type === 'warn'" name="ionAlertCircleOutline" size="26"/>
-      <ng-icon *ngIf="type === 'info'" name="ionInformationCircleOutline" size="26"/>
-      <ng-icon *ngIf="type === 'success'" name="ionCheckmarkCircleOutline" size="26"/>
+      <ng-icon *ngIf="type === 'error'" name="ionWarningOutline" size="26" />
+      <ng-icon *ngIf="type === 'warn'" name="ionAlertCircleOutline" size="26" />
+      <ng-icon
+        *ngIf="type === 'info'"
+        name="ionInformationCircleOutline"
+        size="26"
+      />
+      <ng-icon
+        *ngIf="type === 'success'"
+        name="ionCheckmarkCircleOutline"
+        size="26"
+      />
       <p>
         <ng-content />
       </p>

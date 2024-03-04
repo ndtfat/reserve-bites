@@ -1,7 +1,12 @@
-import { Component, EventEmitter, Input, Output, booleanAttribute } from '@angular/core';
+import {
+  Input,
+  Output,
+  Component,
+  EventEmitter,
+  booleanAttribute,
+} from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatFormFieldAppearance } from '@angular/material/form-field';
-import { MatSelectChange } from '@angular/material/select';
 import validationMessages, {
   ValidationMessages,
 } from 'src/app/utils/validationMessages';
@@ -52,12 +57,12 @@ export class AppSelectComponent {
   @Input() options?: { value: string; content: string }[];
   @Input() value?: string | string[];
   @Input() errors?: any;
-  @Output() selectionChange = new EventEmitter<string | string[]>()
+  @Output() selectionChange = new EventEmitter<string | string[]>();
 
   errorMessage: string = '';
 
   form = new FormGroup({
-    name: new FormControl('')
+    name: new FormControl(''),
   });
 
   onBlur() {
@@ -68,7 +73,7 @@ export class AppSelectComponent {
   }
 
   handleChange(option: string | string[]) {
-    this.selectionChange.emit(option)
+    this.selectionChange.emit(option);
   }
 
   handleClear(event: any, select: any) {

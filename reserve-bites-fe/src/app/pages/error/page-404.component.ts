@@ -36,7 +36,7 @@ import { Component } from '@angular/core';
           transform: translateY(20px) skew(-2deg, -10deg);
         }
       }
-    `
+    `,
   ],
   template: `
     <div class="wrapper">
@@ -45,14 +45,14 @@ import { Component } from '@angular/core';
         <h4>Page not found ＞﹏＜</h4>
         <div class="error-code">
           <p>4</p>
-          <img src="../../../assets/imgs/egg.png" >
+          <img src="../../../assets/imgs/egg.png" />
           <p>4</p>
         </div>
-        <button mat-raised-button color="primary" routerLink="/">Back to home</button>
+        <button mat-raised-button color="primary" routerLink="/">
+          Back to home
+        </button>
       </div>
     </div>
   `,
 })
-export class Page404Component {
-
-}
+export class Page404Component {}

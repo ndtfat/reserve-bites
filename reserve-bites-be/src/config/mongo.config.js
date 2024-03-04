@@ -1,12 +1,14 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 export function connectDb() {
   mongoose
-    .connect("mongodb+srv://phatndt268:0NxeaAMA6oGmPe8H@booking-restaurant.g4ozd00.mongodb.net/")
-    .then(() => console.log("Connected to mongoDb"));
+    .connect(
+      'mongodb+srv://phatndt268:0NxeaAMA6oGmPe8H@booking-restaurant.g4ozd00.mongodb.net/',
+    )
+    .then(() => console.log('Connected to mongoDb'));
 }
 
-mongoose.set("toJSON", {
+mongoose.set('toJSON', {
   virtuals: true,
   transform: function (doc, ret) {
     // Transform the "_id" field to "id" in the output
@@ -15,7 +17,7 @@ mongoose.set("toJSON", {
   },
 });
 
-mongoose.set("toObject", {
+mongoose.set('toObject', {
   virtuals: true,
   transform: function (doc, ret) {
     // Transform the "_id" field to "id" in the output

@@ -259,50 +259,6 @@ export default {
         .send({ message: 'something wrong with get reviews', error });
     }
   },
-  async postReview(req, res) {
-    try {
-      const { rid, food, service, ambiance, content, dinerId } = req.body;
-      const restaurant = await Restaurant.findById(rid);
-      const numberOfReviewsOfRestaurant = await Review.countDocuments({ rid });
-
-      const userAvarageRate = (food + service + ambiance) / 3;
-
-      restaurant.rate = (
-        (restaurant.rate * numberOfReviewsOfRestaurant + userAvarageRate) /
-        (numberOfReviewsOfRestaurant + 1)
-      ).toFixed(2);
-
-      const newReview = new Review({
-        rid,
-        dinerId,
-        food,
-        service,
-        ambiance,
-        content,
-      });
-      await newReview.save();
-      await restaurant.save();
-      return res.status(200).send(newReview.toObject());
-    } catch (error) {
-      res
-        .status(500)
-        .send({ message: 'Something wrong with review restaurant', error });
-    }
-  },
-  async deleteReview(req, res) {
-    try {
-      const user = req.user;
-      const { id } = req.params;
-
-      console.log({ userId: user.id, id });
-      await Review.findOneAndDelete({ _id: id, dinerId: user.id });
-      res.status(200).send({ message: 'Review is deleted successfully' });
-    } catch (error) {
-      res
-        .status(500)
-        .send({ message: 'Something wrong with review restaurant', error });
-    }
-  },
   async getRestaurantReservations(req, res) {
     const rid = req.params.id;
     const { text, status } = req.query;
