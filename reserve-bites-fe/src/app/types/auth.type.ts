@@ -14,3 +14,8 @@ export type ILoginResponse = {
   accessToken: string;
   refreshToken: string;
 };
+
+export enum UserType {
+  OWNER = 'OWNER',
+  CLIENT = 'CLIENT',
+}

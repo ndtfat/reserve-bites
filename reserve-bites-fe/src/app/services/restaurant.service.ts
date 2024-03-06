@@ -1,23 +1,20 @@
-import { ActivatedRoute, Router } from '@angular/router';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { Injectable } from '@angular/core';
+import { environment } from 'src/environments/environment';
+import { lastValueFrom } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { AuthService } from './auth.service';
+import { SnackbarService } from './snackbar.service';
+import { findMaxPrice, findMinPrice } from '../utils/find';
 import {
-  IReservation,
   IRestaurant,
   IRestaurantCard,
   IReview,
-  ReservationStatus,
 } from '../types/restaurant.type';
-import { SnackbarService } from './snackbar.service';
 import {
   IFormOwnerInformationType,
   IFormRestaurantInformationType,
 } from './../types/restaurant.type';
-import { lastValueFrom, map } from 'rxjs';
-import { format } from 'date-fns';
-import { findMaxPrice, findMinPrice } from '../utils/find';
-import { environment } from 'src/environments/environment';
-import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',

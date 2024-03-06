@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import Review from '../models/Review.js';
 import Restaurant from '../models/Restaurant.js';
 import Reservation from '../models/Reservation.js';
+import Notification from '../models/Notification.js';
 
 export default {
   async getUser(req, res) {
@@ -11,7 +12,6 @@ export default {
       const { id } = req.params;
       const user = id === 'me' ? req.user : await User.findById(id);
       let rid = undefined;
-      console.log(user.id);
 
       if (user.isOwner) {
         const restaurant = await Restaurant.findOne({ ownerId: user.id });
@@ -19,7 +19,6 @@ export default {
       }
       const { password, ...safeInfo } = user.toObject();
 
-      console.log('get user' + user.id);
       return res.status(200).send({
         ...safeInfo,
         ...(rid ? { rid } : {}),
@@ -32,8 +31,7 @@ export default {
   async putChangeInfo(req, res) {
     try {
       const user = req.user;
-      const { firstName, lastName, email, address, favoriteCuisines } =
-        req.body;
+      const { firstName, lastName, email, address, favoriteCuisines } = req.body;
       user.email = email || user.email;
       user.address = address || user.address;
       user.lastName = lastName || user.lastName;
@@ -53,10 +51,7 @@ export default {
       const user = await User.findById(req.user.id).select('+password');
       const { oldPassword, newPassword } = req.body;
 
-      const isValidOldPassword = await bcrypt.compare(
-        oldPassword,
-        user.password,
-      );
+      const isValidOldPassword = await bcrypt.compare(oldPassword, user.password);
       if (!isValidOldPassword)
         return res.status(403).send({ message: 'Old password is not correct' });
 
@@ -67,9 +62,7 @@ export default {
       return res.status(200).send({ message: 'Change password success' });
     } catch (error) {
       console.log(error);
-      res
-        .status(500)
-        .send({ message: 'Something wrong with change password', error });
+      res.status(500).send({ message: 'Something wrong with change password', error });
     }
   },
   async postReservation(req, res) {
@@ -89,7 +82,6 @@ export default {
     try {
       const user = req.user;
       const { page, sortBy, pageSize, offset } = req.paginator;
-      console.log(user.id);
 
       const totalItems = await Reservation.countDocuments({ dinerId: user.id });
       const totalPages = Math.ceil(totalItems / pageSize);
@@ -113,7 +105,6 @@ export default {
           return item;
         });
 
-        console.log(reservations);
         return res.status(200).send({
           page,
           totalItems,
@@ -160,9 +151,7 @@ export default {
 
       return res.status(200).send(resData);
     } catch (error) {
-      res
-        .status(500)
-        .send({ message: 'Something wrong with review restaurant', error });
+      res.status(500).send({ message: 'Something wrong with review restaurant', error });
     }
   },
   async updateReview(req, res) {
@@ -173,14 +162,11 @@ export default {
       const restaurant = await Restaurant.findById(rid);
       const numberOfReviewsOfRestaurant = await Review.countDocuments({ rid });
 
-      const prevAvarageRate =
-        (review.food + review.service + review.ambiance) / 3;
+      const prevAvarageRate = (review.food + review.service + review.ambiance) / 3;
       const userAvarageRate = (food + service + ambiance) / 3;
 
       restaurant.rate = (
-        (restaurant.rate * numberOfReviewsOfRestaurant +
-          userAvarageRate -
-          prevAvarageRate) /
+        (restaurant.rate * numberOfReviewsOfRestaurant + userAvarageRate - prevAvarageRate) /
         numberOfReviewsOfRestaurant
       ).toFixed(2);
 
@@ -205,13 +191,63 @@ export default {
       const user = req.user;
       const { id } = req.params;
 
-      console.log({ userId: user.id, id });
       await Review.findOneAndDelete({ _id: id, dinerId: user.id });
       res.status(200).send({ message: 'Review is deleted successfully' });
     } catch (error) {
-      res
-        .status(500)
-        .send({ message: 'Something wrong with review restaurant', error });
+      res.status(500).send({ message: 'Something wrong with review restaurant', error });
+    }
+  },
+  async getNotifications(req, res) {
+    try {
+      const user = req.user;
+      const { page, sortBy, pageSize, offset } = req.paginator;
+
+      const totalItems = await Notification.countDocuments({
+        receiverId: user.id,
+      });
+      const totalPages = Math.ceil(totalItems / pageSize);
+      if (page > totalPages && totalPages !== 0) {
+        return res.status(404).send({ message: 'Page not found', totalPages });
+      }
+
+      let notifications = await Notification.find({ receiverId: user.id })
+        .sort({ createdAt: sortBy })
+        .skip(offset)
+        .limit(pageSize)
+        .populate('senderId');
+
+      notifications = notifications.map((item) => {
+        item = item.toObject();
+        item.sender = item.senderId;
+        delete item.senderId;
+        return item;
+      });
+
+      return res.status(200).send({
+        page,
+        totalItems,
+        totalPages,
+        itemsList: notifications,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({
+        message: 'Something wrong with getNotifications',
+        error,
+      });
+    }
+  },
+  async putNotificationStatus() {
+    try {
+      const { notifIds } = req.body;
+      await Notification.updateMany({ id: { $in: notifIds } }, { readed: true });
+      res.status(200).send({ message: 'Update notifications status -> readed' });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({
+        message: 'Something wrong with putNotificationStatus',
+        error,
+      });
     }
   },
 };

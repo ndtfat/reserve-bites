@@ -61,6 +61,14 @@ ul {
   }
 }
 
+.mat-mdc-menu-panel {
+  max-width: none !important;
+}
+
+.mat-mdc-menu-item-text {
+  width: 100% !important;
+}
+
 .mdc-button {
   font-size: 16px;
   padding: 20px !important;

@@ -6,6 +6,8 @@ import { AlertType } from 'src/app/types/notification';
   styles: [
     `
       @import '../../scss/common.scss';
+      @import '../../scss/variables.scss';
+
       div {
         width: 100%;
         display: flex;
@@ -15,20 +17,20 @@ import { AlertType } from 'src/app/types/notification';
         border-radius: 4px;
       }
       div.warn {
-        color: #ce9e41;
-        background-color: #fff3cd;
+        color: $text-warn-color;
+        background-color: $bg-warn;
       }
       div.error {
-        color: #c82727;
-        background-color: #fff5f5;
+        color: $text-error-color;
+        background-color: $bg-error;
       }
       div.success {
-        color: #229939;
-        background-color: #ebfbee;
+        color: $text-success-color;
+        background-color: $bg-success;
       }
       div.info {
-        color: #0f6ac0;
-        background-color: #e7f5ff;
+        color: $text-info-color;
+        background-color: $bg-info;
       }
       p {
         @include ellipsis;
@@ -39,16 +41,8 @@ import { AlertType } from 'src/app/types/notification';
     <div [className]="type">
       <ng-icon *ngIf="type === 'error'" name="ionWarningOutline" size="26" />
       <ng-icon *ngIf="type === 'warn'" name="ionAlertCircleOutline" size="26" />
-      <ng-icon
-        *ngIf="type === 'info'"
-        name="ionInformationCircleOutline"
-        size="26"
-      />
-      <ng-icon
-        *ngIf="type === 'success'"
-        name="ionCheckmarkCircleOutline"
-        size="26"
-      />
+      <ng-icon *ngIf="type === 'info'" name="ionInformationCircleOutline" size="26" />
+      <ng-icon *ngIf="type === 'success'" name="ionCheckmarkCircleOutline" size="26" />
       <p>
         <ng-content />
       </p>

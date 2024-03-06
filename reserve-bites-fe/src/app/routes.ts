@@ -24,7 +24,8 @@ import { NotificationComponent } from './pages/notification/notification.compone
 import { HomeComponent as HomePage } from './pages/home/home.component';
 import { RestaurantRegisterComponent } from './pages/auth/restaurant-register.component';
 
-// account
+// GuestGuard is used for getUser() run when a user access to website
+// the getUser() is for purpose sign in if this user already signed
 
 const routes: Routes = [
   {
@@ -47,7 +48,7 @@ const routes: Routes = [
   {
     path: 'account',
     component: HeaderLayout,
-    canActivate: [AuthGuard],
+    canActivate: [GuestGuard, AuthGuard],
     children: [{ path: ':id', component: AccountComponent }],
   },
   {

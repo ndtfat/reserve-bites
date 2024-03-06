@@ -1,12 +1,14 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { lastValueFrom, map } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { IUser } from '../types/auth.type';
+import { INotification } from '../types/notification';
+import { IReview } from '../types/restaurant.type';
+import { notificationMessage } from '../utils/notification';
 import { AuthService } from './auth.service';
 import { SnackbarService } from './snackbar.service';
-import { Router } from '@angular/router';
-import { IReview } from '../types/restaurant.type';
 
 @Injectable({
   providedIn: 'root',
@@ -42,28 +44,20 @@ export class UserService {
     );
   }
 
-  async getReservations(filterOptions: {
-    text: string;
-    status: string;
-    page: number;
-  }) {
+  async getReservations(filterOptions: { text: string; status: string; page: number }) {
     const isOwner = this.auth.user.value?.isOwner;
     const path = isOwner
       ? `/restaurant/${this.auth.user.value?.rid}/reservations`
       : `/user/reservations`;
 
     const { status, text, page } = filterOptions;
-    const params = new HttpParams()
-      .set('status', status)
-      .set('text', text)
-      .set('page', page);
+    const params = new HttpParams().set('status', status).set('text', text).set('page', page);
 
     const response = await lastValueFrom(
       this.http
-        .get<{ page: number; totalItems: number; itemsList: any[] }>(
-          this.SERVER_URL + path,
-          { params },
-        )
+        .get<{ page: number; totalItems: number; itemsList: any[] }>(this.SERVER_URL + path, {
+          params,
+        })
         .pipe(
           map((res) => {
             let { page, totalItems, itemsList } = res;
@@ -89,13 +83,7 @@ export class UserService {
     return response;
   }
 
-  async reserve(payload: {
-    rid: string;
-    dinerId: string;
-    size: number;
-    date: Date;
-    time: Date;
-  }) {
+  async reserve(payload: { rid: string; dinerId: string; size: number; date: Date; time: Date }) {
     const res = await lastValueFrom(
       this.http.post<any>(this.SERVER_URL + '/user/reservation', payload),
     );
@@ -133,14 +121,12 @@ export class UserService {
     },
   ) {
     const response = await lastValueFrom(
-      this.http
-        .put<IReview>(this.SERVER_URL + '/user/review/' + id, payload)
-        .pipe(
-          map((res) => {
-            res.overall = (res.ambiance + res.food + res.service) / 3;
-            return res;
-          }),
-        ),
+      this.http.put<IReview>(this.SERVER_URL + '/user/review/' + id, payload).pipe(
+        map((res) => {
+          res.overall = (res.ambiance + res.food + res.service) / 3;
+          return res;
+        }),
+      ),
     );
     this._snackbar.open('success', 'Your review has been updated successfully');
     return response;
@@ -148,17 +134,40 @@ export class UserService {
 
   async deleteReview(id: string) {
     try {
-      await lastValueFrom(
-        this.http.delete(this.SERVER_URL + '/user/review/' + id),
-      );
+      await lastValueFrom(this.http.delete(this.SERVER_URL + '/user/review/' + id));
 
-      this._snackbar.open(
-        'success',
-        'You have deleted your review successfully',
-      );
+      this._snackbar.open('success', 'You have deleted your review successfully');
     } catch (error) {
       console.log(error);
       this._snackbar.open('error', 'You have failed to delete your review');
     }
+  }
+
+  async getNotifications(page = 1, sortBy = 'desc') {
+    const params = new HttpParams().set('sortBy', sortBy).set('page', page);
+
+    const response = await lastValueFrom(
+      this.http
+        .get<{
+          page: number;
+          totalPages: number;
+          itemsList: INotification[];
+        }>(this.SERVER_URL + `/user/notifications`, {
+          params,
+        })
+        .pipe(
+          map((res) => {
+            const itemsList = res.itemsList.map((item) => ({
+              ...item,
+              title: item.sender.firstName + item.sender.lastName,
+              message: notificationMessage[item.type],
+            }));
+
+            return { ...res, itemsList };
+          }),
+        ),
+    );
+
+    return response;
   }
 }

@@ -12,6 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTabsModule } from '@angular/material/tabs';
+import { PopoverModule } from 'ngx-bootstrap/popover';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
@@ -21,6 +22,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatStepperModule } from '@angular/material/stepper';
 import { TimepickerModule } from 'ngx-bootstrap/timepicker';
@@ -35,7 +37,14 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 // icons
-import { heroClock, heroTrash, heroPencil } from '@ng-icons/heroicons/outline';
+import {
+  heroClock,
+  heroTrash,
+  heroPencil,
+  heroTicket,
+  heroPencilSquare,
+  heroChatBubbleBottomCenterText,
+} from '@ng-icons/heroicons/outline';
 import { heroUserCircleSolid, heroXMarkSolid } from '@ng-icons/heroicons/solid';
 import {
   ionClose,
@@ -159,6 +168,7 @@ import { AccountTabReservationsManagementComponent } from './components/account/
       heroClock,
       heroTrash,
       heroPencil,
+      heroTicket,
       ionArrowRedo,
       ionBugOutline,
       ionCashOutline,
@@ -166,8 +176,9 @@ import { AccountTabReservationsManagementComponent } from './components/account/
       ionLogInOutline,
       ionLogOutOutline,
       ionPersonOutline,
-      ionPricetagOutline,
+      heroPencilSquare,
       ionWarningOutline,
+      ionPricetagOutline,
       ionLocationOutline,
       heroUserCircleSolid,
       ionCloudUploadOutline,
@@ -176,9 +187,11 @@ import { AccountTabReservationsManagementComponent } from './components/account/
       ionCheckmarkCircleOutline,
       ionInformationCircleOutline,
       ionChatbubbleEllipsesOutline,
+      heroChatBubbleBottomCenterText,
     }),
 
     // component modules
+    PopoverModule.forRoot(),
     CarouselModule.forRoot(),
     TimepickerModule.forRoot(),
     MatCardModule,
@@ -195,6 +208,7 @@ import { AccountTabReservationsManagementComponent } from './components/account/
     MatDialogModule,
     MatSelectModule,
     MatDividerModule,
+    MatTooltipModule,
     MatStepperModule,
     MatGridListModule,
     MatExpansionModule,

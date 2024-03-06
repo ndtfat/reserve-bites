@@ -335,7 +335,7 @@ export class HomeComponent implements OnInit {
       this.restaurntSv.getLocalRestaurants(),
     ]);
 
-    console.log({ topRateRes, suggestRes, localRes });
+    // console.log({ topRateRes, suggestRes, localRes });
 
     const { itemsList: topRateRestaurants, error: topRateRestaurantsError } =
       topRateRes;

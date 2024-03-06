@@ -1,9 +1,12 @@
-import { BehaviorSubject } from 'rxjs';
-import { FormBuilder, Validators } from '@angular/forms';
 import { Component, HostListener, Input, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
 import { IReview } from 'src/app/types/restaurant.type';
 import { AuthService } from 'src/app/services/auth.service';
 import { UserService } from 'src/app/services/user.service';
+import { SocketService } from 'src/app/services/socket.service';
+import { IUser, UserType } from 'src/app/types/auth.type';
+import { NotificationType } from 'src/app/types/notification';
 import { RestaurantService } from 'src/app/services/restaurant.service';
 
 @Component({
@@ -99,7 +102,7 @@ import { RestaurantService } from 'src/app/services/restaurant.service';
             >
               Cancel
             </button>
-            <button mat-raised-button color="primary">
+            <button mat-raised-button color="primary" [disabled]="submitting">
               {{ editting ? 'Update' : 'Post' }}
             </button>
           </div>
@@ -117,9 +120,7 @@ import { RestaurantService } from 'src/app/services/restaurant.service';
       </div>
 
       <div *ngIf="reviews.length > 0">
-        <div
-          style="display: flex; justify-content: space-between; align-items: center"
-        >
+        <div style="display: flex; justify-content: space-between; align-items: center">
           <h6>What other diners said about this restaurant:</h6>
           <select style="margin: 0" (change)="handleSortChange($event)">
             <option value="newest">Newest</option>
@@ -136,9 +137,7 @@ import { RestaurantService } from 'src/app/services/restaurant.service';
         </ul>
         <mat-spinner *ngIf="loading" />
       </div>
-      <h6 *ngIf="reviews.length === 0">
-        There is no review for this restaurant
-      </h6>
+      <h6 *ngIf="reviews.length === 0">There is no review for this restaurant</h6>
     </div>
   `,
 })
@@ -147,12 +146,14 @@ export class RestaurantTabReviewsComponent implements OnInit {
     private fb: FormBuilder,
     private auth: AuthService,
     private userSv: UserService,
+    private socket: SocketService,
     private restaurantSv: RestaurantService,
   ) {}
 
   @Input() rid!: string;
   loading = true;
   editting = false;
+  submitting = false;
   loadingMore = false;
   reviews: IReview[] = [];
   totalPages = 0;
@@ -174,8 +175,7 @@ export class RestaurantTabReviewsComponent implements OnInit {
     const headerHeight = 90;
     const windowHeight = window.innerHeight; // Height of the viewport
     const documentHeight = document.body.offsetHeight; // Total height of the document
-    const scrollTop =
-      (window.scrollY || document.documentElement.scrollTop) - headerHeight; // Current scroll position
+    const scrollTop = (window.scrollY || document.documentElement.scrollTop) - headerHeight; // Current scroll position
 
     const isBottom = documentHeight - windowHeight - scrollTop <= 0;
     const currentReviewPage = this.pageOption.value.page;
@@ -191,8 +191,11 @@ export class RestaurantTabReviewsComponent implements OnInit {
 
   ngOnInit() {
     this.pageOption.subscribe(async ({ page, sortBy }) => {
-      const { itemsList, userItem, totalPages } =
-        await this.restaurantSv.getReviews(this.rid, page, sortBy);
+      const { itemsList, userItem, totalPages } = await this.restaurantSv.getReviews(
+        this.rid,
+        page,
+        sortBy,
+      );
       this.userReview = userItem;
       this.form.setValue({
         food: userItem?.food || null,
@@ -213,7 +216,19 @@ export class RestaurantTabReviewsComponent implements OnInit {
 
   async handleSubmit() {
     this.form.markAllAsTouched();
+
+    const user = this.auth.user.value as IUser;
+    const notificationPayload = {
+      senderId: user.id,
+      receiver: {
+        type: UserType.OWNER,
+        rid: this.rid,
+      },
+      type: this.editting ? NotificationType.UPDATE_REVIEW : NotificationType.POST_REVIEW,
+    };
+
     if (this.form.valid) {
+      this.submitting = true;
       const values = this.form.value;
       const payload = {
         rid: this.rid,
@@ -224,20 +239,21 @@ export class RestaurantTabReviewsComponent implements OnInit {
         content: values.content as string,
       };
       if (this.editting) {
-        const response = await this.userSv.updateReview(
-          this.userReview?.id as string,
-          payload,
-        );
+        const response = await this.userSv.updateReview(this.userReview?.id as string, payload);
         if (response) {
           this.userReview = response;
           this.editting = false;
+          this.socket.sendNotification(notificationPayload);
         }
       } else {
         const response = await this.userSv.review(payload);
         if (response) {
           this.userReview = response;
+          this.socket.sendNotification(notificationPayload);
         }
       }
+
+      this.submitting = false;
     }
   }
 
@@ -252,5 +268,13 @@ export class RestaurantTabReviewsComponent implements OnInit {
   async handleDeleteReview(reviewId: string) {
     await this.userSv.deleteReview(reviewId);
     this.userReview = null;
+    this.socket.sendNotification({
+      senderId: this.auth.user.value?.id as string,
+      receiver: {
+        type: UserType.OWNER,
+        rid: this.rid,
+      },
+      type: NotificationType.DELETE_REVIEW,
+    });
   }
 }

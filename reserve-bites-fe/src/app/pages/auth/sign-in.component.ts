@@ -96,7 +96,7 @@ export class SignInComponent {
   constructor(private auth: AuthService) {}
 
   form: FormGroup = new FormGroup({
-    email: new FormControl('phatnguyen@gmail.com', {
+    email: new FormControl('owner0@gmail.com', {
       validators: [Validators.max(255), Validators.email, Validators.required],
     }),
     password: new FormControl('123456789x@X', {

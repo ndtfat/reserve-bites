@@ -1,19 +1,25 @@
-import { BehaviorSubject, lastValueFrom } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, lastValueFrom } from 'rxjs';
 
-import { ILoginResponse, IUser } from '../types/auth.type';
 import { environment } from 'src/environments/environment';
+import { ILoginResponse, IUser } from '../types/auth.type';
+import { SocketService } from './socket.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  isAuthenticated = new BehaviorSubject<boolean>(false);
   user = new BehaviorSubject<IUser | undefined>(undefined);
+  isAuthenticated = new BehaviorSubject<boolean>(false);
   private SERVER_URL = environment.SERVER_URL;
-  constructor(private http: HttpClient, private router: Router) {}
+
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private socket: SocketService,
+  ) {}
 
   async getUser() {
     try {
@@ -21,6 +27,7 @@ export class AuthService {
         this.http.get<IUser>(this.SERVER_URL + '/user/me'),
       );
       this.user.next(userInfo);
+      this.socket.connect(userInfo);
       this.isAuthenticated.next(true);
     } catch (error) {
       // console.log(error);
@@ -83,6 +90,7 @@ export class AuthService {
       this.isAuthenticated.next(false);
       this.router.navigateByUrl('/auth/sign-in');
       localStorage.clear();
+      this.socket.disconnect();
 
       return { response, error: null };
     } catch (error: any) {

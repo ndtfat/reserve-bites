@@ -28,14 +28,12 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
           height: 100%;
           border-radius: 4px;
           margin-right: 16px;
-          background: $snackbar-success-color;
         }
         .content {
           @include flex(column, flex-start, space-between);
           .title {
             font-size: 18px;
             font-weight: 500;
-            color: $snackbar-success-color;
             margin-bottom: 6px;
             &:first-letter {
               text-transform: uppercase;
@@ -57,6 +55,30 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
         opacity: 1;
         transform: scale(1);
         pointer-events: all;
+      }
+      .wrapper.warn {
+        .padding-color {
+          background: $snackbar-warn-color;
+        }
+        .content > .title {
+          color: $snackbar-warn-color;
+        }
+      }
+      .wrapper.error {
+        .padding-color {
+          background: $snackbar-error-color;
+        }
+        .content > .title {
+          color: $snackbar-error-color;
+        }
+      }
+      .wrapper.success {
+        .padding-color {
+          background: $snackbar-success-color;
+        }
+        .content > .title {
+          color: $snackbar-success-color;
+        }
       }
     `,
   ],

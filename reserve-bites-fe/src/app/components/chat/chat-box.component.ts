@@ -1,10 +1,5 @@
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import {
-  ChatTab,
-  ChatRole,
-  IMessage,
-  IChatHistory,
-} from 'src/app/types/chat.type';
+import { ChatTab, ChatRole, IMessage, IChatHistory } from 'src/app/types/chat.type';
 
 @Component({
   selector: 'chat-box',
@@ -150,10 +145,7 @@ import {
     `,
   ],
   template: `
-    <div
-      class="wrapper"
-      [ngClass]="{ history: tab === 'history', 'chat-box': tab === 'chat-box' }"
-    >
+    <div class="wrapper" [ngClass]="{ history: tab === 'history', 'chat-box': tab === 'chat-box' }">
       <div class="content">
         <!-- Chat list -->
         <div class="chat-list">
@@ -161,17 +153,10 @@ import {
             <h4>Messages</h4>
           </div>
           <ul class="body">
-            <li
-              *ngFor="let mess of chatHistory"
-              (click)="handleOpenChatBox(mess.id)"
-            >
+            <li *ngFor="let mess of chatHistory" (click)="handleOpenChatBox(mess.id)">
               <div>
                 <img *ngIf="mess.avatarUrl" [src]="mess.avatarUrl" />
-                <ng-icon
-                  *ngIf="!mess.avatarUrl"
-                  name="heroUserCircleSolid"
-                  size="40"
-                />
+                <ng-icon *ngIf="!mess.avatarUrl" name="heroUserCircleSolid" size="40" />
 
                 <div class="history-content">
                   <h6>{{ mess.name }}</h6>
@@ -190,11 +175,7 @@ import {
         <!-- Chat box  -->
         <div class="chat-box">
           <div class="header">
-            <button
-              mat-icon-button
-              class="back-btn"
-              (click)="handleBackHistory()"
-            >
+            <button mat-icon-button class="back-btn" (click)="handleBackHistory()">
               <mat-icon>keyboard_arrow_left</mat-icon>
             </button>
             <h4>Bun bo di 2</h4>
@@ -212,14 +193,17 @@ import {
                   right: mess.sender === 'me'
                 }"
               >
-                <p>{{ mess.content }}</p>
-                <span>{{
-                  mess.createdAt.toLocaleString([], {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false
-                  })
-                }}</span>
+                <p
+                  [matTooltip]="
+                    mess.createdAt.toLocaleString([], {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      hour12: false
+                    })
+                  "
+                >
+                  {{ mess.content }}
+                </p>
               </div>
             </div>
           </div>
@@ -280,13 +264,10 @@ export class ChatBoxComponent implements AfterViewInit {
       name: 'Bun rieu`',
       seen: true,
       lastMessage: 'Mấy giờ con qua?',
-      avatarUrl:
-        'https://resizer.otstatic.com/v2/photos/wide-medium/1/25229489.webp',
+      avatarUrl: 'https://resizer.otstatic.com/v2/photos/wide-medium/1/25229489.webp',
     },
   ];
-  @ViewChild('chatboxBody', { static: false }) chatboxBody:
-    | ElementRef
-    | undefined;
+  @ViewChild('chatboxBody', { static: false }) chatboxBody: ElementRef | undefined;
 
   // chat list handlers-------------------------------------------------------------------------------------------
   handleOpenChatBox(id: string) {
@@ -296,8 +277,7 @@ export class ChatBoxComponent implements AfterViewInit {
   // chat box handlers-------------------------------------------------------------------------------------------
   scrollToBottom(): void {
     if (this.chatboxBody) {
-      this.chatboxBody.nativeElement.scrollTop =
-        this.chatboxBody.nativeElement.scrollHeight;
+      this.chatboxBody.nativeElement.scrollTop = this.chatboxBody.nativeElement.scrollHeight;
     }
   }
   adjustTextareaHeight(textarea: HTMLTextAreaElement): void {
@@ -310,12 +290,8 @@ export class ChatBoxComponent implements AfterViewInit {
     if (index === 0) {
       return true; // Show the date for the first message
     }
-    const currentMessageDate = new Date(
-      messages[index].createdAt,
-    ).toDateString();
-    const previousMessageDate = new Date(
-      messages[index - 1].createdAt,
-    ).toDateString();
+    const currentMessageDate = new Date(messages[index].createdAt).toDateString();
+    const previousMessageDate = new Date(messages[index - 1].createdAt).toDateString();
     return currentMessageDate !== previousMessageDate;
   }
   ngAfterViewInit() {

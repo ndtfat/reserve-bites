@@ -8,6 +8,7 @@ const TokenSchema = new Schema(
     accessToken: { type: String, required: true },
     refreshToken: { type: String, required: true },
     resetPasswordToken: { type: String },
+    socketId: { type: String },
   },
   {
     versionKey: false,

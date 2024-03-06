@@ -18,7 +18,6 @@ export class OwnerGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot,
   ): Promise<boolean> {
-    await this.authService.getUser();
     if (this.authService.user.value?.isOwner) {
       // IUser is authenticated, allow navigation
       return true;

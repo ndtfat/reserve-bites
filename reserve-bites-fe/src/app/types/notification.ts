@@ -1,4 +1,5 @@
-import { ReservationStatus } from "./restaurant.type"
+import { IUser, UserType } from './auth.type';
+import { ReservationStatus } from './restaurant.type';
 
 export enum AlertType {
   WARN = 'warn',
@@ -7,16 +8,33 @@ export enum AlertType {
   SUCCESS = 'success',
 }
 
-
 export enum NotificationType {
-  RESERVATION = "reservation",
+  RESERVATION = 'RESERVATION',
+  POST_REVIEW = 'POST_REVIEW',
+  DELETE_REVIEW = 'DELETE_REVIEW',
+  UPDATE_REVIEW = 'UPDATE_REVIEW',
 }
 
 export type INotification = {
   id: string;
   type: NotificationType;
-  title: string;
-  message: '';
+  sender: IUser;
   readed: boolean;
-  status?: ReservationStatus | string;
-}
+  title: string;
+  message: string;
+  createdAt: Date | string;
+  additionalInfo: {
+    rid?: string;
+    reervationId?: string;
+  };
+};
+
+export type ISocketNotification = {
+  senderId: string;
+  receiver: {
+    uid?: string;
+    rid?: string;
+    type: UserType;
+  };
+  type: NotificationType;
+};

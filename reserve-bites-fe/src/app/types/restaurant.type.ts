@@ -84,7 +84,7 @@ export type IRestaurantCard = {
   };
   mainImage: {
     name: string;
-    url: string
+    url: string;
   };
   rate: number;
   owner?: string;
@@ -100,13 +100,13 @@ export type IReview = {
   overall: number;
   content: string;
   createdAt: Date;
-}
+};
 
 export enum ReservationStatus {
-  CONFIRMED = "confirmed",
-  CANCELED = "canceled",
-  RESPONDING = "responding",
-  COMPLETED = "completed",
+  CONFIRMED = 'confirmed',
+  CANCELED = 'canceled',
+  RESPONDING = 'responding',
+  COMPLETED = 'completed',
 }
 
 export type IReservation = {
@@ -116,4 +116,4 @@ export type IReservation = {
   time: Date;
   date: Date;
   status: ReservationStatus;
-}
+};
