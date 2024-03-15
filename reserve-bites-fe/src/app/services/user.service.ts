@@ -152,6 +152,7 @@ export class UserService {
           page: number;
           totalPages: number;
           itemsList: INotification[];
+          totalItems: number;
         }>(this.SERVER_URL + `/user/notifications`, {
           params,
         })
@@ -169,5 +170,23 @@ export class UserService {
     );
 
     return response;
+  }
+
+  async markNotificationsAsReaded(notifIds: string[]) {
+    return this.http
+      .put(this.SERVER_URL + '/user/notifications/mark-as-readed', { notifIds })
+      .subscribe({
+        next: () => console.log('Mask notifs as readed'),
+        error: (error) => console.log(error),
+      });
+  }
+
+  async deleteNotifications(notifIds: string[]) {
+    return this.http
+      .delete(this.SERVER_URL + '/user/notifications', { body: { notifIds } })
+      .subscribe({
+        next: () => this._snackbar.open('success', 'You have deleted notification(s) successfully'),
+        error: (error) => console.log(error),
+      });
   }
 }

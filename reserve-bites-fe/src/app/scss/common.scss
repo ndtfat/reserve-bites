@@ -47,3 +47,63 @@
     }
   }
 }
+
+@mixin notifIcon() {
+  color: #fff;
+  padding: 6px;
+  background: lightblue;
+  border-radius: 4px;
+
+  &.RESERVATION,
+  &.POST_REVIEW {
+    color: $text-info-color;
+    background-color: $bg-info;
+  }
+  &.DELETE_REVIEW {
+    color: $text-error-color;
+    background-color: $bg-error;
+  }
+  &.UPDATE_REVIEW {
+    color: $text-warn-color;
+    background-color: $bg-warn;
+  }
+}
+
+@mixin onlineDot() {
+  width: 10px;
+  height: 10px;
+  background: #4daa57;
+  border-radius: 50%;
+}
+
+@mixin variantColor() {
+  &.warn {
+    color: $text-warn-color;
+    background-color: $bg-warn;
+  }
+  &.error {
+    color: $text-error-color;
+    background-color: $bg-error;
+  }
+  &.success {
+    color: $text-success-color;
+    background-color: $bg-success;
+  }
+  &.info {
+    color: $text-info-color;
+    background-color: $bg-info;
+  }
+}
+
+@mixin overlayLock() {
+  position: absolute;
+  inset: 0;
+  padding: 0 20px;
+  filter: blur(0.5);
+  font-size: 20px;
+  text-align: center;
+  font-weight: bold;
+  @include flex(row, center, center);
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 1;
+}

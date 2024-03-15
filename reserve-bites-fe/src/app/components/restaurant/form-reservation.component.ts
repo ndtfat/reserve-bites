@@ -6,6 +6,31 @@ import { IRestaurant } from 'src/app/types/restaurant.type';
 
 @Component({
   selector: 'form-reservation',
+  styles: [
+    `
+      @import '../../scss/common.scss';
+      @import '../../scss/variables.scss';
+      form {
+        width: 100%;
+        padding: 10px 16px 20px;
+        position: sticky;
+        top: calc($header-height + 60px);
+        @include shadow;
+        background: #fff;
+        border-radius: 4px;
+      }
+      h5 {
+        padding: 6px 0 16px;
+        text-align: center;
+        font-weight: 600;
+        border-bottom: 1px solid #ccc;
+        margin-bottom: 10px;
+      }
+      .overlay {
+        @include overlayLock;
+      }
+    `,
+  ],
   template: `
     <form [formGroup]="form" (ngSubmit)="handleSubmitReservation()">
       <h5>Make a reservation</h5>
@@ -28,12 +53,7 @@ import { IRestaurant } from 'src/app/types/restaurant.type';
 
       <span style="display:flex; align-items: center">
         <h6 style="margin-right: 10px; font-weight: 600">Time:</h6>
-        <timepicker
-          formControlName="time"
-          [hourStep]="1"
-          [minuteStep]="1"
-          [showMeridian]="false"
-        />
+        <timepicker formControlName="time" [hourStep]="1" [minuteStep]="1" [showMeridian]="false" />
       </span>
 
       <button
@@ -44,40 +64,14 @@ import { IRestaurant } from 'src/app/types/restaurant.type';
       >
         Reserve
       </button>
+
+      <div *ngIf="!canMakeReservation" class="overlay">Reservation can only be made by diners</div>
     </form>
   `,
-  styles: [
-    `
-      @import '../../scss/common.scss';
-      @import '../../scss/variables.scss';
-      form {
-        width: 100%;
-        padding: 10px 16px 20px;
-        position: sticky;
-        top: calc($header-height + 60px);
-        @include shadow;
-        background: #fff;
-        border-radius: 4px;
-      }
-      h5 {
-        padding: 6px 0 16px;
-        text-align: center;
-        font-weight: 600;
-        border-bottom: 1px solid #ccc;
-        margin-bottom: 10px;
-      }
-    `,
-  ],
 })
 export class FormReservationComponent implements OnInit {
   @Input() restaurant!: IRestaurant;
   @Input() rid!: string;
-
-  constructor(
-    private fb: FormBuilder,
-    private auth: AuthService,
-    private userSv: UserService,
-  ) {}
 
   form = this.fb.group({
     size: [1, Validators.required],
@@ -86,6 +80,19 @@ export class FormReservationComponent implements OnInit {
   });
   reserving = false;
   alertMessage = '';
+  canMakeReservation = true;
+
+  constructor(private fb: FormBuilder, private auth: AuthService, private userSv: UserService) {
+    auth.user.subscribe((u) => {
+      if (!u) {
+        this.canMakeReservation = false;
+      } else if (u && u.isOwner) {
+        this.canMakeReservation = false;
+      } else {
+        this.canMakeReservation = true;
+      }
+    });
+  }
 
   ngOnInit() {
     this.form.valueChanges.subscribe(() => {
@@ -97,42 +104,25 @@ export class FormReservationComponent implements OnInit {
     this.alertMessage = '';
     const size = Number(this.form.get('size')?.value);
     const today = new Date().getTime();
-    const reserveDate = new Date(
-      this.form.get('date')?.value as Date,
-    ).getTime();
+    const reserveDate = new Date(this.form.get('date')?.value as Date).getTime();
 
-    const reserveHour = new Date(
-      this.form.get('time')?.value as Date,
-    ).getHours();
-    const reserveMinute = new Date(
-      this.form.get('time')?.value as Date,
-    ).getMinutes();
+    const reserveHour = new Date(this.form.get('time')?.value as Date).getHours();
+    const reserveMinute = new Date(this.form.get('time')?.value as Date).getMinutes();
 
-    const openHour = new Date(
-      this.restaurant.operationTime.openTime,
-    ).getHours();
-    const closeHour = new Date(
-      this.restaurant.operationTime.closeTime,
-    ).getHours();
-    const openMinute = new Date(
-      this.restaurant.operationTime.openTime,
-    ).getMinutes();
-    const closeMinute = new Date(
-      this.restaurant.operationTime.closeTime,
-    ).getMinutes();
+    const openHour = new Date(this.restaurant.operationTime.openTime).getHours();
+    const closeHour = new Date(this.restaurant.operationTime.closeTime).getHours();
+    const openMinute = new Date(this.restaurant.operationTime.openTime).getMinutes();
+    const closeMinute = new Date(this.restaurant.operationTime.closeTime).getMinutes();
 
     // console.table({ openHour, openMinute });
 
     const isHourInRange =
-      reserveHour > openHour ||
-      (reserveHour === openHour && reserveMinute >= openMinute);
+      reserveHour > openHour || (reserveHour === openHour && reserveMinute >= openMinute);
     const isMinuteInRange =
-      reserveHour < closeHour ||
-      (reserveHour === closeHour && reserveMinute <= closeMinute);
+      reserveHour < closeHour || (reserveHour === closeHour && reserveMinute <= closeMinute);
 
     const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
-    const reserveDay =
-      daysOfWeek[new Date(this.form.get('date')?.value as Date).getDay()];
+    const reserveDay = daysOfWeek[new Date(this.form.get('date')?.value as Date).getDay()];
 
     // console.log(
     //   reserveDay,

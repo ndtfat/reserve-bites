@@ -1,4 +1,4 @@
-import { Component, HostListener, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { IReview } from 'src/app/types/restaurant.type';
@@ -8,6 +8,7 @@ import { SocketService } from 'src/app/services/socket.service';
 import { IUser, UserType } from 'src/app/types/auth.type';
 import { NotificationType } from 'src/app/types/notification';
 import { RestaurantService } from 'src/app/services/restaurant.service';
+import { SortBy } from 'src/app/types/filter.type';
 
 @Component({
   selector: 'restaurant-tab-reviews',
@@ -39,14 +40,7 @@ import { RestaurantService } from 'src/app/services/restaurant.service';
           }
         }
         .overlay {
-          position: absolute;
-          inset: 0;
-          filter: blur(0.5);
-          font-size: 20px;
-          font-weight: bold;
-          @include flex(row, center, center);
-          background-color: rgba(255, 255, 255, 0.8);
-          z-index: 1;
+          @include overlayLock;
         }
       }
     `,
@@ -107,7 +101,9 @@ import { RestaurantService } from 'src/app/services/restaurant.service';
             </button>
           </div>
 
-          <!-- <div class="overlay">Reviews can only be made by diners who have eaten at this restaurant</div> -->
+          <div *ngIf="!canMakeReview" class="overlay">
+            Reviews can only be made by diners who have eaten at this restaurant
+          </div>
         </form>
 
         <restaurant-review
@@ -127,7 +123,7 @@ import { RestaurantService } from 'src/app/services/restaurant.service';
             <option value="oldest">Oldest</option>
           </select>
         </div>
-        <ul *ngIf="!loading">
+        <ul>
           <li *ngFor="let r of reviews">
             <restaurant-review [review]="r" />
             <mat-divider style="margin:20px 10px;" />
@@ -135,39 +131,52 @@ import { RestaurantService } from 'src/app/services/restaurant.service';
 
           <mat-spinner *ngIf="loadingMore" />
         </ul>
-        <mat-spinner *ngIf="loading" />
+        <div *ngIf="totalPages > 1">Scroll down to load more</div>
+        <!-- <mat-spinner *ngIf="loading" /> -->
       </div>
       <h6 *ngIf="reviews.length === 0">There is no review for this restaurant</h6>
     </div>
   `,
 })
-export class RestaurantTabReviewsComponent implements OnInit {
-  constructor(
-    private fb: FormBuilder,
-    private auth: AuthService,
-    private userSv: UserService,
-    private socket: SocketService,
-    private restaurantSv: RestaurantService,
-  ) {}
+export class RestaurantTabReviewsComponent {
+  constructor(private fb: FormBuilder, private auth: AuthService) {
+    auth.user.subscribe((u) => {
+      if (u && u.isOwner) {
+        this.canMakeReview = false;
+      } else {
+        this.canMakeReview = true;
+      }
+    });
+  }
 
   @Input() rid!: string;
-  loading = true;
+  @Input() reviews: IReview[] = [];
+  @Input() userReview: IReview | null = null;
+  @Input() totalPages = 1;
+  @Input() pageOption!: BehaviorSubject<{ page: number; sortBy: string }>;
+  @Output() loadMore = new EventEmitter();
+  @Output() sortChange = new EventEmitter<SortBy>();
+  @Output() postUserReview = new EventEmitter();
+  @Output() editUserReview = new EventEmitter();
+  @Output() deleteUserReview = new EventEmitter<string>();
+
+  // loading = true;
   editting = false;
   submitting = false;
   loadingMore = false;
-  reviews: IReview[] = [];
-  totalPages = 0;
-  userReview: (IReview & { id: string }) | null = null;
-  pageOption = new BehaviorSubject({
-    page: 1,
-    sortBy: 'desc',
-  });
+  canMakeReview = true;
 
   form = this.fb.group({
-    food: [0, [Validators.required, Validators.min(0), Validators.max(5)]],
-    service: [0, [Validators.required, Validators.min(0), Validators.max(5)]],
-    ambiance: [0, [Validators.required, Validators.min(0), Validators.max(5)]],
-    content: ['', Validators.required],
+    food: [this.userReview?.food || 0, [Validators.required, Validators.min(0), Validators.max(5)]],
+    service: [
+      this.userReview?.service || 0,
+      [Validators.required, Validators.min(0), Validators.max(5)],
+    ],
+    ambiance: [
+      this.userReview?.ambiance || 0,
+      [Validators.required, Validators.min(0), Validators.max(5)],
+    ],
+    content: [this.userReview?.content || '', Validators.required],
   });
 
   @HostListener('window:scroll', []) // for window scroll events
@@ -182,36 +191,8 @@ export class RestaurantTabReviewsComponent implements OnInit {
 
     if (isBottom && currentReviewPage < this.totalPages) {
       this.loadingMore = true;
-      this.pageOption.next({
-        ...this.pageOption.value,
-        page: currentReviewPage + 1,
-      });
+      this.loadMore.emit();
     }
-  }
-
-  ngOnInit() {
-    this.pageOption.subscribe(async ({ page, sortBy }) => {
-      const { itemsList, userItem, totalPages } = await this.restaurantSv.getReviews(
-        this.rid,
-        page,
-        sortBy,
-      );
-      this.userReview = userItem;
-      this.form.setValue({
-        food: userItem?.food || null,
-        service: userItem?.service || null,
-        ambiance: userItem?.ambiance || null,
-        content: userItem?.content || '',
-      });
-      this.totalPages = totalPages;
-      if (this.loadingMore) {
-        this.reviews = [...this.reviews, ...itemsList];
-        this.loadingMore = false;
-      } else {
-        this.reviews = itemsList;
-        this.loading = false;
-      }
-    });
   }
 
   async handleSubmit() {
@@ -239,18 +220,10 @@ export class RestaurantTabReviewsComponent implements OnInit {
         content: values.content as string,
       };
       if (this.editting) {
-        const response = await this.userSv.updateReview(this.userReview?.id as string, payload);
-        if (response) {
-          this.userReview = response;
-          this.editting = false;
-          this.socket.sendNotification(notificationPayload);
-        }
+        this.editUserReview.emit(payload);
+        this.editting = false;
       } else {
-        const response = await this.userSv.review(payload);
-        if (response) {
-          this.userReview = response;
-          this.socket.sendNotification(notificationPayload);
-        }
+        this.postUserReview.emit(payload);
       }
 
       this.submitting = false;
@@ -258,23 +231,10 @@ export class RestaurantTabReviewsComponent implements OnInit {
   }
 
   handleSortChange(event: Event) {
-    this.loading = true;
-    this.pageOption.next({
-      ...this.pageOption.value,
-      sortBy: (event.target as HTMLSelectElement).value,
-    });
+    this.sortChange.emit((event.target as HTMLSelectElement).value as SortBy);
   }
 
   async handleDeleteReview(reviewId: string) {
-    await this.userSv.deleteReview(reviewId);
-    this.userReview = null;
-    this.socket.sendNotification({
-      senderId: this.auth.user.value?.id as string,
-      receiver: {
-        type: UserType.OWNER,
-        rid: this.rid,
-      },
-      type: NotificationType.DELETE_REVIEW,
-    });
+    this.deleteUserReview.emit(reviewId);
   }
 }

@@ -1,4 +1,4 @@
-import mongoose from '../config/mongo.config.js';
+import mongoose from '../config/mongoose.config.js';
 
 const Schema = mongoose.Schema;
 const ImageSchema = new Schema(

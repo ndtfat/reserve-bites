@@ -29,13 +29,6 @@ import { RestaurantRegisterComponent } from './pages/auth/restaurant-register.co
 
 const routes: Routes = [
   {
-    path: '',
-    pathMatch: 'full',
-    component: HeaderLayout,
-    canActivate: [GuestGuard, DinerGuard],
-    children: [{ path: '', component: HomePage }],
-  },
-  {
     path: 'auth',
     component: AuthLayout,
     children: [
@@ -44,37 +37,38 @@ const routes: Routes = [
       { path: 'reset-password', component: ResetPasswordPage },
     ],
   },
-  { path: 'restaurant-register', component: RestaurantRegisterComponent },
   {
-    path: 'account',
-    component: HeaderLayout,
-    canActivate: [GuestGuard, AuthGuard],
-    children: [{ path: ':id', component: AccountComponent }],
-  },
-  {
-    path: 'restaurant',
+    path: '',
     component: HeaderLayout,
     canActivate: [GuestGuard],
     children: [
-      { path: 'search', component: SearchComponent },
-      { path: ':id', component: RestaurantComponent },
+      { path: '', pathMatch: 'full', canActivate: [DinerGuard], component: HomePage },
+
+      { path: 'restaurant-register', component: RestaurantRegisterComponent },
+      {
+        path: 'account',
+        canActivate: [AuthGuard],
+        children: [{ path: ':id', component: AccountComponent }],
+      },
+      {
+        path: 'restaurant',
+        children: [
+          { path: 'search', component: SearchComponent },
+          { path: ':id', component: RestaurantComponent },
+        ],
+      },
+      {
+        path: 'reservation',
+        children: [{ path: ':id', component: ReservationComponent }],
+      },
+      {
+        path: 'notification',
+        children: [{ path: '', component: NotificationComponent }],
+      },
     ],
   },
-  {
-    path: 'reservation',
-    component: HeaderLayout,
-    canActivate: [GuestGuard],
-    children: [{ path: ':id', component: ReservationComponent }],
-  },
-  {
-    path: 'notification',
-    component: HeaderLayout,
-    canActivate: [GuestGuard],
-    children: [{ path: '', component: NotificationComponent }],
-  },
-
-  { path: '**', component: Page404Component },
   { path: '404', component: Page404Component },
+  { path: '**', component: Page404Component },
 ];
 
 export default routes;

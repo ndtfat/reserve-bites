@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from 'src/app/services/user.service';
-import { SocketService } from 'src/app/services/socket.service';
 import { INotification } from 'src/app/types/notification';
+import { SocketService } from 'src/app/services/socket.service';
 import { notificationIcon, notificationMessage } from 'src/app/utils/notification';
 
 @Component({
@@ -24,24 +24,7 @@ import { notificationIcon, notificationMessage } from 'src/app/utils/notificatio
         }
 
         .icon {
-          color: #fff;
-          padding: 6px;
-          background: lightblue;
-          border-radius: 4px;
-
-          &.RESERVATION,
-          &.POST_REVIEW {
-            color: $text-info-color;
-            background-color: $bg-info;
-          }
-          &.DELETE_REVIEW {
-            color: $text-error-color;
-            background-color: $bg-error;
-          }
-          &.UPDATE_REVIEW {
-            color: $text-warn-color;
-            background-color: $bg-warn;
-          }
+          @include notifIcon;
         }
 
         .title {
@@ -56,6 +39,7 @@ import { notificationIcon, notificationMessage } from 'src/app/utils/notificatio
 
         .time {
           font-size: 13px;
+          text-align: right;
         }
       }
     `,
@@ -104,8 +88,8 @@ export class NotificationDropDownComponent implements OnInit {
   constructor(private userSv: UserService, private socket: SocketService) {}
 
   async ngOnInit() {
-    const { itemsList } = await this.userSv.getNotifications(1);
-    this.notificationList = itemsList.reverse();
+    const { itemsList } = await this.userSv.getNotifications(1, 'desc');
+    this.notificationList = itemsList;
 
     this.socket.receiveNotification().subscribe({
       next: (n) => {

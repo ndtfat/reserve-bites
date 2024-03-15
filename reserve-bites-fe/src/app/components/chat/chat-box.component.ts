@@ -65,11 +65,8 @@ import { ChatTab, ChatRole, IMessage, IChatHistory } from 'src/app/types/chat.ty
               margin-top: 2px;
             }
           }
-          .point {
-            width: 10px;
-            height: 10px;
-            background: green;
-            border-radius: 50%;
+          .dot {
+            @include onlineDot;
           }
         }
       }
@@ -165,7 +162,7 @@ import { ChatTab, ChatRole, IMessage, IChatHistory } from 'src/app/types/chat.ty
                   </p>
                 </div>
 
-                <div *ngIf="!mess.seen" class="point"></div>
+                <div *ngIf="!mess.seen" class="dot"></div>
               </div>
               <mat-divider style="margin: 0 20px;" />
             </li>

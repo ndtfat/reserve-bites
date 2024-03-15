@@ -55,14 +55,26 @@ import { RestaurantService } from 'src/app/services/restaurant.service';
           marginBottom: '30px'
         }"
       >
-        <h4 [style]="{ fontSize: '30px', fontWeight: 'bold' }">
-          {{ editting ? 'Edit Restaurant' : 'Restaurant information' }}
-        </h4>
-        <button
-          mat-raised-button
-          [color]="editting ? 'warn' : ''"
-          (click)="editting = !editting"
-        >
+        <div>
+          <h4 [style]="{ fontSize: '30px', fontWeight: 'bold' }">
+            {{ editting ? 'Edit Restaurant' : 'Restaurant information' }}
+          </h4>
+          <p
+            *ngIf="restaurant"
+            [routerLink]="'/restaurant/' + restaurant.id"
+            [style]="{
+              display: 'flex',
+              gap: '4px',
+              color: 'blue',
+              cursor: 'pointer',
+              marginTop: '6px'
+            }"
+          >
+            <ng-icon name="matOpenInNewOutline" /> View restaurant
+          </p>
+        </div>
+
+        <button mat-raised-button [color]="editting ? 'warn' : ''" (click)="editting = !editting">
           <span>{{ editting ? 'Cancel' : 'Edit' }}</span>
           <mat-icon>{{ editting ? 'close' : 'border_color' }}</mat-icon>
         </button>
@@ -135,9 +147,7 @@ import { RestaurantService } from 'src/app/services/restaurant.service';
                 <a *ngFor="let img of restaurant.gallery" [href]="img.url">
                   <ng-icon name="ionImage" class="image-icon" /> {{ img.name }}
                 </a>
-                <span *ngIf="restaurant.gallery.length === 0"
-                  >Your restaurant have no gallery</span
-                >
+                <span *ngIf="restaurant.gallery.length === 0">Your restaurant have no gallery</span>
               </p>
             </div>
           </div>
@@ -146,10 +156,7 @@ import { RestaurantService } from 'src/app/services/restaurant.service';
             <div>
               <p class="field">Menu</p>
               <div style="margin-top: 10px;">
-                <menu
-                  [menu]="restaurant.menu"
-                  [currency]="restaurant.currency"
-                ></menu>
+                <menu [menu]="restaurant.menu" [currency]="restaurant.currency"></menu>
               </div>
             </div>
           </div>
@@ -172,17 +179,11 @@ export class AccountTabRestaurantComponent implements OnInit {
   editting = false;
   restaurant!: IRestaurant;
   editedData: any;
-  dayOptions = [
-    'Monday',
-    'Tuesday',
-    'Wendsday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday',
-  ].map((day) => {
-    return { value: day, content: day };
-  });
+  dayOptions = ['Monday', 'Tuesday', 'Wendsday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(
+    (day) => {
+      return { value: day, content: day };
+    },
+  );
 
   constructor(
     private auth: AuthService,
@@ -204,10 +205,7 @@ export class AccountTabRestaurantComponent implements OnInit {
       const response = await this.restaurantSv.update(payload);
       this.restaurant = response as IRestaurant;
       this.editting = false;
-      this._snackbar.open(
-        'success',
-        'You have updated restaurant successfully!',
-      );
+      this._snackbar.open('success', 'You have updated restaurant successfully!');
     }
   }
 }

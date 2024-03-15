@@ -25,7 +25,7 @@ export type INotification = {
   createdAt: Date | string;
   additionalInfo: {
     rid?: string;
-    reervationId?: string;
+    reservationId?: string;
   };
 };
 
@@ -34,6 +34,7 @@ export type ISocketNotification = {
   receiver: {
     uid?: string;
     rid?: string;
+    reservationId?: string;
     type: UserType;
   };
   type: NotificationType;

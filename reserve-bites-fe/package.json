@@ -23,6 +23,7 @@
     "@ng-icons/core": "^26.2.0",
     "@ng-icons/heroicons": "^26.2.0",
     "@ng-icons/ionicons": "^26.3.0",
+    "@ng-icons/material-icons": "^27.2.0",
     "@popperjs/core": "^2.11.6",
     "bootstrap": "^5.2.3",
     "date-fns": "^2.30.0",

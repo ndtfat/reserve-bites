@@ -31,9 +31,14 @@ function routes(app) {
   app.put('/user/edit', verifyAccessToken, userControler.putChangeInfo);
   app.put('/user/change-password', verifyAccessToken, userControler.putChangePassword);
   app.put('/user/review/:id', verifyAccessToken, userControler.updateReview);
-  app.put('/user/notifications', verifyAccessToken, userControler.putNotificationStatus);
+  app.put(
+    '/user/notifications/mark-as-readed',
+    verifyAccessToken,
+    userControler.putNotificationsStatus,
+  );
 
   app.delete('/user/review/:id', verifyAccessToken, userControler.deleteReview);
+  app.delete('/user/notifications', verifyAccessToken, userControler.deleteNotifications);
 
   // upload image ------------------------------------------------------------------------------------
   app.post('/upload-image/single', multer().single('file'), imageController.uploadSingleImage);

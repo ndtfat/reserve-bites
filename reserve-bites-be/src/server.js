@@ -9,7 +9,7 @@ import './utils/cron.js';
 import routes from './routes.js';
 import firebaseConfig from './config/firebase.config.js';
 import soketController from './controllers/socketIO.controller.js';
-import { connectDb } from './config/mongo.config.js';
+import { connectDb } from './config/mongoose.config.js';
 
 const app = express();
 const server = createServer(app);

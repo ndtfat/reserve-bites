@@ -1,11 +1,17 @@
 import { format } from 'date-fns';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RestaurantService } from 'src/app/services/restaurant.service';
-import { IRestaurant } from 'src/app/types/restaurant.type';
+import { IRestaurant, IReview } from 'src/app/types/restaurant.type';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
+import { BehaviorSubject } from 'rxjs';
+import { SortBy } from 'src/app/types/filter.type';
+import { UserService } from 'src/app/services/user.service';
+import { SocketService } from 'src/app/services/socket.service';
+import { UserType } from 'src/app/types/auth.type';
+import { NotificationType } from 'src/app/types/notification';
 
 @Component({
   selector: 'restaurant',
@@ -52,7 +58,18 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
               <restaurant-tab-overview [restaurant]="restaurant" />
             </mat-tab>
             <mat-tab label="Reviews">
-              <restaurant-tab-reviews [rid]="rid" *ngIf="currentTabIndex === 1" />
+              <restaurant-tab-reviews
+                *ngIf="currentTabIndex === 1"
+                [rid]="rid"
+                [reviews]="reviews"
+                [userReview]="userReview"
+                [totalPages]="totalReviewPages"
+                [pageOption]="reviewPagination"
+                (sortChange)="handleReviewSortChange($event)"
+                (postUserReview)="handlePostReview($event)"
+                (editUserReview)="handleEditUserReview($event)"
+                (deleteUserReview)="handleDeleteUserReview($event)"
+              />
             </mat-tab>
           </mat-tab-group>
         </div>
@@ -62,22 +79,37 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
     </div>
   `,
 })
-export class RestaurantComponent {
+export class RestaurantComponent implements OnInit {
   rid!: string;
-  fetching = true;
   restaurant!: IRestaurant;
   currentTabIndex = 0;
 
-  constructor(private route: ActivatedRoute, private restaurantSv: RestaurantService, private router: Router) {
+  // review tab
+  reviews: IReview[] = [];
+  totalReviewPages = 1;
+  userReview: IReview | null = null;
+  reviewLoading = false;
+  reviewLoadingMore = false;
+  reviewPagination: BehaviorSubject<{ page: number; sortBy: string }> = new BehaviorSubject({
+    page: 1,
+    sortBy: 'desc',
+  });
+
+  constructor(
+    private auth: AuthService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private socket: SocketService,
+    private userSv: UserService,
+    private restaurantSv: RestaurantService,
+  ) {
     if (this.route.snapshot.paramMap.has('id')) {
       const id = route.snapshot.paramMap.get('id');
       if (id) {
         this.rid = id;
-        this.fetching = true;
         this.restaurantSv.getRestaurant(id).subscribe(
           (response) => {
             this.restaurant = response;
-            this.fetching = false;
           },
           (error) => {
             this.router.navigateByUrl('/404');
@@ -87,7 +119,73 @@ export class RestaurantComponent {
     }
   }
 
+  ngOnInit() {
+    this.reviewPagination.subscribe(async ({ page, sortBy }) => {
+      const { itemsList, userItem, totalPages } = await this.restaurantSv.getReviews(
+        this.rid,
+        page,
+        sortBy,
+      );
+      this.userReview = userItem;
+      this.totalReviewPages = totalPages;
+      this.reviews = [...this.reviews, ...itemsList];
+      console.log(this.reviews);
+    });
+  }
+
   handleTabChange(index: number) {
     this.currentTabIndex = index;
+  }
+
+  handleReviewSortChange(sortBy: SortBy) {
+    this.reviewLoading = true;
+    this.reviewPagination.next({
+      ...this.reviewPagination.value,
+      sortBy,
+    });
+  }
+
+  async handlePostReview(payload: any) {
+    const response = await this.userSv.review(payload);
+    if (response) {
+      this.userReview = response;
+      this.socket.sendNotification({
+        senderId: this.auth.user.value?.id as string,
+        receiver: {
+          type: UserType.OWNER,
+          rid: this.rid,
+        },
+        type: NotificationType.POST_REVIEW,
+      });
+    }
+  }
+
+  async handleEditUserReview(editData: any) {
+    const response = await this.userSv.updateReview(this.userReview?.id as string, editData);
+    if (response) {
+      this.userReview = response;
+      // this.editting = false;
+      this.socket.sendNotification({
+        senderId: this.auth.user.value?.id as string,
+        receiver: {
+          type: UserType.OWNER,
+          rid: this.rid,
+        },
+        type: NotificationType.UPDATE_REVIEW,
+      });
+    }
+  }
+
+  async handleDeleteUserReview(reviewId: string) {
+    await this.userSv.deleteReview(reviewId);
+    this.userReview = null;
+    this.socket.sendNotification({
+      senderId: this.auth.user.value?.id as string,
+      receiver: {
+        type: UserType.OWNER,
+        rid: this.rid,
+      },
+      type: NotificationType.DELETE_REVIEW,
+    });
   }
 }

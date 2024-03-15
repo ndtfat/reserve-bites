@@ -26,6 +26,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatStepperModule } from '@angular/material/stepper';
 import { TimepickerModule } from 'ngx-bootstrap/timepicker';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -37,6 +38,11 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 // icons
+import {
+  matMoreHorizOutline,
+  matOpenInNewOutline,
+  matMarkEmailReadOutline,
+} from '@ng-icons/material-icons/outline';
 import {
   heroClock,
   heroTrash,
@@ -180,10 +186,13 @@ import { AccountTabReservationsManagementComponent } from './components/account/
       ionWarningOutline,
       ionPricetagOutline,
       ionLocationOutline,
+      matOpenInNewOutline,
       heroUserCircleSolid,
+      matMoreHorizOutline,
       ionCloudUploadOutline,
       ionAlertCircleOutline,
       ionDocumentTextOutline,
+      matMarkEmailReadOutline,
       ionCheckmarkCircleOutline,
       ionInformationCircleOutline,
       ionChatbubbleEllipsesOutline,
@@ -210,6 +219,7 @@ import { AccountTabReservationsManagementComponent } from './components/account/
     MatDividerModule,
     MatTooltipModule,
     MatStepperModule,
+    MatCheckboxModule,
     MatGridListModule,
     MatExpansionModule,
     MatPaginatorModule,

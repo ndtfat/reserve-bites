@@ -237,17 +237,27 @@ export default {
       });
     }
   },
-  async putNotificationStatus() {
+  async putNotificationsStatus(req, res) {
     try {
       const { notifIds } = req.body;
-      await Notification.updateMany({ id: { $in: notifIds } }, { readed: true });
+      await Notification.updateMany({ _id: { $in: notifIds } }, { $set: { readed: true } });
       res.status(200).send({ message: 'Update notifications status -> readed' });
     } catch (error) {
       console.log(error);
       res.status(500).send({
-        message: 'Something wrong with putNotificationStatus',
+        message: 'Something wrong with putNotificationsStatus',
         error,
       });
+    }
+  },
+  async deleteNotifications(req, res) {
+    try {
+      const { notifIds } = req.body;
+      await Notification.deleteMany({ _id: { $in: notifIds } });
+      res.status(200).send({ message: 'Delete notification success' });
+    } catch (error) {
+      console.log(error);
+      res.status(500);
     }
   },
 };
