@@ -25,43 +25,28 @@ export default {
 
       await neWUser.save();
       await newRestaurant.save();
-      await Image.updateMany(
-        { _id: { $in: imageIds } },
-        { $set: { state: 1 } },
-      );
+      await Image.updateMany({ _id: { $in: imageIds } }, { $set: { state: 1 } });
 
-      return res
-        .status(200)
-        .send({ message: 'Restaurant is registed successfully' });
+      return res.status(200).send({ message: 'Restaurant is registed successfully' });
     } catch (error) {
       console.log(error);
-      res
-        .status(500)
-        .send({ message: 'Something wrong with restaurant register', error });
+      res.status(500).send({ message: 'Something wrong with restaurant register', error });
     }
   },
   async putUpdateRestaurant(req, res) {
     try {
       const owner = req.user;
       const { restaurant, deletedImageIds } = req.body;
-      const imageIds = [
-        ...([restaurant?.mainImage] || []),
-        ...(restaurant?.gallery || []),
-      ];
+      const imageIds = [...([restaurant?.mainImage] || []), ...(restaurant?.gallery || [])];
 
-      await Image.updateMany(
-        { _id: { $in: imageIds } },
-        { $set: { state: 1 } },
-      );
+      await Image.updateMany({ _id: { $in: imageIds } }, { $set: { state: 1 } });
       await Image.deleteMany({ _id: { $in: deletedImageIds } });
 
       console.log(restaurant);
 
-      let updatedRestaurant = await Restaurant.findOneAndUpdate(
-        { ownerId: owner.id },
-        restaurant,
-        { new: true },
-      )
+      let updatedRestaurant = await Restaurant.findOneAndUpdate({ ownerId: owner.id }, restaurant, {
+        new: true,
+      })
         .populate('ownerId')
         .populate('gallery', 'url name')
         .populate('mainImage', 'url name');
@@ -77,9 +62,7 @@ export default {
       }
     } catch (error) {
       console.log(error);
-      res
-        .status(500)
-        .send({ message: 'Something wrong with restaurant update', error });
+      res.status(500).send({ message: 'Something wrong with restaurant update', error });
     }
   },
   async getInfo(req, res) {
@@ -106,9 +89,7 @@ export default {
       }
     } catch (error) {
       console.log(error);
-      res
-        .status(500)
-        .send({ message: 'Something wrong with get restaurant info', error });
+      res.status(500).send({ message: 'Something wrong with get restaurant info', error });
     }
   },
   async getTopRestaurant(req, res) {
@@ -177,15 +158,11 @@ export default {
         ]);
         return res.status(200).send(restaurants);
       } else {
-        return res
-          .status(403)
-          .send({ message: "Dont have user's favoriteCuisines" });
+        return res.status(403).send({ message: "Dont have user's favoriteCuisines" });
       }
     } catch (error) {
       console.log(error);
-      res
-        .status(500)
-        .send({ message: 'Something wrong with get suggest for user', error });
+      res.status(500).send({ message: 'Something wrong with get suggest for user', error });
     }
   },
   async geLocalRestaurants(req, res) {
@@ -205,9 +182,7 @@ export default {
       }
     } catch (error) {
       console.log(error);
-      res
-        .status(500)
-        .send({ message: 'Something wrong with get Local restaurants', error });
+      res.status(500).send({ message: 'Something wrong with get Local restaurants', error });
     }
   },
   async getReviews(req, res) {
@@ -222,9 +197,7 @@ export default {
         return res.status(404).send({ message: 'Page not found', totalPages });
       }
 
-      let userReview =
-        (await Review.find({ rid, dinerId: uid }).populate('dinerId'))[0] ||
-        null;
+      let userReview = (await Review.find({ rid, dinerId: uid }).populate('dinerId'))[0] || null;
       if (userReview) {
         userReview = userReview.toObject();
         userReview.diner = userReview.dinerId;
@@ -254,9 +227,7 @@ export default {
       });
     } catch (error) {
       console.log(error);
-      res
-        .status(500)
-        .send({ message: 'something wrong with get reviews', error });
+      res.status(500).send({ message: 'something wrong with get reviews', error });
     }
   },
   async getRestaurantReservations(req, res) {
@@ -331,13 +302,7 @@ export default {
         {
           $addFields: {
             combinedAddress: {
-              $concat: [
-                '$address.detail',
-                ', ',
-                '$address.province',
-                ', ',
-                '$address.country',
-              ],
+              $concat: ['$address.detail', ', ', '$address.province', ', ', '$address.country'],
             },
             mainImage: { $toObjectId: '$mainImage' },
           },
@@ -362,10 +327,7 @@ export default {
         },
       ];
 
-      const count = await Restaurant.aggregate([
-        ...condition,
-        { $count: 'totalItems' },
-      ]);
+      const count = await Restaurant.aggregate([...condition, { $count: 'totalItems' }]);
       const totalItems = count.length > 0 ? count[0].totalItems : 0;
 
       const totalPages = Math.ceil(totalItems / pageSize);
@@ -373,10 +335,7 @@ export default {
         return res.status(404).send({ message: 'Page not found', totalPages });
       }
 
-      const results = await Restaurant.aggregate([
-        ...condition,
-        { $skip: offset },
-      ]);
+      const results = await Restaurant.aggregate([...condition, { $skip: offset }]);
 
       return res.status(200).send({
         page,
@@ -390,6 +349,28 @@ export default {
     } catch (error) {
       console.log(error);
       res.status(500).status({ message: 'Something wrong with search' });
+    }
+  },
+  async getReservation(req, res) {
+    try {
+      const { id } = req.params;
+      console.log(id);
+      let reservation = await Reservation.findById(id).populate('rid').populate('dinerId');
+
+      if (reservation) {
+        reservation = reservation.toObject();
+        reservation.restaurant = reservation.rid;
+        reservation.diner = reservation.dinerId;
+        delete reservation.rid;
+        delete reservation.dinerId;
+
+        res.status(200).send(reservation);
+      } else {
+        res.status(404).send({ message: `Reservation ${id} not found` });
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({ message: 'Something wrong with get reservation by id' });
     }
   },
 };

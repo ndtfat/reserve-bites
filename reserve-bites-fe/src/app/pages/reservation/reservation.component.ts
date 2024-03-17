@@ -1,12 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { TimepickerModule } from 'ngx-bootstrap/timepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { IRestaurant } from 'src/app/types/restaurant.type';
+import { IReservation, IRestaurant } from 'src/app/types/restaurant.type';
+import { ActivatedRoute } from '@angular/router';
+import { RestaurantService } from 'src/app/services/restaurant.service';
 
 @Component({
   selector: 'reservation',
@@ -25,65 +27,76 @@ import { IRestaurant } from 'src/app/types/restaurant.type';
         padding: 20px 30px;
         transform: translateY(-50px);
       }
-      .restaurant-name {
-        @include flex(row, center, space-between);
-        h2 {
-          font-weight: bold;
-        }
-        p {
-          @include flex(row, center, space-between);
-          &:hover {
-            @include cursor;
-            color: $primary;
-          }
-        }
-      }
-      .detail,
-      .reservation,
-      .user {
-        @include flex(row, flex-start, flex-start);
-      }
-      .detail {
-        gap: 70px;
-        padding: 0 40px;
-      }
-      .reservation,
-      .user {
-        gap: 30px;
-        font-size: 18px;
-        .field p {
-          font-weight: bold;
+      .fields-wrapper {
+        flex: 1;
+
+        & > div {
+          @include flex(row, flex-start, flex-start);
           margin-bottom: 10px;
-        }
-        .value p {
-          margin-bottom: 10px;
-          &.confirmed {
-            color: #1f931e;
-            background-color: #e9f6e9;
+
+          .field {
+            font-weight: 600;
           }
-          &.responding {
-            color: #e69216;
-            background-color: #fff6e8;
-          }
-          &.canceled {
-            color: #c51d1a;
-            background-color: #fbe9e8;
-          }
-          &.completed {
-            color: #333;
-            background-color: #eee;
+          .value {
+            flex: 1;
           }
         }
       }
-      .sub-text {
-        font-weight: 500;
-        padding-left: 40px;
-        margin-bottom: 10px;
+
+      .confirmed {
+        color: #1f931e;
+        background-color: #e9f6e9;
+      }
+      .responding {
+        color: #e69216;
+        background-color: #fff6e8;
+      }
+      .canceled {
+        color: #c51d1a;
+        background-color: #fbe9e8;
+      }
+      .completed {
+        color: #333;
+        background-color: #eee;
       }
       .btns {
         gap: 10px;
         margin-top: 20px;
         @include flex(row, flex-end, flex-end);
+      }
+
+      @include mobile {
+        .body {
+          margin: 0 20px;
+        }
+        .detail {
+          @include flex(column, flex-start, flex-start);
+          gap: 10px;
+        }
+        .fields-wrapper {
+          flex-basis: 100px;
+
+          & > div .field {
+            flex-basis: 130px;
+          }
+        }
+      }
+
+      @include tablet {
+        .body {
+          margin: 0 50px;
+        }
+        .detail {
+          @include flex(row, flex-start, flex-start);
+          gap: 30px;
+        }
+        .fields-wrapper {
+          flex-basis: 360px;
+
+          & > div .field {
+            flex-basis: 160px;
+          }
+        }
       }
 
       @include desktop {
@@ -95,66 +108,91 @@ import { IRestaurant } from 'src/app/types/restaurant.type';
     `,
   ],
   template: `
-    <img [src]="restaurant.mainImage.url" [alt]="restaurant.mainImage.name" />
+    <!-- <img [src]="restaurant.mainImage.url" [alt]="restaurant.mainImage.name" /> -->
+    <img src="../../../assets/backgrounds/reservation.png" alt="reservation-bg" />
     <div class="body">
-      <div class="restaurant-name">
-        <h2>{{ restaurant.name }}</h2>
-        <p *ngIf="!isOwner" [routerLink]="'/restaurant/' + restaurant.id">
-          Restaurant detail <mat-icon>keyboard_arrow_right</mat-icon>
-        </p>
-      </div>
-      <mat-divider style="margin-top: 10px; margin-bottom: 20px;" />
-      <div class="sub-text-wrapper">
-        <p class="sub-text">Restaurant will respond to you soon ❤</p>
-      </div>
-      <div class="detail">
-        <div class="reservation">
-          <div class="field">
-            <p>Status</p>
-            <p>Number of diners</p>
-            <p>Date</p>
-            <p>Time</p>
-            <p>Address</p>
+      <span *ngIf="reservation">
+        <div>
+          <h2 [style]="{ fontWeight: 'bold' }">{{ reservation.restaurant.name }}</h2>
+          <p
+            [routerLink]="'/restaurant/' + reservation.restaurant.id"
+            [style]="{
+              display: 'flex',
+              gap: '4px',
+              color: 'blue',
+              cursor: 'pointer',
+              marginTop: '6px'
+            }"
+          >
+            <ng-icon name="matOpenInNewOutline" /> View restaurant
+          </p>
+        </div>
+        <mat-divider style="margin-top: 10px; margin-bottom: 20px;" />
+        <div class="detail">
+          <div class="fields-wrapper">
+            <div>
+              <p class="field">Status</p>
+              <p [class]="'value ' + reservation.status" style="font-weight: bold;">
+                {{ reservation.status }}
+              </p>
+            </div>
+            <div>
+              <p class="field">Number of diners</p>
+              <p class="value">{{ reservation.size }}</p>
+            </div>
+            <div>
+              <p class="field">Date</p>
+              <p class="value">{{ reservation.date | date : 'dd/MM/YYYY' }}</p>
+            </div>
+            <div>
+              <p class="field">Time</p>
+              <p class="value">{{ reservation.time | time }}</p>
+            </div>
+            <div>
+              <p class="field">Address</p>
+              <p class="value">
+                {{
+                  reservation.restaurant.address.detail +
+                    ', ' +
+                    reservation.restaurant.address.province +
+                    ', ' +
+                    reservation.restaurant.address.country
+                }}
+              </p>
+            </div>
           </div>
-          <div class="value">
-            <p class="responding" style="font-weight: bold;">Responding</p>
-            <p>2</p>
-            <p>August, 26th 2002</p>
-            <p>19:00</p>
-            <p>
-              {{
-                restaurant.address.detail +
-                  ', ' +
-                  restaurant.address.province +
-                  ', ' +
-                  restaurant.address.country
-              }}
-            </p>
+          <div class="fields-wrapper">
+            <div>
+              <p class="field">First name</p>
+              <p class="value">{{ reservation.diner.firstName }}</p>
+            </div>
+            <div>
+              <p class="field">Last name</p>
+              <p class="value">{{ reservation.diner.lastName }}</p>
+            </div>
+            <div>
+              <p class="field">Email</p>
+              <p class="value">{{ reservation.diner.email }}</p>
+            </div>
           </div>
         </div>
-        <div class="user">
-          <div class="field">
-            <p>First name</p>
-            <p>Last name</p>
-            <p>Email</p>
-          </div>
-          <div class="value">
-            <p>Phat</p>
-            <p>Nguyen</p>
-            <p>phatnguyen&#64;gmail.com</p>
-          </div>
-        </div>
-      </div>
 
-      <div class="btns">
-        <button mat-raised-button (click)="openEditDialog()">Edit</button>
-        <button mat-raised-button color="warn" (click)="openCancelDialog()">Cancel</button>
-      </div>
+        <div class="btns">
+          <button mat-raised-button (click)="openEditDialog()">Edit</button>
+          <button mat-raised-button color="warn" (click)="openCancelDialog()">Cancel</button>
+        </div>
+      </span>
+
+      <mat-spinner *ngIf="!reservation" />
     </div>
   `,
 })
-export class ReservationComponent {
-  constructor(public dialog: MatDialog) {}
+export class ReservationComponent implements OnInit {
+  constructor(
+    public dialog: MatDialog,
+    private route: ActivatedRoute,
+    private restaurantSv: RestaurantService,
+  ) {}
 
   isOwner = false;
   restaurant: IRestaurant = {
@@ -217,6 +255,18 @@ export class ReservationComponent {
     ],
     rate: 4,
   };
+  reservation!: IReservation;
+
+  async ngOnInit() {
+    if (this.route.snapshot.paramMap.has('id')) {
+      const id = this.route.snapshot.paramMap.get('id');
+      if (id) {
+        const res = await this.restaurantSv.getReservationById(id);
+        console.log(res);
+        this.reservation = res;
+      }
+    }
+  }
 
   openCancelDialog(): void {
     this.dialog.open(CancelDialog, {
@@ -228,6 +278,7 @@ export class ReservationComponent {
     this.dialog.open(EditDialog, {
       enterAnimationDuration: '100ms',
       exitAnimationDuration: '100ms',
+      data: this.reservation,
     });
   }
 }
@@ -363,11 +414,15 @@ class CancelDialog {
   `,
 })
 class EditDialog {
-  constructor(public dialogRef: MatDialogRef<EditDialog>, private fb: FormBuilder) {}
+  constructor(
+    public dialogRef: MatDialogRef<EditDialog>,
+    private fb: FormBuilder,
+    @Inject(MAT_DIALOG_DATA) public data: IReservation,
+  ) {}
   form = this.fb.group({
-    size: [1],
-    time: [new Date()],
-    date: [new Date()],
+    size: [this.data.size],
+    time: [this.data.time],
+    date: [this.data.date],
   });
 
   handleClose() {

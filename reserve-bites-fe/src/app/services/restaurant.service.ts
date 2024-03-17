@@ -6,11 +6,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { AuthService } from './auth.service';
 import { SnackbarService } from './snackbar.service';
 import { findMaxPrice, findMinPrice } from '../utils/find';
-import {
-  IRestaurant,
-  IRestaurantCard,
-  IReview,
-} from '../types/restaurant.type';
+import { IReservation, IRestaurant, IRestaurantCard, IReview } from '../types/restaurant.type';
 import {
   IFormOwnerInformationType,
   IFormRestaurantInformationType,
@@ -32,16 +28,11 @@ export class RestaurantService {
     owner: IFormOwnerInformationType;
     restaurant: IFormRestaurantInformationType;
   }) {
-    this.http
-      .post(this.SERVER_URL + '/restaurant/register', payload)
-      .subscribe((response) => {
-        console.log(response);
-        this._snackbar.open(
-          'success',
-          'You have register restaurant successfully',
-        );
-        this.router.navigateByUrl('/');
-      });
+    this.http.post(this.SERVER_URL + '/restaurant/register', payload).subscribe((response) => {
+      console.log(response);
+      this._snackbar.open('success', 'You have register restaurant successfully');
+      this.router.navigateByUrl('/');
+    });
   }
 
   getRestaurant(id: string) {
@@ -89,9 +80,7 @@ export class RestaurantService {
   async getSuggestRestaurants() {
     try {
       const restaurants = await lastValueFrom(
-        this.http.get<IRestaurant[]>(
-          this.SERVER_URL + '/restaurant/suggest-for-user',
-        ),
+        this.http.get<IRestaurant[]>(this.SERVER_URL + '/restaurant/suggest-for-user'),
       );
 
       const formatedRestaurants = restaurants.map((restaurant: IRestaurant) => {
@@ -208,5 +197,12 @@ export class RestaurantService {
     } catch (error: any) {
       return { page, totalItems: 0, itemsList: [], error: error?.message };
     }
+  }
+
+  async getReservationById(id: string) {
+    const res = await lastValueFrom(
+      this.http.get<IReservation>(this.SERVER_URL + `/restaurant/reservation/${id}`),
+    );
+    return res;
   }
 }

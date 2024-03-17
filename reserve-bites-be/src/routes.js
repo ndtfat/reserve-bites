@@ -55,6 +55,7 @@ function routes(app) {
   );
   app.get('/restaurant/local', verifyAccessToken, restaurantController.geLocalRestaurants);
   app.get('/restaurant/search', restaurantController.search);
+  app.get('/restaurant/reservation/:id', verifyAccessToken, restaurantController.getReservation);
   app.get('/restaurant/:id/reviews', paginator, restaurantController.getReviews);
   app.get(
     '/restaurant/:id/reservations',

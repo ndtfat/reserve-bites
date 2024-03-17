@@ -111,6 +111,7 @@ export enum ReservationStatus {
 
 export type IReservation = {
   id: string;
+  restaurant: IRestaurant;
   diner: IUser;
   size: number;
   time: Date;
