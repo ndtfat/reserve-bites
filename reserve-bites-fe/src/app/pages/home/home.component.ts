@@ -13,15 +13,7 @@ import { AuthService } from 'src/app/services/auth.service';
       @import '../../scss/common.scss';
       @import '../../scss/variables.scss';
       @import '../../scss/responsive.scss';
-      @keyframes go {
-        0%,
-        100% {
-          transform: translateX(0);
-        }
-        50% {
-          transform: translateX(10px);
-        }
-      }
+
       h3 {
         font-weight: 600;
         margin-bottom: 10px;
@@ -31,9 +23,9 @@ import { AuthService } from 'src/app/services/auth.service';
         height: 412px;
 
         .search-bg {
+          width: 100vw;
           height: 100%;
-          background: url('../../../assets/backgrounds/search-2.jpeg') no-repeat
-            0% 60%;
+          background: url('../../../assets/backgrounds/search-2.jpeg') no-repeat 0% 60%;
           background-size: cover;
           background-position: right 40%;
           // filter: blur(2px);
@@ -64,21 +56,7 @@ import { AuthService } from 'src/app/services/auth.service';
         }
       }
       .body {
-        margin: 0 30px;
-        padding: 30px 0;
-        .sub-title {
-          font-weight: 600;
-          text-decoration: underline;
-          margin-bottom: 20px;
-          @include cursor;
-          @include flex(row, center, flex-start);
-          &:hover {
-            color: $primary;
-          }
-          &:hover .icon {
-            animation: go 0.8s ease-in-out infinite;
-          }
-        }
+        padding: 30px;
         .card-wrapper {
           width: 100%;
           display: grid;
@@ -198,16 +176,12 @@ import { AuthService } from 'src/app/services/auth.service';
     <div class="search">
       <div class="search-bg"></div>
       <div class="search-body">
-        <h1 class="search-slogan">
-          Reserve your bites at the best restaurants
-        </h1>
+        <h1 class="search-slogan">Reserve your bites at the best restaurants</h1>
         <div class="form">
           <form>
             <mat-form-field class="form-field-size">
               <mat-label>Size</mat-label>
-              <input matInput type="number" /><mat-hint style="display: none;"
-                >asdas</mat-hint
-              >
+              <input matInput type="number" /><mat-hint style="display: none;">asdas</mat-hint>
             </mat-form-field>
 
             <app-select
@@ -216,12 +190,7 @@ import { AuthService } from 'src/app/services/auth.service';
               appearance="fill"
               [options]="dayOptions"
             />
-            <button
-              class="form-button"
-              mat-raised-button
-              color="primary"
-              style="height: 56px;"
-            >
+            <button class="form-button" mat-raised-button color="primary" style="height: 56px;">
               Find a table
             </button>
           </form>
@@ -312,22 +281,14 @@ export class HomeComponent implements OnInit {
   topRateRestaurants!: IRestaurantCard[];
   suggestRestaurants!: IRestaurantCard[];
 
-  dayOptions = [
-    'Monday',
-    'Tuesday',
-    'Wendsday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday',
-  ].map((day) => {
-    return { value: day.substring(0, 3), content: day };
-  });
+  dayOptions = ['Monday', 'Tuesday', 'Wendsday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(
+    (day) => {
+      return { value: day.substring(0, 3), content: day };
+    },
+  );
 
   async ngOnInit() {
-    this.auth.isAuthenticated.subscribe(
-      (value) => (this.isAuthenicated = value),
-    );
+    this.auth.isAuthenticated.subscribe((value) => (this.isAuthenicated = value));
 
     const [topRateRes, suggestRes, localRes] = await Promise.all([
       this.restaurntSv.getTopRateRestaurants(),
@@ -337,18 +298,15 @@ export class HomeComponent implements OnInit {
 
     // console.log({ topRateRes, suggestRes, localRes });
 
-    const { itemsList: topRateRestaurants, error: topRateRestaurantsError } =
-      topRateRes;
+    const { itemsList: topRateRestaurants, error: topRateRestaurantsError } = topRateRes;
     this.topRateRestaurants = topRateRestaurants;
     this.errorTopRateRestaurants = topRateRestaurantsError || '';
 
-    const { itemsList: suggestRestaurants, error: suggestRestaurantsError } =
-      suggestRes;
+    const { itemsList: suggestRestaurants, error: suggestRestaurantsError } = suggestRes;
     this.suggestRestaurants = suggestRestaurants;
     this.errorSuggestRestaurants = suggestRestaurantsError || '';
 
-    const { itemsList: localRestaurants, error: localRestaurantsError } =
-      localRes;
+    const { itemsList: localRestaurants, error: localRestaurantsError } = localRes;
     this.localRestaurants = localRestaurants;
     this.errorLocalRestaurants = localRestaurantsError || '';
   }

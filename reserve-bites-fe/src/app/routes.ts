@@ -37,6 +37,7 @@ const routes: Routes = [
       { path: 'reset-password', component: ResetPasswordPage },
     ],
   },
+  { path: 'restaurant-register', component: RestaurantRegisterComponent },
   {
     path: '',
     component: HeaderLayout,
@@ -44,7 +45,6 @@ const routes: Routes = [
     children: [
       { path: '', pathMatch: 'full', canActivate: [DinerGuard], component: HomePage },
 
-      { path: 'restaurant-register', component: RestaurantRegisterComponent },
       {
         path: 'account',
         canActivate: [AuthGuard],

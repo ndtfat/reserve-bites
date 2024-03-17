@@ -45,6 +45,16 @@ import { MatChipInputEvent } from '@angular/material/chips';
         justify-content: center;
       }
 
+      @include mobile {
+        form {
+          padding: 40px 20px;
+        }
+
+        .field-name {
+          flex-direction: column;
+          gap: 0;
+        }
+      }
       @include tablet {
         form {
           padding: 25px;
@@ -53,17 +63,6 @@ import { MatChipInputEvent } from '@angular/material/chips';
         .field-name {
           flex-direction: row;
           gap: 10px;
-        }
-      }
-
-      @include mobile {
-        form {
-          padding: 60px 20px;
-        }
-
-        .field-name {
-          flex-direction: column;
-          gap: 0;
         }
       }
     `,
@@ -135,10 +134,7 @@ import { MatChipInputEvent } from '@angular/material/chips';
             <mat-form-field style="width: 100%;">
               <mat-label>Favorite Cuisines</mat-label>
               <mat-chip-grid #chipGrid>
-                <mat-chip-row
-                  *ngFor="let cuisine of cuisines"
-                  (click)="removeCuisine(cuisine)"
-                >
+                <mat-chip-row *ngFor="let cuisine of cuisines" (click)="removeCuisine(cuisine)">
                   {{ cuisine }}
                 </mat-chip-row>
               </mat-chip-grid>
@@ -161,15 +157,8 @@ import { MatChipInputEvent } from '@angular/material/chips';
           </div>
 
           <div style="display: flex; gap: 10px">
-            <button type="button" mat-button (click)="handleBack()">
-              Back
-            </button>
-            <button
-              mat-raised-button
-              color="primary"
-              [disabled]="loading"
-              (click)="handleSubmit()"
-            >
+            <button type="button" mat-button (click)="handleBack()">Back</button>
+            <button mat-raised-button color="primary" [disabled]="loading" (click)="handleSubmit()">
               <mat-spinner *ngIf="loading" [diameter]="30" />
               <span *ngIf="!loading">Create account</span>
             </button>
@@ -204,9 +193,7 @@ export class SignUpComponent {
       validators: [
         Validators.required,
         Validators.minLength(8),
-        Validators.pattern(
-          /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*#?&^_-]).{8,}/,
-        ),
+        Validators.pattern(/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*#?&^_-]).{8,}/),
       ],
     }),
   });
@@ -251,14 +238,7 @@ export class SignUpComponent {
       const { firstName, lastName, email, password, address } = this.form.value;
 
       if (this.form.valid) {
-        await this.auth.signUp(
-          firstName,
-          lastName,
-          email,
-          password,
-          address,
-          this.cuisines,
-        );
+        await this.auth.signUp(firstName, lastName, email, password, address, this.cuisines);
       }
     } catch (error: any) {
       this.alertMessage = error.error.message;

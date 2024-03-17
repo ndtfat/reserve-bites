@@ -2,10 +2,7 @@ import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ImageService } from 'src/app/services/image.service';
-import {
-  IFormRestaurantInformationType,
-  IRestaurant,
-} from 'src/app/types/restaurant.type';
+import { IFormRestaurantInformationType, IRestaurant } from 'src/app/types/restaurant.type';
 
 @Component({
   selector: 'form-restaurant-information',
@@ -127,9 +124,7 @@ import {
       <!-- Menu -->
       <h4>
         Menu
-        <span style="color:red; font-weight: lighter;">
-          (Must have at least 1 category)
-        </span>
+        <span style="color:red; font-weight: lighter;"> (Must have at least 1 category) </span>
       </h4>
       <div formArrayName="menu" class="menu">
         <div *ngFor="let cat of getMenuFormGroups(); let catId = index">
@@ -146,13 +141,7 @@ import {
               formArrayName="dishes"
               style="flex: 1; display: flex; flex-direction: column; align-items: flex-end;margin-bottom: 20px"
             >
-              <div
-                *ngFor="
-                  let dish of getDishesFormGroups(cat);
-                  let dishId = index
-                "
-                class="dish"
-              >
+              <div *ngFor="let dish of getDishesFormGroups(cat); let dishId = index" class="dish">
                 <form-input
                   [formGroup]="dish"
                   name="name"
@@ -174,7 +163,7 @@ import {
                   style="width: 50px;"
                   (click)="handleRemoveDish(catId, dishId)"
                 >
-                  <mat-icon>close</mat-icon>
+                  <ng-icon name="matCloseOutline" />
                 </button>
               </div>
               <button
@@ -244,9 +233,7 @@ import {
       <!-- Main image -->
       <h4>
         Main image
-        <span style="color:red; font-weight: normal;"
-          >(Restaurant must have main image)</span
-        >
+        <span style="color:red; font-weight: normal;">(Restaurant must have main image)</span>
       </h4>
       <upload-image
         *ngIf="!form.get('mainImage')?.value"
@@ -264,10 +251,7 @@ import {
       <h4>Gallery</h4>
       <upload-image multiple (onUploadFiles)="handleUploadGallery($event)" />
       <div style="margin-top: 20px;"></div>
-      <div
-        *ngFor="let item of form.get('gallery')?.value"
-        style="margin-bottom: 16px;"
-      >
+      <div *ngFor="let item of form.get('gallery')?.value" style="margin-bottom: 16px;">
         <image-status
           [error]="item?.error"
           [file]="item.file"
@@ -278,12 +262,7 @@ import {
 
       <!-- Buttons -->
       <div class="button-wrapper">
-        <button
-          *ngIf="backButton"
-          type="button"
-          mat-raised-button
-          (click)="back.emit()"
-        >
+        <button *ngIf="backButton" type="button" mat-raised-button (click)="back.emit()">
           Back
         </button>
         <button
@@ -310,17 +289,11 @@ export class FormRestaurantInformationComponent implements OnInit {
   >();
 
   deletedImageIds: string[] = [];
-  dayOptions = [
-    'Monday',
-    'Tuesday',
-    'Wendsday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday',
-  ].map((day) => {
-    return { value: day.substring(0, 3), content: day };
-  });
+  dayOptions = ['Monday', 'Tuesday', 'Wendsday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(
+    (day) => {
+      return { value: day.substring(0, 3), content: day };
+    },
+  );
 
   addressGroup: FormGroup = this.fb.group({
     country: ['', Validators.required],
@@ -498,8 +471,7 @@ export class FormRestaurantInformationComponent implements OnInit {
                 gallery.setValue(
                   gallery.value.map((el: any) => {
                     if (el.file.name === item.file.name && event.total) {
-                      el.progress =
-                        Math.round((event.loaded / event.total) * 100) - 10;
+                      el.progress = Math.round((event.loaded / event.total) * 100) - 10;
                     }
                     return { ...el };
                   }),
@@ -558,9 +530,7 @@ export class FormRestaurantInformationComponent implements OnInit {
       }
       this.submit.emit({
         ...(values as IFormRestaurantInformationType),
-        ...(this.restaurantInfo
-          ? { deletedImageIds: this.deletedImageIds }
-          : {}),
+        ...(this.restaurantInfo ? { deletedImageIds: this.deletedImageIds } : {}),
       });
     }
   }

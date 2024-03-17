@@ -21,7 +21,7 @@ import { NotificationType } from 'src/app/types/notification';
       @import '../../scss/variables.scss';
       @import '../../scss/responsive.scss';
       img {
-        @include img-fit(100%, 300px);
+        @include img-fit(100vw, 300px);
       }
       .body {
         @include flex(row, flex-start, flex-start);

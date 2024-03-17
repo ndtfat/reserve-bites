@@ -15,15 +15,15 @@ import {
       @import '../../scss/responsive.scss';
 
       .wrapper {
-        margin: 50px;
-        padding: 20px;
+        padding: 30px 20px 0;
         border-radius: 4px;
         @include shadow;
+        background: #fff;
+        width: min(1000px, 70vw);
 
         .logo {
-          display: block;
-          margin: 0 auto;
-          width: 50px;
+          display: flex;
+          justify-content: center;
         }
 
         h1 {
@@ -35,20 +35,20 @@ import {
 
       @include desktop {
         .wrapper {
-          max-width: $body-width;
-          margin: 50px auto;
+          margin: 30px auto 0;
+        }
+      }
+
+      @include mobile {
+        .wrapper {
+          margin: 30px auto;
         }
       }
     `,
   ],
   template: `
     <div class="wrapper">
-      <img
-        routerLink="/"
-        class="logo"
-        src="../../../assets/logos/logo--black.svg"
-        alt="logo"
-      />
+      <logo class="logo" [text]="true" width="140px" />
       <h1>Restaurant Register</h1>
       <mat-stepper linear [selectedIndex]="step">
         <mat-step>
@@ -84,9 +84,7 @@ export class RestaurantRegisterComponent {
   ownerInformation: IFormOwnerInformationType | undefined;
   restaurantInformation: IFormRestaurantInformationType | undefined;
 
-  handleNextStep(
-    data?: IFormOwnerInformationType | IFormRestaurantInformationType,
-  ) {
+  handleNextStep(data?: IFormOwnerInformationType | IFormRestaurantInformationType) {
     switch (this.step) {
       case 0:
         this.ownerInformation = data as IFormOwnerInformationType;

@@ -6,20 +6,14 @@ import { AuthService } from 'src/app/services/auth.service';
   styles: [],
   template: `
     <button mat-icon-button [matMenuTriggerFor]="menu">
-      <mat-icon style="font-size: 30px; width: 30px; height: 30px;"
-        >account_circle
-      </mat-icon>
+      <ng-icon size="1.8rem" name="matAccountCircleOutline" />
     </button>
     <mat-menu #menu="matMenu" xPosition="before">
       <span *ngIf="isAuthenticated">
         <button mat-menu-item routerLink="/account/me">
           <span>My Account</span>
         </button>
-        <button
-          mat-menu-item
-          style="border-top: 1px solid #ccc;"
-          (click)="signOut()"
-        >
+        <button mat-menu-item style="border-top: 1px solid #ccc;" (click)="signOut()">
           <span>Sign out</span>
         </button>
       </span>

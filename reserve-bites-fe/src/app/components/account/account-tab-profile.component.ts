@@ -18,6 +18,11 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
     `
       @import '../../scss/common.scss';
       @import '../../scss/variables.scss';
+      .menu-button {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
       .wrapper {
         margin: 20px 0;
         background: #fff;
@@ -59,11 +64,7 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
       <div class="oserview">
         <div class="greeting">
           <div style="display: flex; align-items: center;">
-            <ng-icon
-              name="heroUserCircleSolid"
-              class="avatar-icon"
-              size="100"
-            />
+            <ng-icon name="heroUserCircleSolid" class="avatar-icon" size="100" />
             <span>
               <h1>Hi, {{ user.firstName + ' ' + user.lastName }}</h1>
               <p [style.color]="'green'">
@@ -73,16 +74,20 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
             </span>
           </div>
           <button mat-icon-button [matMenuTriggerFor]="menu">
-            <mat-icon>settings</mat-icon>
+            <ng-icon name="ionSettingsOutline" />
           </button>
           <mat-menu #menu="matMenu" xPosition="before">
             <button mat-menu-item (click)="handleToogleForm('editProfile')">
-              <mat-icon>border_color</mat-icon>
-              <span>Edit Profile</span>
+              <div class="menu-button">
+                <ng-icon name="matModeEditOutline" size="1.4rem" />
+                <span>Edit Profile</span>
+              </div>
             </button>
             <button mat-menu-item (click)="handleToogleForm('changePassword')">
-              <mat-icon>lock</mat-icon>
-              <span>Change Password</span>
+              <div class="menu-button">
+                <ng-icon name="ionLockClosedOutline" size="1.4rem" />
+                <span>Change Password</span>
+              </div>
             </button>
           </mat-menu>
         </div>
@@ -122,12 +127,7 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
         />
 
         <div style="display: flex; justify-content: flex-end;">
-          <button
-            mat-raised-button
-            color="main"
-            type="submit"
-            [disabled]="loading"
-          >
+          <button mat-raised-button color="main" type="submit" [disabled]="loading">
             <mat-spinner *ngIf="loading" [diameter]="30" />
             <span *ngIf="!loading">Save change</span>
           </button>
@@ -154,9 +154,7 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
           [errors]="changePasswordForm.controls['oldPassword'].errors"
           type="password"
           [icon]="oldPassword.type === 'text' ? 'visibility_off' : 'visibility'"
-          (onClickIcon)="
-            oldPassword.type = oldPassword.type === 'text' ? 'password' : 'text'
-          "
+          (onClickIcon)="oldPassword.type = oldPassword.type === 'text' ? 'password' : 'text'"
         />
         <form-input
           #newPassword
@@ -166,9 +164,7 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
           [errors]="changePasswordForm.controls['newPassword'].errors"
           type="password"
           [icon]="newPassword.type === 'text' ? 'visibility_off' : 'visibility'"
-          (onClickIcon)="
-            newPassword.type = newPassword.type === 'text' ? 'password' : 'text'
-          "
+          (onClickIcon)="newPassword.type = newPassword.type === 'text' ? 'password' : 'text'"
         />
         <form-input
           #confirmPassword
@@ -177,22 +173,14 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
           label="Confirm password"
           [errors]="changePasswordForm.controls['confirmPassword'].errors"
           type="password"
-          [icon]="
-            confirmPassword.type === 'text' ? 'visibility_off' : 'visibility'
-          "
+          [icon]="confirmPassword.type === 'text' ? 'visibility_off' : 'visibility'"
           (onClickIcon)="
-            confirmPassword.type =
-              confirmPassword.type === 'text' ? 'password' : 'text'
+            confirmPassword.type = confirmPassword.type === 'text' ? 'password' : 'text'
           "
         />
 
         <div style="display: flex; justify-content: flex-end;">
-          <button
-            mat-raised-button
-            color="main"
-            type="submit"
-            [disabled]="loading"
-          >
+          <button mat-raised-button color="main" type="submit" [disabled]="loading">
             <mat-spinner *ngIf="loading" [diameter]="30" />
             <span *ngIf="!loading">Save change</span>
           </button>
@@ -224,9 +212,7 @@ export class AccountTabProfileComponent implements OnInit {
           validators: [
             Validators.required,
             Validators.minLength(8),
-            Validators.pattern(
-              /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*#?&^_-]).{8,}/,
-            ),
+            Validators.pattern(/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*#?&^_-]).{8,}/),
           ],
         }),
         confirmPassword: new FormControl('', {
@@ -237,9 +223,7 @@ export class AccountTabProfileComponent implements OnInit {
     );
   }
 
-  checkPasswords: ValidatorFn = (
-    group: AbstractControl,
-  ): ValidationErrors | null => {
+  checkPasswords: ValidatorFn = (group: AbstractControl): ValidationErrors | null => {
     let pass = group.get('newPassword');
     let confirmPass = group.get('confirmPassword');
 
@@ -276,9 +260,7 @@ export class AccountTabProfileComponent implements OnInit {
     try {
       this.editProfileForm.markAllAsTouched();
       if (this.editProfileForm.valid) {
-        const newInfo = await this.userSv.editProfile(
-          this.editProfileForm.value,
-        );
+        const newInfo = await this.userSv.editProfile(this.editProfileForm.value);
 
         this.editProfileForm.setValue({
           firstName: newInfo.firstName,
@@ -301,10 +283,7 @@ export class AccountTabProfileComponent implements OnInit {
 
       if (this.changePasswordForm.valid) {
         const { oldPassword, newPassword } = this.changePasswordForm.value;
-        await this.userSv.changePassword(
-          oldPassword as string,
-          newPassword as string,
-        );
+        await this.userSv.changePassword(oldPassword as string, newPassword as string);
 
         this.changePasswordForm.setValue({
           oldPassword: '',

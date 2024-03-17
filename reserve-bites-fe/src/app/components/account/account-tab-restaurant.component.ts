@@ -14,6 +14,11 @@ import { RestaurantService } from 'src/app/services/restaurant.service';
         margin: 20px 0;
         background: #fff;
       }
+      .edit-button {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
       .row {
         @include flex(row, flex-start, space-between);
         margin: 0 0 16px;
@@ -75,8 +80,10 @@ import { RestaurantService } from 'src/app/services/restaurant.service';
         </div>
 
         <button mat-raised-button [color]="editting ? 'warn' : ''" (click)="editting = !editting">
-          <span>{{ editting ? 'Cancel' : 'Edit' }}</span>
-          <mat-icon>{{ editting ? 'close' : 'border_color' }}</mat-icon>
+          <div class="edit-button">
+            <ng-icon [name]="editting ? 'matCloseOutline' : 'matModeEditOutline'" size="1.4rem" />
+            <span>{{ editting ? 'Cancel' : 'Edit' }}</span>
+          </div>
         </button>
       </div>
 

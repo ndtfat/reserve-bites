@@ -46,13 +46,12 @@ import { notificationIcon, notificationMessage } from 'src/app/utils/notificatio
   ],
   template: `
     <button mat-icon-button [matMenuTriggerFor]="menu" (click)="unReadNotif = 0">
-      <mat-icon
-        style="font-size: 30px; width: 30px; height: 30px;"
+      <ng-icon
+        size="1.8rem"
+        name="matNotificationsNoneOutline"
         matBadgeColor="warn"
         [matBadge]="unReadNotif > 0 ? unReadNotif : null"
-      >
-        notifications
-      </mat-icon>
+      />
     </button>
     <mat-menu #menu="matMenu" xPosition="before">
       <div style="max-height: calc(57.2px * 6); overflow-y: auto">
@@ -72,7 +71,7 @@ import { notificationIcon, notificationMessage } from 'src/app/utils/notificatio
         </button>
       </div>
 
-      <button mat-menu-item routerLink="/notification">
+      <button mat-menu-item [routerLink]="notificationList.length > 0 ? '/notification' : null">
         <div style="text-align: center;">
           {{ notificationList.length === 0 ? 'Your have no notifications' : 'Show all' }}
         </div>

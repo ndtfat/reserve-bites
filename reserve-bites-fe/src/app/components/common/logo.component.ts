@@ -32,8 +32,8 @@ export class LogoComponent implements OnChanges {
       noText: '../../assets/logos/book-a-bite--white.png',
     },
     black: {
-      text: '../../assets/logos/book-a-bite--black.png',
-      noText: '../../assets/logos/book-a-bite--black.png',
+      text: '../../assets/logos/book-a-bite--white.png',
+      noText: '../../assets/logos/book-a-bite--white.png',
     },
   };
 

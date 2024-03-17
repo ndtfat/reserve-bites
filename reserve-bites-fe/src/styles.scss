@@ -74,6 +74,13 @@ ul {
   padding: 20px !important;
 }
 
+.mat-mdc-icon-button {
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
 .mdc-button.mdc-button--raised.mat-mdc-raised-button.mat-main {
   background-color: $primary;
   color: #fff;

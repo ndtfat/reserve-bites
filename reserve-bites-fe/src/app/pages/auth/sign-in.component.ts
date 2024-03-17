@@ -7,44 +7,33 @@ import { AuthService } from 'src/app/services/auth.service';
   styles: [
     `
       @import '../../scss/responsive.scss';
+
       form {
-        padding: 60px 46px;
         background: #fff;
         width: 100%;
         border-radius: 4px;
       }
-
       button {
         width: 100%;
       }
-
       .title {
         font-size: 48px;
         margin-bottom: 16px;
       }
-
       .alert {
         display: block;
         margin-bottom: 20px;
         padding: 0;
       }
-
-      // @include desktop {
-      //   form {
-      //     width: 500px;
-      //   }
-      // }
-
-      // @include tablet {
-      //   form {
-      //     width: 550px;
-      //   }
-      // }
-
       @include mobile {
         form {
           // width: 100%;
-          padding: 60px 20px;
+          padding: 40px 20px;
+        }
+      }
+      @include tablet {
+        form {
+          padding: 40px 30px;
         }
       }
     `,
@@ -79,9 +68,7 @@ import { AuthService } from 'src/app/services/auth.service';
         [errors]="form.controls['password'].errors"
       />
 
-      <a
-        style="margin: 10px 0 20px; float: right"
-        [routerLink]="'/auth/reset-password'"
+      <a style="margin: 10px 0 20px; float: right" [routerLink]="'/auth/reset-password'"
         >Forgot password?
       </a>
 

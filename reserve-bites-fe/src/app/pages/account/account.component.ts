@@ -10,29 +10,25 @@ import { IUser } from 'src/app/types/auth.type';
       @import '../../scss/variables.scss';
       @import '../../scss/responsive.scss';
       .wrapper {
-        margin: 0 50px;
+        width: min($body-width, 80vw);
       }
       @include tablet {
         .wrapper {
-          max-width: $body-width;
-          margin: 0 auto;
+          // max-width: $body-width;
         }
       }
     `,
   ],
   template: `
     <div *ngIf="user" class="wrapper">
-      <mat-tab-group>
+      <mat-tab-group [style]="{ width: '100%' }">
         <mat-tab label="My Profile">
           <account-tab-profile *ngIf="user" [user]="user" />
         </mat-tab>
         <mat-tab *ngIf="user.isOwner" label="My Restaurant">
           <account-tab-restaurant />
         </mat-tab>
-        <mat-tab
-          *ngIf="user"
-          [label]="user.isOwner ? 'Reservations Management' : 'Dining History'"
-        >
+        <mat-tab *ngIf="user" [label]="user.isOwner ? 'Reservations Management' : 'Dining History'">
           <account-tab-reservations-management />
         </mat-tab>
       </mat-tab-group>

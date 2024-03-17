@@ -23,15 +23,14 @@ import { Component } from '@angular/core';
       @include desktop {
       }
 
-      @include tablet {
-        .wrapper div {
-          width: 550px;
-        }
-      }
-
       @include mobile {
         .wrapper div {
           width: 100%;
+        }
+      }
+      @include tablet {
+        .wrapper div {
+          width: 550px;
         }
       }
     `,

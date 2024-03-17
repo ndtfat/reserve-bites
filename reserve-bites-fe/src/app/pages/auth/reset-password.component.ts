@@ -15,35 +15,31 @@ import { AuthService } from 'src/app/services/auth.service';
   styles: [
     `
       @import '../../scss/responsive.scss';
+
       form {
         width: 100%;
         background: #fff;
         border-radius: 4px;
       }
-
       .title {
         font-size: 48px;
         margin-bottom: 16px;
       }
 
-      @include tablet {
-        form {
-          padding: 52px 46px;
-        }
-      }
-
       @include mobile {
         form {
-          padding: 52px 20px;
+          padding: 40px 20px;
+        }
+      }
+      @include tablet {
+        form {
+          padding: 40px 30px;
         }
       }
     `,
   ],
   template: `
-    <form
-      [formGroup]="token ? resetPasswordForm : sendMailForm"
-      (ngSubmit)="onSubmit()"
-    >
+    <form [formGroup]="token ? resetPasswordForm : sendMailForm" (ngSubmit)="onSubmit()">
       <logo class="logo" [text]="true" width="140px" />
       <div style="margin-bottom: 10px;"></div>
 
@@ -64,8 +60,7 @@ import { AuthService } from 'src/app/services/auth.service';
       </p>
 
       <p *ngIf="token && resetSuccess" style="margin-bottom: 30px;">
-        Your password has been reset. Click sign in button to go to sign in
-        page!
+        Your password has been reset. Click sign in button to go to sign in page!
       </p>
 
       <div *ngIf="errorMessage" style="margin-bottom: 10px;">
@@ -92,9 +87,7 @@ import { AuthService } from 'src/app/services/auth.service';
         [errors]="resetPasswordForm.controls['password'].errors"
         type="password"
         [icon]="newPassword.type === 'text' ? 'visibility_off' : 'visibility'"
-        (onClickIcon)="
-          newPassword.type = newPassword.type === 'text' ? 'password' : 'text'
-        "
+        (onClickIcon)="newPassword.type = newPassword.type === 'text' ? 'password' : 'text'"
       />
       <form-input
         *ngIf="token && !resetSuccess"
@@ -104,13 +97,8 @@ import { AuthService } from 'src/app/services/auth.service';
         label="Confirm password"
         [errors]="resetPasswordForm.controls['confirmPassword'].errors"
         type="password"
-        [icon]="
-          confirmPassword.type === 'text' ? 'visibility_off' : 'visibility'
-        "
-        (onClickIcon)="
-          confirmPassword.type =
-            confirmPassword.type === 'text' ? 'password' : 'text'
-        "
+        [icon]="confirmPassword.type === 'text' ? 'visibility_off' : 'visibility'"
+        (onClickIcon)="confirmPassword.type = confirmPassword.type === 'text' ? 'password' : 'text'"
       />
 
       <button
@@ -130,15 +118,9 @@ import { AuthService } from 'src/app/services/auth.service';
   `,
 })
 export class ResetPasswordComponent implements OnInit {
-  constructor(
-    private auth: AuthService,
-    private route: ActivatedRoute,
-    private router: Router,
-  ) {}
+  constructor(private auth: AuthService, private route: ActivatedRoute, private router: Router) {}
 
-  checkPasswords: ValidatorFn = (
-    group: AbstractControl,
-  ): ValidationErrors | null => {
+  checkPasswords: ValidatorFn = (group: AbstractControl): ValidationErrors | null => {
     let pass = group.get('password');
     let confirmPass = group.get('confirmPassword');
 
@@ -165,9 +147,7 @@ export class ResetPasswordComponent implements OnInit {
       validators: [
         Validators.required,
         Validators.minLength(8),
-        Validators.pattern(
-          /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*#?&^_-]).{8,}/,
-        ),
+        Validators.pattern(/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*#?&^_-]).{8,}/),
       ],
     }),
     confirmPassword: new FormControl('', {

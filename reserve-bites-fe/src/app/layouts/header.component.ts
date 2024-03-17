@@ -15,8 +15,9 @@ import { AuthService } from '../services/auth.service';
         right: 0;
         @include flex(row, center, space-between);
         min-height: $header-height;
-        background: #000;
-        color: #fff;
+        color: #000;
+        background: #fff;
+        @include shadow;
         z-index: 999;
       }
       .buttons {
@@ -25,18 +26,17 @@ import { AuthService } from '../services/auth.service';
         button {
           @include flex(row, center, center);
         }
-        button:first-child {
-          color: white;
-          border-color: white;
-        }
-        .icon {
-          font-size: 26px;
-        }
       }
-      .content {
+      .outlet-wrapper {
         min-height: 100vh;
+        width: 100vw;
         background: #f5f6f8;
         margin-top: $header-height;
+        display: flex;
+        justify-content: center;
+        .outlet-content {
+          // width: min($body-width, 80vw);
+        }
       }
       .chat {
         position: fixed;
@@ -108,8 +108,7 @@ import { AuthService } from '../services/auth.service';
   ],
   template: `
     <div class="header">
-      <logo class="logo-no-text" [width]="60" color="white" />
-      <logo class="logo-with-text" [width]="180" color="white" [text]="true" />
+      <logo class="logo-with-text" [width]="200" color="white" [text]="true" />
       <div>
         <span *ngIf="isAuthenticated" class="buttons">
           <notification-drop-down />
@@ -117,30 +116,23 @@ import { AuthService } from '../services/auth.service';
         </span>
 
         <div *ngIf="!isAuthenticated" class="buttons">
-          <button mat-stroked-button routerLink="/auth/sign-in">
+          <button mat-raised-button routerLink="/auth/sign-in">
             <span>SIGN IN</span>
-            <ng-icon class="icon" name="ionLogInOutline" />
           </button>
-          <button mat-raised-button routerLink="/auth/sign-up">
+          <button mat-raised-button color="primary" routerLink="/auth/sign-up">
             <span>SIGN UP</span>
-            <ng-icon class="icon" name="ionLogOutOutline" />
           </button>
         </div>
       </div>
     </div>
-    <div class="content">
-      <router-outlet />
+    <div class="outlet-wrapper">
+      <div class="outlet-content">
+        <router-outlet />
+      </div>
     </div>
     <div class="chat" *ngIf="isAuthenticated">
-      <button
-        mat-icon-button
-        class="toggle-chat-btn"
-        (click)="openChatBox = !openChatBox"
-      >
-        <ng-icon
-          size="30"
-          [name]="openChatBox ? 'ionClose' : 'ionChatbubbleEllipsesOutline'"
-        />
+      <button mat-icon-button class="toggle-chat-btn" (click)="openChatBox = !openChatBox">
+        <ng-icon size="30" [name]="openChatBox ? 'ionClose' : 'ionChatbubbleEllipsesOutline'" />
       </button>
       <chat-box class="chat-box" [ngClass]="{ open: openChatBox }" />
     </div>
