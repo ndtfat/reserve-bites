@@ -129,9 +129,11 @@ enum Action {
               <button
                 mat-menu-item
                 [routerLink]="
-                  (notif.additionalInfo.rid ? '/restaurant/' : '/reservation/') +
-                  (notif.additionalInfo.rid || notif.additionalInfo.reservationId)
+                  notif.additionalInfo.rid
+                    ? '/restaurant/' + notif.additionalInfo.rid
+                    : '/reservation/' + notif.additionalInfo.reservationId
                 "
+                [queryParams]="notif.additionalInfo.rid ? { tab: 'reviews' } : {}"
               >
                 View
               </button>

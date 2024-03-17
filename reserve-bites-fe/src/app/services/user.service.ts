@@ -3,12 +3,13 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { lastValueFrom, map } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { IUser } from '../types/auth.type';
-import { INotification } from '../types/notification';
+import { IUser, UserType } from '../types/auth.type';
+import { INotification, NotificationType } from '../types/notification';
 import { IReview } from '../types/restaurant.type';
 import { notificationMessage } from '../utils/notification';
 import { AuthService } from './auth.service';
 import { SnackbarService } from './snackbar.service';
+import { SocketService } from './socket.service';
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +20,7 @@ export class UserService {
     private http: HttpClient,
     private auth: AuthService,
     private router: Router,
+    private socket: SocketService,
     private _snackbar: SnackbarService,
   ) {}
 
@@ -84,11 +86,24 @@ export class UserService {
   }
 
   async reserve(payload: { rid: string; dinerId: string; size: number; date: Date; time: Date }) {
-    const res = await lastValueFrom(
-      this.http.post<any>(this.SERVER_URL + '/user/reservation', payload),
-    );
-    this._snackbar.open('success', 'You have maked a reservation successfully');
-    this.router.navigateByUrl('/reservation/' + res?.reservationId);
+    try {
+      const res = await lastValueFrom(
+        this.http.post<{ reservationId: string }>(this.SERVER_URL + '/user/reservation', payload),
+      );
+
+      this.socket.sendNotification({
+        senderId: this.auth.user.value?.id as string,
+        receiver: {
+          type: UserType.OWNER,
+          rid: payload.rid,
+          reservationId: res.reservationId,
+        },
+        type: NotificationType.MAKE_RESERVATION,
+      });
+
+      this._snackbar.open('success', 'You have made a reservation successfully');
+      this.router.navigateByUrl('/reservation/' + res?.reservationId);
+    } catch (error) {}
   }
 
   async review(payload: {
@@ -99,20 +114,33 @@ export class UserService {
     ambiance: number;
     content: string;
   }) {
-    const response = await lastValueFrom(
-      this.http.post<IReview>(this.SERVER_URL + '/user/review', payload).pipe(
-        map((res) => {
-          res.overall = (res.ambiance + res.food + res.service) / 3;
-          return res;
-        }),
-      ),
-    );
-    this._snackbar.open('success', 'Your review has been posted successfully');
-    return response;
+    try {
+      const response = await lastValueFrom(
+        this.http.post<IReview>(this.SERVER_URL + '/user/review', payload).pipe(
+          map((res) => {
+            res.overall = (res.ambiance + res.food + res.service) / 3;
+            return res;
+          }),
+        ),
+      );
+      this.socket.sendNotification({
+        senderId: this.auth.user.value?.id as string,
+        receiver: {
+          type: UserType.OWNER,
+          rid: payload.rid,
+        },
+        type: NotificationType.POST_REVIEW,
+      });
+      this._snackbar.open('success', 'Your review has been posted successfully');
+      return response;
+    } catch (error) {
+      return null;
+    }
   }
 
   async updateReview(
     id: string,
+    rid: string,
     payload: {
       food: number;
       service: number;
@@ -120,22 +148,41 @@ export class UserService {
       content: string;
     },
   ) {
-    const response = await lastValueFrom(
-      this.http.put<IReview>(this.SERVER_URL + '/user/review/' + id, payload).pipe(
-        map((res) => {
-          res.overall = (res.ambiance + res.food + res.service) / 3;
-          return res;
-        }),
-      ),
-    );
-    this._snackbar.open('success', 'Your review has been updated successfully');
-    return response;
+    try {
+      const response = await lastValueFrom(
+        this.http.put<IReview>(this.SERVER_URL + '/user/review/' + id, payload).pipe(
+          map((res) => {
+            res.overall = (res.ambiance + res.food + res.service) / 3;
+            return res;
+          }),
+        ),
+      );
+      this.socket.sendNotification({
+        senderId: this.auth.user.value?.id as string,
+        receiver: {
+          type: UserType.OWNER,
+          rid: rid,
+        },
+        type: NotificationType.UPDATE_REVIEW,
+      });
+      this._snackbar.open('success', 'Your review has been updated successfully');
+      return response;
+    } catch (erorr) {
+      return null;
+    }
   }
 
-  async deleteReview(id: string) {
+  async deleteReview(uid: string, rid: string) {
     try {
-      await lastValueFrom(this.http.delete(this.SERVER_URL + '/user/review/' + id));
-
+      await lastValueFrom(this.http.delete(this.SERVER_URL + '/user/review/' + uid));
+      this.socket.sendNotification({
+        senderId: this.auth.user.value?.id as string,
+        receiver: {
+          type: UserType.OWNER,
+          rid: rid,
+        },
+        type: NotificationType.DELETE_REVIEW,
+      });
       this._snackbar.open('success', 'You have deleted your review successfully');
     } catch (error) {
       console.log(error);

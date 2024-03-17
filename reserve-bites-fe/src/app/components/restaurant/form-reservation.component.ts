@@ -35,7 +35,7 @@ import { IRestaurant } from 'src/app/types/restaurant.type';
     <form [formGroup]="form" (ngSubmit)="handleSubmitReservation()">
       <h5>Make a reservation</h5>
 
-      <alert *ngIf="alertMessage">{{ alertMessage }}</alert>
+      <alert type="error" *ngIf="alertMessage">{{ alertMessage }}</alert>
       <form-input
         [formGroup]="form"
         [label]="'Size - maximum ' + restaurant.maxReservationSize"

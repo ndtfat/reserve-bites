@@ -16,7 +16,7 @@ import { IRestaurant } from 'src/app/types/restaurant.type';
       @import '../../scss/variables.scss';
       @import '../../scss/responsive.scss';
       img {
-        @include img-fit(100%, 300px);
+        @include img-fit(100vw, 300px);
       }
       .body {
         @include shadow;
@@ -148,9 +148,7 @@ import { IRestaurant } from 'src/app/types/restaurant.type';
 
       <div class="btns">
         <button mat-raised-button (click)="openEditDialog()">Edit</button>
-        <button mat-raised-button color="warn" (click)="openCancelDialog()">
-          Cancel
-        </button>
+        <button mat-raised-button color="warn" (click)="openCancelDialog()">Cancel</button>
       </div>
     </div>
   `,
@@ -266,19 +264,12 @@ export class ReservationComponent {
       <p>Why you want to cancel this reservation?</p>
       <mat-form-field style="width: 100%;" appearance="outline">
         <mat-label>Message to restaurant</mat-label>
-        <textarea
-          #textarea
-          matInput
-          rows="3"
-          (input)="message = textarea.value"
-        ></textarea>
+        <textarea #textarea matInput rows="3" (input)="message = textarea.value"></textarea>
       </mat-form-field>
       <p style="color: red;">{{ errorMessage }}</p>
       <div class="btns">
         <button mat-raised-button (click)="handleClose()">Cancel</button>
-        <button mat-raised-button color="warn" (click)="handleSend()">
-          Send
-        </button>
+        <button mat-raised-button color="warn" (click)="handleSend()">Send</button>
       </div>
     </div>
   `,
@@ -366,18 +357,13 @@ class CancelDialog {
 
       <div class="btns">
         <button mat-raised-button (click)="handleClose()">Cancel</button>
-        <button mat-raised-button color="primary" (click)="handleEdit()">
-          Edit
-        </button>
+        <button mat-raised-button color="primary" (click)="handleEdit()">Edit</button>
       </div>
     </div>
   `,
 })
 class EditDialog {
-  constructor(
-    public dialogRef: MatDialogRef<EditDialog>,
-    private fb: FormBuilder,
-  ) {}
+  constructor(public dialogRef: MatDialogRef<EditDialog>, private fb: FormBuilder) {}
   form = this.fb.group({
     size: [1],
     time: [new Date()],

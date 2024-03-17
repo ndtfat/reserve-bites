@@ -15,7 +15,7 @@ const soketController = (io, socket) => {
   socket.on('send-notification', async (payload) => {
     const { senderId, receiver, type } = payload;
 
-    if (receiver.type === 'OWNER') {
+    if (receiver.rid) {
       const restaurant = await Restaurant.findById(receiver.rid);
       receiver.id = restaurant.toObject().ownerId;
     } else {
@@ -27,7 +27,9 @@ const soketController = (io, socket) => {
       receiverId: receiver.id,
       type,
       additionalInfo: {
-        ...(receiver.rid ? { rid: receiver.rid } : {}),
+        ...(receiver.reservationId
+          ? { reservationId: receiver.reservationId }
+          : { rid: receiver.rid }),
       },
     });
     await notification.save();

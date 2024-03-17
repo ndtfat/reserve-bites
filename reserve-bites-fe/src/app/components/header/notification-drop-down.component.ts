@@ -55,7 +55,17 @@ import { notificationIcon, notificationMessage } from 'src/app/utils/notificatio
     </button>
     <mat-menu #menu="matMenu" xPosition="before">
       <div style="max-height: calc(57.2px * 6); overflow-y: auto">
-        <button *ngFor="let n of notificationList" mat-menu-item class="notif-item">
+        <button
+          *ngFor="let n of notificationList"
+          mat-menu-item
+          class="notif-item"
+          [routerLink]="
+            n.additionalInfo.reservationId
+              ? '/reservation/' + n.additionalInfo.reservationId
+              : '/restaurant/' + n.additionalInfo.rid
+          "
+          [queryParams]="n.additionalInfo.reservationId ? null : { tab: 'reviews' }"
+        >
           <div class="body">
             <ng-icon [class]="'icon ' + n.type" [name]="notifIcon[n.type]" size="2.2rem" />
             <div style="flex: 1;">
