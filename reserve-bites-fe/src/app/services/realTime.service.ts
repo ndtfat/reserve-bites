@@ -58,7 +58,7 @@ export class RealTimeService {
           conversationId: m.conversationId,
           senderId: m.sender.id,
           content: m.message,
-          createdAt: m.createdAt,
+          createdAt: new Date(m.createdAt),
         });
       });
     });
