@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { SocketService } from './services/socket.service';
+import { RealTimeService } from './services/realTime.service';
 import { SnackbarService } from './services/snackbar.service';
 
 @Component({
@@ -10,10 +10,7 @@ import { SnackbarService } from './services/snackbar.service';
   `,
 })
 export class AppComponent {
-  constructor(
-    private socket: SocketService,
-    private _snackbar: SnackbarService,
-  ) {}
+  constructor(private socket: RealTimeService, private _snackbar: SnackbarService) {}
   // openSnackbar() {
   //   this._snackbar.open('success', 'Message of snackbar');
   // }

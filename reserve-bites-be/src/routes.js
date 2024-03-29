@@ -21,13 +21,16 @@ function routes(app) {
   app.post('/auth/reset-password/:uid/:token', authController.resetPassword);
 
   // USER --------------------------------------------------------------------------------------------
+  app.get('/user/chat-box', verifyAccessToken, userControler.getChatBoxes);
   app.get('/user/reservations', verifyAccessToken, paginator, userControler.getUserReservations);
   app.get('/user/notifications', verifyAccessToken, paginator, userControler.getNotifications);
   app.get('/user/:id', verifyAccessToken, userControler.getUser);
 
   app.post('/user/reservation', verifyAccessToken, userControler.postReservation);
+  app.post('/user/chat-box', verifyAccessToken, userControler.postChatBox);
   app.post('/user/review', verifyAccessToken, userControler.postReview);
 
+  app.put('/user/read-message', verifyAccessToken, userControler.putReadedMessageStatus);
   app.put('/user/edit', verifyAccessToken, userControler.putChangeInfo);
   app.put('/user/change-password', verifyAccessToken, userControler.putChangePassword);
   app.put('/user/review/:id', verifyAccessToken, userControler.updateReview);

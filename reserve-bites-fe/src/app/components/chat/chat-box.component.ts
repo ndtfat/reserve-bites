@@ -1,5 +1,8 @@
+import { AuthService } from './../../services/auth.service';
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { ChatTab, ChatRole, IMessage, IChatHistory } from 'src/app/types/chat.type';
+import { RealTimeService } from 'src/app/services/realTime.service';
+import { UserService } from 'src/app/services/user.service';
+import { ChatTab, ChatRole, IMessage, IChatBox } from 'src/app/types/chat.type';
 
 @Component({
   selector: 'chat-box',
@@ -8,6 +11,8 @@ import { ChatTab, ChatRole, IMessage, IChatHistory } from 'src/app/types/chat.ty
       @import '../../scss/common.scss';
       @import '../../scss/variables.scss';
       $window-width: 450px;
+      $heder-height: 70px;
+
       .wrapper {
         @include shadow;
         border-radius: 4px;
@@ -29,7 +34,7 @@ import { ChatTab, ChatRole, IMessage, IChatHistory } from 'src/app/types/chat.ty
           width: $window-width;
           height: 70vh;
           .header {
-            height: 70px;
+            height: $heder-height;
             padding: 10px 14px;
             @include flex(row, center, flex-start);
             border-bottom: 1px solid #ccc;
@@ -41,6 +46,11 @@ import { ChatTab, ChatRole, IMessage, IChatHistory } from 'src/app/types/chat.ty
       .chat-list {
         & .header {
           justify-content: center !important;
+        }
+        .body {
+          @include scrollbar;
+          height: calc(100% - $header-height);
+          overflow-y: auto;
         }
         .body > li > div {
           padding: 14px 20px;
@@ -57,12 +67,12 @@ import { ChatTab, ChatRole, IMessage, IChatHistory } from 'src/app/types/chat.ty
           .history-content {
             flex: 1;
             h6,
-            .not-seen {
+            .un-readed {
               font-weight: bold;
             }
             p {
               font-size: 14px;
-              margin-top: 2px;
+              margin-top: 4px;
             }
           }
           .dot {
@@ -88,7 +98,7 @@ import { ChatTab, ChatRole, IMessage, IChatHistory } from 'src/app/types/chat.ty
           @include scrollbar;
           .date-divider {
             position: relative;
-            margin: 20px 0 10px;
+            margin: 20px 0;
             padding: 0 50px;
             span {
               position: absolute;
@@ -150,22 +160,35 @@ import { ChatTab, ChatRole, IMessage, IChatHistory } from 'src/app/types/chat.ty
             <h4>Messages</h4>
           </div>
           <ul class="body">
-            <li *ngFor="let mess of chatHistory" (click)="handleOpenChatBox(mess.id)">
+            <li *ngFor="let cb of chatBoxes" (click)="handleOpenChatBox(cb.id)">
               <div>
-                <img *ngIf="mess.avatarUrl" [src]="mess.avatarUrl" />
-                <ng-icon *ngIf="!mess.avatarUrl" name="heroUserCircleSolid" size="40" />
+                <img *ngIf="cb.avatarUrl" [src]="cb.avatarUrl" />
+                <ng-icon *ngIf="!cb.avatarUrl" name="heroUserCircleSolid" size="40" />
 
                 <div class="history-content">
-                  <h6>{{ mess.name }}</h6>
-                  <p [ngClass]="{ 'not-seen': !mess.seen }">
-                    {{ mess.lastMessage }}
+                  <h6>{{ cb.name }}</h6>
+                  <p [ngClass]="{ 'un-readed': !cb.readed }">
+                    {{ cb.messages[cb.messages.length - 1].sender === 'me' ? '(You)' : '' }}
+                    {{ cb.messages[cb.messages.length - 1].content }}
                   </p>
                 </div>
 
-                <div *ngIf="!mess.seen" class="dot"></div>
+                <div *ngIf="!cb.readed" class="dot"></div>
               </div>
               <mat-divider style="margin: 0 20px;" />
             </li>
+
+            <div
+              *ngIf="chatBoxes.length === 0"
+              [style]="{
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }"
+            >
+              There is no conversation
+            </div>
           </ul>
         </div>
 
@@ -175,11 +198,14 @@ import { ChatTab, ChatRole, IMessage, IChatHistory } from 'src/app/types/chat.ty
             <button mat-icon-button class="back-btn" (click)="handleBackHistory()">
               <mat-icon>keyboard_arrow_left</mat-icon>
             </button>
-            <h4>Bun bo di 2</h4>
+            <h4>{{ openedChatBox?.name }}</h4>
           </div>
           <div class="body" #chatboxBody>
-            <div *ngFor="let mess of messages; let i = index">
-              <div *ngIf="isNewDate(messages, i)" class="date-divider">
+            <div *ngFor="let mess of openedChatBox?.messages; let i = index">
+              <div
+                *ngIf="openedChatBox && isNewDate(openedChatBox.messages, i)"
+                class="date-divider"
+              >
                 <mat-divider />
                 <span>{{ mess.createdAt | date }}</span>
               </div>
@@ -224,51 +250,72 @@ import { ChatTab, ChatRole, IMessage, IChatHistory } from 'src/app/types/chat.ty
 })
 export class ChatBoxComponent implements AfterViewInit {
   tab: ChatTab = ChatTab.HISTORY;
-  messages: IMessage[] = [
-    {
-      sender: ChatRole.YOU,
-      content: 'Hello',
-      createdAt: new Date(1703496013010),
-    },
-    { sender: ChatRole.ME, content: 'Hi', createdAt: new Date(1703496013010) },
-    {
-      sender: ChatRole.ME,
-      content: 'Whats up',
-      createdAt: new Date(1703496013010),
-    },
-    {
-      sender: ChatRole.YOU,
-      content: 'Can you lend me a pencil',
-      createdAt: new Date(1703496113010),
-    },
-    {
-      sender: ChatRole.ME,
-      content: 'Of course',
-      createdAt: new Date(1703496224010),
-    },
-    { sender: ChatRole.ME, content: 'No', createdAt: new Date(1703496224010) },
-  ];
-  chatHistory: IChatHistory[] = [
-    {
-      id: '',
-      name: 'Bun bo`',
-      seen: false,
-      lastMessage: 'Ăn mấy tô con?',
-      avatarUrl: '',
-    },
-    {
-      id: '',
-      name: 'Bun rieu`',
-      seen: true,
-      lastMessage: 'Mấy giờ con qua?',
-      avatarUrl: 'https://resizer.otstatic.com/v2/photos/wide-medium/1/25229489.webp',
-    },
-  ];
+  chatBoxes: IChatBox[] = [];
+  openedChatBox: IChatBox | null = null;
   @ViewChild('chatboxBody', { static: false }) chatboxBody: ElementRef | undefined;
+
+  constructor(
+    private auth: AuthService,
+    private userSv: UserService,
+    private realTime: RealTimeService,
+  ) {
+    this.refetchGetChatBoxes();
+
+    realTime.openedConversation.subscribe((res) => {
+      const chatBox = this.chatBoxes.find((cb) => cb.chatWithId === res?.owner.id);
+      if (chatBox) {
+        this.tab = ChatTab.CHATBOX;
+        this.openedChatBox = chatBox;
+      } else if (res) {
+        this.tab = ChatTab.CHATBOX;
+        this.openedChatBox = {
+          id: '',
+          chatWithId: res?.owner.id,
+          name: res.name,
+          avatarUrl: res.mainImage.url,
+          messages: [],
+          readed: true,
+        };
+      }
+    });
+
+    realTime.receiveMessage().subscribe(({ conversationId, senderId, content, createdAt }) => {
+      const newMess = { sender: ChatRole.YOU, content: content, createdAt };
+
+      if (this.openedChatBox) {
+        this.openedChatBox.messages.push(newMess);
+      }
+      this.refetchGetChatBoxes();
+
+      // use setTimeout to make sure messages updated before scroll
+      setTimeout(() => {
+        this.scrollToBottom();
+      });
+    });
+  }
+
+  refetchGetChatBoxes() {
+    this.userSv.getChatBoxes().subscribe((res) => (this.chatBoxes = res));
+  }
 
   // chat list handlers-------------------------------------------------------------------------------------------
   handleOpenChatBox(id: string) {
     this.tab = ChatTab.CHATBOX;
+    const chatBox = this.chatBoxes.find((cb) => cb.id === id);
+    if (chatBox) {
+      this.openedChatBox = chatBox;
+      setTimeout(() => {
+        this.scrollToBottom();
+      });
+
+      if (!chatBox.readed) {
+        this.userSv.markChatBoxReaded(id);
+        this.chatBoxes = this.chatBoxes.map((cb) => {
+          if (cb.id === chatBox.id) return { ...cb, readed: true };
+          else return { ...cb };
+        });
+      }
+    }
   }
 
   // chat box handlers-------------------------------------------------------------------------------------------
@@ -278,8 +325,10 @@ export class ChatBoxComponent implements AfterViewInit {
     }
   }
   adjustTextareaHeight(textarea: HTMLTextAreaElement): void {
+    const line = 4;
+
     const lineHeight = getComputedStyle(textarea).lineHeight;
-    const maxHeight = 4 * parseFloat(lineHeight);
+    const maxHeight = line * parseFloat(lineHeight);
     textarea.style.height = 'auto';
     textarea.style.height = Math.min(textarea.scrollHeight, maxHeight) + 'px';
   }
@@ -294,22 +343,41 @@ export class ChatBoxComponent implements AfterViewInit {
   ngAfterViewInit() {
     this.scrollToBottom();
   }
-
   handleEnter(event: KeyboardEvent, textarea: HTMLTextAreaElement) {
     if (event.key === 'Enter' && !event.shiftKey && !event.altKey) {
+      event.preventDefault();
       this.sendMessage(textarea);
     }
   }
-  sendMessage(textarea: HTMLTextAreaElement) {
+  async sendMessage(textarea: HTMLTextAreaElement) {
     const value = textarea.value.trim();
+    textarea.value = '';
+    textarea.focus();
     if (this.chatboxBody && value) {
-      this.messages.push({
+      this.openedChatBox?.messages.push({
         sender: ChatRole.ME,
         content: value,
         createdAt: new Date(),
       });
-      textarea.value = '';
-      textarea.focus();
+
+      if (this.openedChatBox && !this.openedChatBox?.id) {
+        const { chatBoxId } = await this.userSv.createChatBox({
+          senderId: this.auth.user.value?.id as string,
+          receiverId: this.openedChatBox?.chatWithId as string,
+        });
+        this.openedChatBox = { ...this.openedChatBox, id: chatBoxId };
+        this.chatBoxes.unshift({ ...this.openedChatBox, id: chatBoxId });
+        this.refetchGetChatBoxes();
+      }
+
+      if (this.openedChatBox?.id) {
+        this.realTime.sendMessage({
+          conversationId: this.openedChatBox.id,
+          senderId: this.auth.user.value?.id as string,
+          receiverId: this.openedChatBox?.chatWithId as string,
+          message: value,
+        });
+      }
 
       // use setTimeout to make sure messages updated before scroll
       setTimeout(() => {
@@ -319,5 +387,6 @@ export class ChatBoxComponent implements AfterViewInit {
   }
   handleBackHistory() {
     this.tab = ChatTab.HISTORY;
+    this.openedChatBox = null;
   }
 }

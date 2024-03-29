@@ -1,10 +1,10 @@
-import Restaurant from '../models/Restaurant.js';
 import Token from '../models/Token.js';
+import User from '../models/User.js';
+import Restaurant from '../models/Restaurant.js';
 import Notification from '../models/Notification.js';
+import Conversation from '../models/Conversation.js';
 
 const soketController = (io, socket) => {
-  // console.log(socket.id + 'connected');
-
   socket.emit('socket-connected');
 
   socket.on('user', async ({ uid, socketId }) => {
@@ -44,6 +44,35 @@ const soketController = (io, socket) => {
       delete sentNotif.senderId;
 
       io.to(receiverSocketId).emit('receive-notification', sentNotif);
+    }
+  });
+
+  socket.on('send-message', async (payload) => {
+    const { conversationId, senderId, receiverId, message } = payload;
+    const receiverSocketId = (await Token.findOne({ uid: receiverId })).toObject().socketId;
+    let sender = await User.findById(senderId);
+
+    const createdAt = new Date();
+
+    // save into database
+    if (conversationId) {
+      const conversation = await Conversation.findById(conversationId);
+      conversation.messages = [
+        ...conversation.messages,
+        { senderId, receiverId, message, createdAt },
+      ];
+      conversation.usersReaded = [senderId];
+      await conversation.save();
+    }
+
+    // emit event
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit('receive-message', {
+        conversationId,
+        sender,
+        message,
+        createdAt,
+      });
     }
   });
 };

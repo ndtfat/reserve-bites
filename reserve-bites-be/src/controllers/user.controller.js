@@ -5,6 +5,7 @@ import Review from '../models/Review.js';
 import Restaurant from '../models/Restaurant.js';
 import Reservation from '../models/Reservation.js';
 import Notification from '../models/Notification.js';
+import Conversation from '../models/Conversation.js';
 
 export default {
   async getUser(req, res) {
@@ -258,6 +259,64 @@ export default {
     } catch (error) {
       console.log(error);
       res.status(500);
+    }
+  },
+  async postChatBox(req, res) {
+    try {
+      const { senderId, receiverId } = req.body;
+      const newConversation = new Conversation({
+        uids: [senderId, receiverId],
+        messages: [],
+        usersReaded: [senderId],
+      });
+      await newConversation.save();
+
+      res.status(200).send({ chatBoxId: newConversation.id });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({ message: 'Something wrong with create chatbox', error });
+    }
+  },
+
+  async getChatBoxes(req, res) {
+    try {
+      const user = req.user;
+
+      let chatBoxes = await Conversation.find({ uids: { $in: [user.id] } });
+      chatBoxes = await Promise.all(
+        chatBoxes.map(async (item) => {
+          const chatWithUserId = item.uids.filter((id) => id !== user.id);
+          let userChatWith;
+          if (user.isOwner) {
+            userChatWith = await User.findById(chatWithUserId);
+          } else {
+            userChatWith = await Restaurant.findOne({ ownerId: chatWithUserId }).populate(
+              'mainImage',
+              'url name',
+            );
+          }
+
+          return {
+            ...item.toObject(),
+            userChatWith,
+          };
+        }),
+      );
+
+      res.status(200).send(chatBoxes);
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({ message: 'Something wrong with get chatboxs', error });
+    }
+  },
+
+  async putReadedMessageStatus(req, res) {
+    try {
+      const { conversationId, uid } = req.body;
+      await Conversation.findByIdAndUpdate(conversationId, { $push: { usersReaded: uid } });
+      res.status(200).send({ message: 'readed successfully' });
+    } catch (error) {
+      console.log(error);
     }
   },
 };

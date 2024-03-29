@@ -5,7 +5,7 @@ import { BehaviorSubject, lastValueFrom } from 'rxjs';
 
 import { environment } from 'src/environments/environment';
 import { ILoginResponse, IUser } from '../types/auth.type';
-import { SocketService } from './socket.service';
+import { RealTimeService } from './realTime.service';
 
 @Injectable({
   providedIn: 'root',
@@ -15,19 +15,13 @@ export class AuthService {
   isAuthenticated = new BehaviorSubject<boolean>(false);
   private SERVER_URL = environment.SERVER_URL;
 
-  constructor(
-    private http: HttpClient,
-    private router: Router,
-    private socket: SocketService,
-  ) {}
+  constructor(private http: HttpClient, private router: Router, private socket: RealTimeService) {}
 
   async getUser() {
     try {
-      const userInfo = await lastValueFrom(
-        this.http.get<IUser>(this.SERVER_URL + '/user/me'),
-      );
+      const userInfo = await lastValueFrom(this.http.get<IUser>(this.SERVER_URL + '/user/me'));
       this.user.next(userInfo);
-      this.socket.connect(userInfo);
+      this.socket.connectSocket(userInfo);
       this.isAuthenticated.next(true);
     } catch (error) {
       // console.log(error);
@@ -84,13 +78,11 @@ export class AuthService {
 
   async signOut() {
     try {
-      const response = await lastValueFrom(
-        this.http.post(this.SERVER_URL + '/auth/sign-out', {}),
-      );
+      const response = await lastValueFrom(this.http.post(this.SERVER_URL + '/auth/sign-out', {}));
       this.isAuthenticated.next(false);
       this.router.navigateByUrl('/auth/sign-in');
       localStorage.clear();
-      this.socket.disconnect();
+      this.socket.disconnectSocket();
 
       return { response, error: null };
     } catch (error: any) {
@@ -115,10 +107,9 @@ export class AuthService {
   async resetPassword(uid: string, token: string, newPw: string) {
     try {
       const res = await lastValueFrom(
-        this.http.post(
-          this.SERVER_URL + `/auth/reset-password/${uid}/${token}`,
-          { password: newPw },
-        ),
+        this.http.post(this.SERVER_URL + `/auth/reset-password/${uid}/${token}`, {
+          password: newPw,
+        }),
       );
       return { response: res, error: null };
     } catch (error: any) {

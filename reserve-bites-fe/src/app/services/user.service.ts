@@ -1,15 +1,16 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { lastValueFrom, map } from 'rxjs';
+import { Observable, lastValueFrom, map } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { IUser, UserType } from '../types/auth.type';
 import { INotification, NotificationType } from '../types/notification';
-import { IReview } from '../types/restaurant.type';
+import { IReservation, IReview } from '../types/restaurant.type';
 import { notificationMessage } from '../utils/notification';
 import { AuthService } from './auth.service';
 import { SnackbarService } from './snackbar.service';
-import { SocketService } from './socket.service';
+import { RealTimeService } from './realTime.service';
+import { ChatRole, IChatBox } from '../types/chat.type';
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +21,8 @@ export class UserService {
     private http: HttpClient,
     private auth: AuthService,
     private router: Router,
-    private socket: SocketService,
+    private socket: RealTimeService,
+    private realTime: RealTimeService,
     private _snackbar: SnackbarService,
   ) {}
 
@@ -64,13 +66,13 @@ export class UserService {
           map((res) => {
             let { page, totalItems, itemsList } = res;
             if (isOwner) {
-              itemsList = itemsList.map((item: any) => {
+              itemsList = itemsList.map((item: IReservation) => {
                 return {
-                  id: item._id,
+                  id: item.id,
                   diner: item.diner.firstName + ' ' + item.diner.lastName,
                   email: item.diner.email,
                   size: item.size,
-                  date: item.createdAt,
+                  date: item.date,
                   time: item.time,
                   status: item.status,
                 };
@@ -235,5 +237,57 @@ export class UserService {
         next: () => this._snackbar.open('success', 'You have deleted notification(s) successfully'),
         error: (error) => console.log(error),
       });
+  }
+
+  async createChatBox(payload: { senderId: string; receiverId: string }) {
+    return await lastValueFrom(
+      this.http.post<{ chatBoxId: string }>(this.SERVER_URL + '/user/chat-box', payload),
+    );
+  }
+
+  getChatBoxes(): Observable<IChatBox[]> {
+    return this.http.get(this.SERVER_URL + '/user/chat-box').pipe(
+      map((res: any) => {
+        console.log(res);
+
+        res = res.map((item: any) => {
+          const userChatWith = item.userChatWith;
+          const user = this.auth.user.value;
+          const messages = item.messages.map((mess: any) => ({
+            sender: user?.id === mess.senderId ? ChatRole.ME : ChatRole.YOU,
+            content: mess.message,
+            createdAt: new Date(mess.createdAt),
+          }));
+
+          if (!item.usersReaded.includes(user?.id)) {
+            this.realTime.numUnReadChatBox.next(this.realTime.numUnReadChatBox.value + 1);
+          }
+
+          return {
+            id: item.id,
+            chatWithId: user?.isOwner ? userChatWith.id : userChatWith.ownerId,
+            name: user?.isOwner
+              ? `${userChatWith.firstName} ${userChatWith.lastName}`
+              : userChatWith.name,
+            messages,
+            avatarUrl: user?.isOwner ? '' : userChatWith.mainImage.url,
+            createdAt: item.createdAt,
+            readed: item.usersReaded.includes(user?.id),
+          };
+        });
+
+        return res;
+      }),
+    );
+  }
+
+  markChatBoxReaded(id: string) {
+    console.log(id);
+    this.http
+      .put(this.SERVER_URL + '/user/read-message', {
+        conversationId: id,
+        uid: this.auth.user.value?.id,
+      })
+      .subscribe((res) => console.log(res));
   }
 }

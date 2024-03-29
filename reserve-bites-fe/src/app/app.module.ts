@@ -39,6 +39,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 // icons
 import {
+  matStarOutline,
   matCloseOutline,
   matModeEditOutline,
   matMoreHorizOutline,
@@ -72,6 +73,7 @@ import {
   ionLockClosedOutline,
   ionCloudUploadOutline,
   ionAlertCircleOutline,
+  ionChatbubblesOutline,
   ionDocumentTextOutline,
   ionCheckmarkCircleOutline,
   ionInformationCircleOutline,
@@ -184,6 +186,7 @@ import { AccountTabReservationsManagementComponent } from './components/account/
       ionArrowRedo,
       ionBugOutline,
       ionCashOutline,
+      matStarOutline,
       heroXMarkSolid,
       matCloseOutline,
       ionLogInOutline,
@@ -201,6 +204,7 @@ import { AccountTabReservationsManagementComponent } from './components/account/
       ionLockClosedOutline,
       ionCloudUploadOutline,
       ionAlertCircleOutline,
+      ionChatbubblesOutline,
       ionDocumentTextOutline,
       matMarkEmailReadOutline,
       matAccountCircleOutline,

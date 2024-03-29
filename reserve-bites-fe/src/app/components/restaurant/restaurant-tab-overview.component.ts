@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { RealTimeService } from 'src/app/services/realTime.service';
 import { IRestaurant } from 'src/app/types/restaurant.type';
 import { findMaxPrice, findMinPrice } from 'src/app/utils/find';
 
@@ -11,15 +12,19 @@ import { findMaxPrice, findMinPrice } from 'src/app/utils/find';
       .wrapper {
         padding: 20px 0 10px;
       }
-      h2 {
+      .restaurant-name {
         font-weight: 600;
         margin-bottom: 20px;
         @include flex(row, center, space-between);
+
+        .chat-icon {
+          color: $primary;
+        }
         .rate {
           font-size: 20px;
           font-weight: 400;
           span {
-            font-size: 40px;
+            font-size: 30px;
             font-weight: 500;
           }
         }
@@ -60,13 +65,23 @@ import { findMaxPrice, findMinPrice } from 'src/app/utils/find';
   ],
   template: `
     <div class="wrapper">
-      <h2>
-        {{ restaurant.name }}
-        <span class="rate">
-          <span>{{ restaurant.rate }}</span
-          >/5
-        </span>
-      </h2>
+      <div class="restaurant-name">
+        <div style="display: flex; align-items: center">
+          <h2 style="margin-right: 20px;">{{ restaurant.name }}</h2>
+          <span class="rate">
+            ( <span>{{ restaurant.rate }}</span
+            >/5 )
+          </span>
+        </div>
+        <button
+          mat-raised-button
+          color="main"
+          matTooltip="Chat with restaurant"
+          (click)="handleClickChatButton()"
+        >
+          <ng-icon name="ionChatbubblesOutline" size="1.5rem" />
+        </button>
+      </div>
 
       <!-- Description -->
       <p class="description" [ngClass]="{ less: !showFullDesc }">
@@ -136,15 +151,15 @@ import { findMaxPrice, findMinPrice } from 'src/app/utils/find';
       <menu [menu]="restaurant.menu" [currency]="restaurant.currency"></menu>
 
       <!-- End text -->
-      <p
-        style="margin-top: 30px; padding-top: 10px; border-top: 1px solid #ccc;"
-      >
+      <p style="margin-top: 30px; padding-top: 10px; border-top: 1px solid #ccc;">
         Move to reviews tab to see what other diner think. :0
       </p>
     </div>
   `,
 })
 export class RestaurantTabOverviewComponent implements OnInit {
+  constructor(private realTime: RealTimeService) {}
+
   @Input() restaurant!: IRestaurant;
   showFullDesc = false;
   minPrice: string = '';
@@ -153,5 +168,9 @@ export class RestaurantTabOverviewComponent implements OnInit {
   ngOnInit() {
     this.minPrice = findMinPrice(this.restaurant.menu).toLocaleString('en-US');
     this.maxPrice = findMaxPrice(this.restaurant.menu).toLocaleString('en-US');
+  }
+
+  handleClickChatButton() {
+    this.realTime.startConversation(this.restaurant);
   }
 }

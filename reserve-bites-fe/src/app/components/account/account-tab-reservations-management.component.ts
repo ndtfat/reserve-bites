@@ -92,6 +92,9 @@ import { UserService } from 'src/app/services/user.service';
 
       <div *ngIf="dataSource && !fetching">
         <table mat-table class="mat-elevation-z8" [dataSource]="dataSource">
+          <tr mat-header-row *matHeaderRowDef="columns"></tr>
+          <tr mat-row *matRowDef="let row; columns: columns" class="element-row"></tr>
+
           <ng-container *ngIf="isOwner" matColumnDef="diner">
             <th mat-header-cell *matHeaderCellDef>Diner</th>
             <td mat-cell *matCellDef="let element">
@@ -148,13 +151,22 @@ import { UserService } from 'src/app/services/user.service';
             </td>
           </ng-container>
 
-          <tr mat-header-row *matHeaderRowDef="columns"></tr>
-          <tr
-            mat-row
-            *matRowDef="let row; columns: columns"
-            class="element-row"
-            [routerLink]="'/reservation/' + row.id"
-          ></tr>
+          <ng-container matColumnDef="action">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let element">
+              <ng-icon
+                class="action-icon"
+                name="matMoreHorizOutline"
+                size="1.4rem"
+                (click)="$event.stopPropagation()"
+                [matMenuTriggerFor]="actionMenu"
+              />
+              <mat-menu #actionMenu="matMenu" xPosition="before">
+                <button mat-menu-item [routerLink]="'/reservation/' + element.id">View</button>
+                <button mat-menu-item>Mark as readed</button>
+              </mat-menu>
+            </td>
+          </ng-container>
         </table>
       </div>
 
@@ -185,7 +197,7 @@ export class AccountTabReservationsManagementComponent implements OnInit {
     this.auth.user.subscribe((u) => {
       this.isOwner = u?.isOwner as boolean;
       if (u?.isOwner) {
-        this.columns = ['diner', 'email', 'size', 'date', 'time', 'status'];
+        this.columns = ['diner', 'email', 'size', 'date', 'time', 'status', 'action'];
       }
     });
 
@@ -196,12 +208,9 @@ export class AccountTabReservationsManagementComponent implements OnInit {
       );
     this.$filterOptions.subscribe(async (options) => {
       this.fetching = true;
-      const { page, totalItems, itemsList } = await this.userSv.getReservations(
-        options,
-      );
+      const { page, totalItems, itemsList } = await this.userSv.getReservations(options);
       this.totalItems = totalItems;
-      this.dataSource =
-        itemsList.length > 0 ? new MatTableDataSource(itemsList) : null;
+      this.dataSource = itemsList.length > 0 ? new MatTableDataSource(itemsList) : null;
       this.fetching = false;
     });
   }

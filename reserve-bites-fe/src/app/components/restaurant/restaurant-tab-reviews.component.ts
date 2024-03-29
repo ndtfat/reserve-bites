@@ -4,7 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import { IReview } from 'src/app/types/restaurant.type';
 import { AuthService } from 'src/app/services/auth.service';
 import { UserService } from 'src/app/services/user.service';
-import { SocketService } from 'src/app/services/socket.service';
+import { RealTimeService } from 'src/app/services/realTime.service';
 import { IUser, UserType } from 'src/app/types/auth.type';
 import { NotificationType } from 'src/app/types/notification';
 import { RestaurantService } from 'src/app/services/restaurant.service';

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from 'src/app/services/user.service';
 import { INotification } from 'src/app/types/notification';
-import { SocketService } from 'src/app/services/socket.service';
+import { RealTimeService } from 'src/app/services/realTime.service';
 import { notificationIcon, notificationMessage } from 'src/app/utils/notification';
 
 @Component({
@@ -94,7 +94,7 @@ export class NotificationDropDownComponent implements OnInit {
   unReadNotif = 0;
   notificationList: INotification[] = [];
 
-  constructor(private userSv: UserService, private socket: SocketService) {}
+  constructor(private userSv: UserService, private socket: RealTimeService) {}
 
   async ngOnInit() {
     const { itemsList } = await this.userSv.getNotifications(1, 'desc');

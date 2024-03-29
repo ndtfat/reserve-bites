@@ -5,7 +5,7 @@ import { SortBy } from 'src/app/types/filter.type';
 import { UserType } from 'src/app/types/auth.type';
 import { AuthService } from 'src/app/services/auth.service';
 import { UserService } from 'src/app/services/user.service';
-import { SocketService } from 'src/app/services/socket.service';
+import { RealTimeService } from 'src/app/services/realTime.service';
 import { NotificationType } from 'src/app/types/notification';
 import { RestaurantService } from 'src/app/services/restaurant.service';
 import { IRestaurant, IReview } from 'src/app/types/restaurant.type';
@@ -122,7 +122,6 @@ export class RestaurantComponent implements OnInit {
     }
 
     this.route.queryParams.subscribe((params) => {
-      console.log(params);
       const { tab } = params;
       if (tab === 'overview') {
         this.currentTabIndex = Tabs.OVERVIEW;

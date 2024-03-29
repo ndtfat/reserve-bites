@@ -1,14 +1,15 @@
-import { Component, Inject, OnInit } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { TimepickerModule } from 'ngx-bootstrap/timepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { IReservation, IRestaurant } from 'src/app/types/restaurant.type';
+import { AuthService } from 'src/app/services/auth.service';
 import { ActivatedRoute } from '@angular/router';
 import { RestaurantService } from 'src/app/services/restaurant.service';
+import { IReservation, IRestaurant } from 'src/app/types/restaurant.type';
 
 @Component({
   selector: 'reservation',
@@ -178,8 +179,19 @@ import { RestaurantService } from 'src/app/services/restaurant.service';
         </div>
 
         <div class="btns">
-          <button mat-raised-button (click)="openEditDialog()">Edit</button>
-          <button mat-raised-button color="warn" (click)="openCancelDialog()">Cancel</button>
+          <button
+            mat-raised-button
+            (click)="isOwner ? responseReservation('confirm') : openEditDialog()"
+          >
+            {{ isOwner ? 'Confirm' : 'Edit' }}
+          </button>
+          <button
+            mat-raised-button
+            color="warn"
+            (click)="isOwner ? responseReservation('reject') : openCancelDialog()"
+          >
+            {{ isOwner ? 'Reject' : 'Cancel' }}
+          </button>
         </div>
       </span>
 
@@ -190,71 +202,17 @@ import { RestaurantService } from 'src/app/services/restaurant.service';
 export class ReservationComponent implements OnInit {
   constructor(
     public dialog: MatDialog,
+    private auth: AuthService,
     private route: ActivatedRoute,
     private restaurantSv: RestaurantService,
-  ) {}
+  ) {
+    auth.user.subscribe((u) => {
+      this.isOwner = !!u?.isOwner;
+    });
+  }
 
   isOwner = false;
-  restaurant: IRestaurant = {
-    id: '1',
-    name: 'Bun bo di` 2',
-    description: 'Bun bo di 2 always serve the best "Bun Bo" for buyers.',
-    owner: {
-      id: '',
-      email: '',
-      isOwner: true,
-      lastName: 'Nguyen',
-      firstName: 'Phat',
-    },
-    address: {
-      detail: 'Hem 114',
-      province: 'Dong Nai',
-      country: 'Viet Nam',
-    },
-    currency: 'VND',
-    menu: [
-      {
-        category: 'Soup',
-        dishes: [
-          { name: 'Bun bo dac biet', price: 50000 },
-          { name: 'Bun bo`', price: 25000 },
-          { name: 'HU tieu', price: 20000 },
-        ],
-      },
-      {
-        category: 'Soup',
-        dishes: [
-          { name: 'Bun bo dac biet', price: 50000 },
-          { name: 'Bun bo`', price: 25000 },
-          { name: 'HU tieu', price: 20000 },
-        ],
-      },
-    ],
-    operationTime: {
-      openTime: '07:00',
-      closeTime: '19:00',
-      openDay: ['Monday', 'Wednesday'],
-    },
-    maxReservationSize: 4,
-    mainImage: {
-      id: '',
-      name: 'bun bo',
-      url: 'https://static.vinwonders.com/production/bun-bo-da-lat-banner.jpg',
-    },
-    gallery: [
-      {
-        id: '',
-        name: 'bun bo',
-        url: 'https://static.vinwonders.com/production/bun-bo-da-lat-banner.jpg',
-      },
-      {
-        id: '',
-        name: 'bun bo',
-        url: 'https://img-global.cpcdn.com/recipes/6824738c264d979d/1200x630cq70/photo.jpg',
-      },
-    ],
-    rate: 4,
-  };
+  restaurant!: IRestaurant;
   reservation!: IReservation;
 
   async ngOnInit() {
@@ -268,19 +226,20 @@ export class ReservationComponent implements OnInit {
     }
   }
 
-  openCancelDialog(): void {
-    this.dialog.open(CancelDialog, {
+  openCancelDialog() {
+    this.dialog.open(CancelReservationDialog, {
       enterAnimationDuration: '100ms',
       exitAnimationDuration: '100ms',
     });
   }
   openEditDialog() {
-    this.dialog.open(EditDialog, {
+    this.dialog.open(EditReservationDialog, {
       enterAnimationDuration: '100ms',
       exitAnimationDuration: '100ms',
       data: this.reservation,
     });
   }
+  responseReservation(res: string) {}
 }
 
 @Component({
@@ -325,8 +284,8 @@ export class ReservationComponent implements OnInit {
     </div>
   `,
 })
-class CancelDialog {
-  constructor(public dialogRef: MatDialogRef<CancelDialog>) {}
+class CancelReservationDialog {
+  constructor(public dialogRef: MatDialogRef<CancelReservationDialog>) {}
   message: string = '';
   errorMessage = '';
 
@@ -413,9 +372,9 @@ class CancelDialog {
     </div>
   `,
 })
-class EditDialog {
+class EditReservationDialog {
   constructor(
-    public dialogRef: MatDialogRef<EditDialog>,
+    public dialogRef: MatDialogRef<EditReservationDialog>,
     private fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: IReservation,
   ) {}

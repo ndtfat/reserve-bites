@@ -1,3 +1,4 @@
+import { RealTimeService } from 'src/app/services/realTime.service';
 import { Component } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 
@@ -28,7 +29,7 @@ import { AuthService } from '../services/auth.service';
         }
       }
       .outlet-wrapper {
-        min-height: 100vh;
+        min-height: calc(100vh - $header-height);
         width: 100vw;
         background: #f5f6f8;
         margin-top: $header-height;
@@ -132,19 +133,44 @@ import { AuthService } from '../services/auth.service';
     </div>
     <div class="chat" *ngIf="isAuthenticated">
       <button mat-icon-button class="toggle-chat-btn" (click)="openChatBox = !openChatBox">
-        <ng-icon size="30" [name]="openChatBox ? 'ionClose' : 'ionChatbubbleEllipsesOutline'" />
+        <ng-icon
+          size="30"
+          [name]="openChatBox ? 'ionClose' : 'ionChatbubbleEllipsesOutline'"
+          [matBadge]="numUnReadChatBox || null"
+          matBadgeColor="warn"
+        />
       </button>
       <chat-box class="chat-box" [ngClass]="{ open: openChatBox }" />
     </div>
   `,
 })
 export class HeaderComponent {
-  isAuthenticated: boolean = false;
   openChatBox = false;
+  numUnReadChatBox = 0;
+  isAuthenticated: boolean = false;
 
-  constructor(private auth: AuthService) {
+  constructor(private auth: AuthService, private realTime: RealTimeService) {
     this.auth.isAuthenticated.subscribe((value) => {
       this.isAuthenticated = value;
     });
+
+    this.realTime.openedConversation.subscribe((id) => {
+      if (id) {
+        this.openChatBox = true;
+      }
+    });
+
+    this.realTime.numUnReadChatBox.subscribe((num) => {
+      if (this.openChatBox) this.realTime.numUnReadChatBox.next(0);
+      else this.numUnReadChatBox = num;
+    });
+  }
+
+  handleToggleChat() {
+    this.openChatBox = !this.openChatBox;
+    if (this.openChatBox) {
+      this.numUnReadChatBox = 0;
+      this.realTime.numUnReadChatBox.next(0);
+    }
   }
 }
