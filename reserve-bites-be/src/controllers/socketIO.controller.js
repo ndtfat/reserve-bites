@@ -19,7 +19,7 @@ const soketController = (io, socket) => {
       const restaurant = await Restaurant.findById(receiver.rid);
       receiver.id = restaurant.toObject().ownerId;
     } else {
-      receiver.id = receiver.id;
+      receiver.id = receiver.uid;
     }
 
     const notification = new Notification({
@@ -43,7 +43,15 @@ const soketController = (io, socket) => {
       sentNotif.sender = sentNotif.senderId;
       delete sentNotif.senderId;
 
-      io.to(receiverSocketId).emit('receive-notification', sentNotif);
+      let restaurant = null; // if seender is restaurant
+      if (sentNotif.sender.isOwner) {
+        restaurant = await Restaurant.findOne({ ownerId: senderId });
+      }
+
+      io.to(receiverSocketId).emit('receive-notification', {
+        ...sentNotif,
+        ...(restaurant ? { sender: restaurant } : {}),
+      });
     }
   });
 

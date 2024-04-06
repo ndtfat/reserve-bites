@@ -271,7 +271,6 @@ export default {
       return reservation;
     });
 
-    console.log('get reservations[]');
     return res.status(200).send({
       page,
       totalItems,
@@ -371,6 +370,26 @@ export default {
     } catch (error) {
       console.log(error);
       res.status(500).send({ message: 'Something wrong with get reservation by id' });
+    }
+  },
+  async updateReservation(req, res) {
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
+
+      const reservation = await Reservation.findById(id);
+      if (reservation) {
+        reservation.status = status;
+        await reservation.save();
+        return res.status(200).send({});
+      }
+
+      res
+        .status(409)
+        .send({ message: `Can not modified reservation have status ${reservation.status}` });
+    } catch (error) {
+      console.log(error);
+      res.status(200).send({ message: 'Something wrong with responseReservation', error });
     }
   },
 };

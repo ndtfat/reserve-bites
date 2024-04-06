@@ -217,12 +217,18 @@ export default {
         .limit(pageSize)
         .populate('senderId');
 
-      notifications = notifications.map((item) => {
-        item = item.toObject();
-        item.sender = item.senderId;
-        delete item.senderId;
-        return item;
-      });
+      notifications = await Promise.all(
+        notifications.map(async (item) => {
+          item = item.toObject();
+          if (item.senderId.isOwner) {
+            item.sender = await Restaurant.findOne({ ownerId: item.senderId.id });
+          } else {
+            item.sender = item.senderId;
+          }
+          delete item.senderId;
+          return item;
+        }),
+      );
 
       return res.status(200).send({
         page,
@@ -317,6 +323,23 @@ export default {
       res.status(200).send({ message: 'readed successfully' });
     } catch (error) {
       console.log(error);
+    }
+  },
+
+  async putReservation(req, res) {
+    try {
+      const { id } = req.params;
+      const { payload } = req.body;
+
+      const reservation = await Reservation.findById(id);
+
+      if (!reservation) return res.status(404).send({ message: 'Reservation not found' });
+
+      await reservation.save();
+      res.status(200).send(reservation.toObject());
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({ message: 'Something wrong with putReservation', error });
     }
   },
 };

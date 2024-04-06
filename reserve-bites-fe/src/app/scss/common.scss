@@ -48,23 +48,29 @@
 }
 
 @mixin notifIcon() {
-  color: #fff;
   padding: 6px;
-  background: lightblue;
   border-radius: 4px;
 
-  &.RESERVATION,
+  &.MAKE_RESERVATION,
   &.POST_REVIEW {
     color: $text-info-color;
     background-color: $bg-info;
   }
-  &.DELETE_REVIEW {
+  &.DELETE_REVIEW,
+  &.CANCEL_RESERVATION,
+  &.REJECT_RESERVATION {
     color: $text-error-color;
     background-color: $bg-error;
   }
-  &.UPDATE_REVIEW {
+  &.UPDATE_REVIEW,
+  &.UPDATE_RESERVATION {
     color: $text-warn-color;
     background-color: $bg-warn;
+  }
+
+  &.CONFIRM_RESERVATION {
+    color: $text-success-color;
+    background-color: $bg-success;
   }
 }
 

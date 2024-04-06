@@ -9,7 +9,8 @@ import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
 import { ActivatedRoute } from '@angular/router';
 import { RestaurantService } from 'src/app/services/restaurant.service';
-import { IReservation, IRestaurant } from 'src/app/types/restaurant.type';
+import { IReservation, IRestaurant, ReservationStatus } from 'src/app/types/restaurant.type';
+import { RealTimeService } from 'src/app/services/realTime.service';
 
 @Component({
   selector: 'reservation',
@@ -44,7 +45,8 @@ import { IReservation, IRestaurant } from 'src/app/types/restaurant.type';
         }
       }
 
-      .confirmed {
+      .confirmed,
+      .completed {
         color: #1f931e;
         background-color: #e9f6e9;
       }
@@ -56,7 +58,8 @@ import { IReservation, IRestaurant } from 'src/app/types/restaurant.type';
         color: #c51d1a;
         background-color: #fbe9e8;
       }
-      .completed {
+      .expired,
+      .rejected {
         color: #333;
         background-color: #eee;
       }
@@ -178,17 +181,17 @@ import { IReservation, IRestaurant } from 'src/app/types/restaurant.type';
           </div>
         </div>
 
-        <div class="btns">
+        <div *ngIf="reservation.status !== 'confirmed' || !isOwner" class="btns">
           <button
             mat-raised-button
-            (click)="isOwner ? responseReservation('confirm') : openEditDialog()"
+            (click)="isOwner ? responseReservation(ReservationStatus.CONFIRMED) : openEditDialog()"
           >
             {{ isOwner ? 'Confirm' : 'Edit' }}
           </button>
           <button
             mat-raised-button
             color="warn"
-            (click)="isOwner ? responseReservation('reject') : openCancelDialog()"
+            (click)="isOwner ? responseReservation(ReservationStatus.REJECTED) : openCancelDialog()"
           >
             {{ isOwner ? 'Reject' : 'Cancel' }}
           </button>
@@ -206,11 +209,11 @@ export class ReservationComponent implements OnInit {
     private route: ActivatedRoute,
     private restaurantSv: RestaurantService,
   ) {
-    auth.user.subscribe((u) => {
+    this.auth.user.subscribe((u) => {
       this.isOwner = !!u?.isOwner;
     });
   }
-
+  ReservationStatus = ReservationStatus;
   isOwner = false;
   restaurant!: IRestaurant;
   reservation!: IReservation;
@@ -220,7 +223,6 @@ export class ReservationComponent implements OnInit {
       const id = this.route.snapshot.paramMap.get('id');
       if (id) {
         const res = await this.restaurantSv.getReservationById(id);
-        console.log(res);
         this.reservation = res;
       }
     }
@@ -239,7 +241,11 @@ export class ReservationComponent implements OnInit {
       data: this.reservation,
     });
   }
-  responseReservation(res: string) {}
+  async responseReservation(status: 'confirmed' | 'rejected') {
+    await this.restaurantSv.responseReservation(this.reservation, status).then(() => {
+      this.reservation.status = status as ReservationStatus;
+    });
+  }
 }
 
 @Component({

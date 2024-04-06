@@ -107,6 +107,7 @@ export enum ReservationStatus {
   CANCELED = 'canceled',
   RESPONDING = 'responding',
   COMPLETED = 'completed',
+  REJECTED = 'rejected',
 }
 
 export type IReservation = {

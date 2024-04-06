@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { AuthService } from 'src/app/services/auth.service';
 import { RealTimeService } from 'src/app/services/realTime.service';
 import { IRestaurant } from 'src/app/types/restaurant.type';
 import { findMaxPrice, findMinPrice } from 'src/app/utils/find';
@@ -74,6 +75,7 @@ import { findMaxPrice, findMinPrice } from 'src/app/utils/find';
           </span>
         </div>
         <button
+          *ngIf="!isOwner"
           mat-raised-button
           color="main"
           matTooltip="Chat with restaurant"
@@ -158,12 +160,15 @@ import { findMaxPrice, findMinPrice } from 'src/app/utils/find';
   `,
 })
 export class RestaurantTabOverviewComponent implements OnInit {
-  constructor(private realTime: RealTimeService) {}
+  constructor(private realTime: RealTimeService, private auth: AuthService) {
+    auth.user.subscribe((u) => (this.isOwner = !!u?.isOwner));
+  }
 
   @Input() restaurant!: IRestaurant;
   showFullDesc = false;
   minPrice: string = '';
   maxPrice: string = '';
+  isOwner = false;
 
   ngOnInit() {
     this.minPrice = findMinPrice(this.restaurant.menu).toLocaleString('en-US');

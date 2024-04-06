@@ -6,7 +6,7 @@ import { createServer } from 'http';
 import { initializeApp } from 'firebase/app';
 
 import './utils/cron.js';
-import routes from './routes.js';
+import routes from './routes/index.js';
 import firebaseConfig from './config/firebase.config.js';
 import soketController from './controllers/socketIO.controller.js';
 import { connectDb } from './config/mongoose.config.js';

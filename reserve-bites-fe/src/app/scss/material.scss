@@ -1,0 +1,50 @@
+@import './variables.scss';
+
+.mat-mdc-menu-panel {
+  max-width: none !important;
+}
+
+.mat-mdc-menu-item-text {
+  width: 100% !important;
+}
+
+.mdc-button {
+  font-size: 16px;
+  padding: 20px !important;
+}
+
+.mat-mdc-icon-button {
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.mdc-button.mdc-button--raised.mat-mdc-raised-button.mat-main {
+  background-color: $primary;
+  color: #fff;
+}
+
+.mdc-button.mdc-button--raised.mat-mdc-raised-button.mat-success {
+  background-color: $success;
+  color: #fff;
+}
+
+.mdc-button.mdc-button--raised.mat-mdc-raised-button.mat-main {
+  background-color: $primary;
+  color: #fff;
+}
+
+.mat-mdc-tab-body,
+.mat-mdc-tab-body-content {
+  overflow-y: hidden !important;
+}
+.mat-horizontal-stepper-header {
+  pointer-events: none !important;
+}
+
+[_nghost-ng-c1598661843] {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}

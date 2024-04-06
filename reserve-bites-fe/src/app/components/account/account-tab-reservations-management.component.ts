@@ -63,6 +63,7 @@ import { UserService } from 'src/app/services/user.service';
           color: #c51d1a;
           background-color: #fbe9e8;
         }
+        &.expired,
         &.rejected {
           color: #333;
           background-color: #eee;
@@ -81,11 +82,12 @@ import { UserService } from 'src/app/services/user.service';
           label="State"
           (selectionChange)="handleStatusChange($event)"
           [options]="[
+            { value: 'expired', content: 'Expired' },
             { value: 'canceled', content: 'Canceled' },
             { value: 'rejected', content: 'Rejected' },
             { value: 'confirmed', content: 'Confirmed' },
             { value: 'completed', content: 'Completed' },
-            { value: 'responsing', content: 'Responsing' }
+            { value: 'responding', content: 'Responding' }
           ]"
         />
       </div>
@@ -93,7 +95,12 @@ import { UserService } from 'src/app/services/user.service';
       <div *ngIf="dataSource && !fetching">
         <table mat-table class="mat-elevation-z8" [dataSource]="dataSource">
           <tr mat-header-row *matHeaderRowDef="columns"></tr>
-          <tr mat-row *matRowDef="let row; columns: columns" class="element-row"></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: columns"
+            class="element-row"
+            [routerLink]="'/reservation/' + row.id"
+          ></tr>
 
           <ng-container *ngIf="isOwner" matColumnDef="diner">
             <th mat-header-cell *matHeaderCellDef>Diner</th>
@@ -150,23 +157,6 @@ import { UserService } from 'src/app/services/user.service';
               </p>
             </td>
           </ng-container>
-
-          <ng-container matColumnDef="action">
-            <th mat-header-cell *matHeaderCellDef></th>
-            <td mat-cell *matCellDef="let element">
-              <ng-icon
-                class="action-icon"
-                name="matMoreHorizOutline"
-                size="1.4rem"
-                (click)="$event.stopPropagation()"
-                [matMenuTriggerFor]="actionMenu"
-              />
-              <mat-menu #actionMenu="matMenu" xPosition="before">
-                <button mat-menu-item [routerLink]="'/reservation/' + element.id">View</button>
-                <button mat-menu-item>Mark as readed</button>
-              </mat-menu>
-            </td>
-          </ng-container>
         </table>
       </div>
 
@@ -197,7 +187,7 @@ export class AccountTabReservationsManagementComponent implements OnInit {
     this.auth.user.subscribe((u) => {
       this.isOwner = u?.isOwner as boolean;
       if (u?.isOwner) {
-        this.columns = ['diner', 'email', 'size', 'date', 'time', 'status', 'action'];
+        this.columns = ['diner', 'email', 'size', 'date', 'time', 'status'];
       }
     });
 

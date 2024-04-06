@@ -41,6 +41,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
   matStarOutline,
   matCloseOutline,
+  matCancelOutline,
   matModeEditOutline,
   matMoreHorizOutline,
   matOpenInNewOutline,
@@ -53,6 +54,8 @@ import {
   heroTrash,
   heroPencil,
   heroTicket,
+  heroFaceFrown,
+  heroFaceSmile,
   heroPencilSquare,
   heroChatBubbleBottomCenterText,
 } from '@ng-icons/heroicons/outline';
@@ -185,6 +188,8 @@ import { AccountTabReservationsManagementComponent } from './components/account/
       heroTicket,
       ionArrowRedo,
       ionBugOutline,
+      heroFaceFrown,
+      heroFaceSmile,
       ionCashOutline,
       matStarOutline,
       heroXMarkSolid,
@@ -192,6 +197,7 @@ import { AccountTabReservationsManagementComponent } from './components/account/
       ionLogInOutline,
       ionLogOutOutline,
       ionPersonOutline,
+      matCancelOutline,
       heroPencilSquare,
       ionWarningOutline,
       matModeEditOutline,

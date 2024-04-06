@@ -7,7 +7,16 @@ const NotificationSchema = new Schema(
     receiverId: { type: String, required: true, ref: 'user' },
     type: {
       type: String,
-      enum: ['MAKE_RESERVATION', 'POST_REVIEW', 'UPDATE_REVIEW', 'DELETE_REVIEW'],
+      enum: [
+        'MAKE_RESERVATION',
+        'POST_REVIEW',
+        'UPDATE_REVIEW',
+        'DELETE_REVIEW',
+        'REJECT_RESERVATION',
+        'UPDATE_RESERVATION',
+        'CANCEL_RESERVATION',
+        'CONFIRM_RESERVATION',
+      ],
       require: true,
     },
     readed: { type: Boolean, default: false },

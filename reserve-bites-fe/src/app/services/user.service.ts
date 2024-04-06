@@ -5,7 +5,7 @@ import { Observable, lastValueFrom, map } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { IUser, UserType } from '../types/auth.type';
 import { INotification, NotificationType } from '../types/notification';
-import { IReservation, IReview } from '../types/restaurant.type';
+import { IReservation, IRestaurant, IReview } from '../types/restaurant.type';
 import { notificationMessage } from '../utils/notification';
 import { AuthService } from './auth.service';
 import { SnackbarService } from './snackbar.service';
@@ -209,7 +209,9 @@ export class UserService {
           map((res) => {
             const itemsList = res.itemsList.map((item) => ({
               ...item,
-              title: item.sender.firstName + item.sender.lastName,
+              title:
+                (item.sender as IRestaurant)?.name ||
+                (item.sender as IUser).firstName + (item.sender as IUser).lastName,
               message: notificationMessage[item.type],
             }));
 

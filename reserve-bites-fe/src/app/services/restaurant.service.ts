@@ -11,6 +11,9 @@ import {
   IFormOwnerInformationType,
   IFormRestaurantInformationType,
 } from './../types/restaurant.type';
+import { RealTimeService } from './realTime.service';
+import { UserType } from '../types/auth.type';
+import { NotificationType } from '../types/notification';
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +24,7 @@ export class RestaurantService {
     private http: HttpClient,
     private auth: AuthService,
     private router: Router,
+    private realTime: RealTimeService,
     private _snackbar: SnackbarService,
   ) {}
 
@@ -201,8 +205,29 @@ export class RestaurantService {
 
   async getReservationById(id: string) {
     const res = await lastValueFrom(
-      this.http.get<IReservation>(this.SERVER_URL + `/restaurant/reservation/${id}`),
+      this.http.get<IReservation>(this.SERVER_URL + `/reservation/${id}`),
     );
     return res;
+  }
+
+  async responseReservation(reservation: IReservation, status: 'rejected' | 'confirmed') {
+    await lastValueFrom(
+      this.http.put(this.SERVER_URL + `/reservation/${reservation.id}`, { status }),
+    );
+    console.log('updateSuccess');
+
+    this._snackbar.open('success', `You have ${status} the reservation`);
+    this.realTime.sendNotification({
+      senderId: this.auth.user.value?.id as string,
+      receiver: {
+        type: UserType.CLIENT,
+        uid: reservation.diner.id,
+        reservationId: reservation.id,
+      },
+      type:
+        status === 'confirmed'
+          ? NotificationType.CONFIRM_RESERVATION
+          : NotificationType.REJECT_RESERVATION,
+    });
   }
 }

@@ -3,6 +3,8 @@ import { UserService } from 'src/app/services/user.service';
 import { INotification } from 'src/app/types/notification';
 import { RealTimeService } from 'src/app/services/realTime.service';
 import { notificationIcon, notificationMessage } from 'src/app/utils/notification';
+import { IRestaurant } from 'src/app/types/restaurant.type';
+import { IUser } from 'src/app/types/auth.type';
 
 @Component({
   selector: 'notification-drop-down',
@@ -104,7 +106,9 @@ export class NotificationDropDownComponent implements OnInit {
       next: (n) => {
         this.notificationList.unshift({
           ...n,
-          title: n.sender.firstName + n.sender.lastName,
+          title:
+            (n.sender as IRestaurant)?.name ||
+            (n.sender as IUser).firstName + (n.sender as IUser).lastName,
           message: notificationMessage[n.type],
         });
         this.unReadNotif += 1;

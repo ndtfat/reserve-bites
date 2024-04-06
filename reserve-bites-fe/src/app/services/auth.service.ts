@@ -26,6 +26,7 @@ export class AuthService {
     } catch (error) {
       // console.log(error);
       this.isAuthenticated.next(false);
+      this.router.navigateByUrl('/auth/sign-in');
     }
   }
 

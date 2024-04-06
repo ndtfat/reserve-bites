@@ -8,9 +8,20 @@ const ReservationSchema = new Schema(
     size: { type: Number, required: true },
     date: { type: Date, required: true },
     time: { type: Date, requried: true },
+    cancelMessage: { type: String },
+    versions: [
+      {
+        type: {
+          size: { type: Number, required: true },
+          date: { type: Date, required: true },
+          time: { type: Date, requried: true },
+          createdAt: { type: Date, default: new Date() },
+        },
+      },
+    ],
     status: {
       type: String,
-      enum: ['confirmed', 'responding', 'canceled', 'completed'],
+      enum: ['confirmed', 'responding', 'canceled', 'completed', 'expired', 'rejected'],
       default: 'responding',
     },
   },
