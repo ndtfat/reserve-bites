@@ -1,9 +1,33 @@
 import { RealTimeService } from 'src/app/services/realTime.service';
 import { Component } from '@angular/core';
 import { AuthService } from '../services/auth.service';
+import { LogoComponent } from '../components/common/logo.component';
+import { NotificationDropDownComponent } from '../components/header/notification-drop-down.component';
+import { AccountDropDownComponent } from '../components/header/account-drop-down.component';
+import { NgIconsModule, provideIcons } from '@ng-icons/core';
+import { RouterOutlet } from '@angular/router';
+import { ionChatbubbleEllipsesOutline, ionClose } from '@ng-icons/ionicons';
+import { MatBadgeModule } from '@angular/material/badge';
+import { ChatBoxComponent } from '../components/chat/chat-box.component';
+import { NgClass, NgIf } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'header',
+  standalone: true,
+  imports: [
+    NgIf,
+    NgClass,
+    RouterOutlet,
+    NgIconsModule,
+    LogoComponent,
+    MatBadgeModule,
+    MatButtonModule,
+    ChatBoxComponent,
+    AccountDropDownComponent,
+    NotificationDropDownComponent,
+  ],
+  viewProviders: [provideIcons({ ionClose, ionChatbubbleEllipsesOutline })],
   styles: [
     `
       @import '../scss/common.scss';

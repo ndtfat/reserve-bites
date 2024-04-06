@@ -5,9 +5,31 @@ import { RealTimeService } from 'src/app/services/realTime.service';
 import { notificationIcon, notificationMessage } from 'src/app/utils/notification';
 import { IRestaurant } from 'src/app/types/restaurant.type';
 import { IUser } from 'src/app/types/auth.type';
+import { TimePipe } from 'src/app/pipes/time.pipe';
+import { NgIconsModule, provideIcons } from '@ng-icons/core';
+import { matNotificationsNoneOutline } from '@ng-icons/material-icons/outline';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatMenu, MatMenuModule } from '@angular/material/menu';
+import { RouterLink } from '@angular/router';
+import { DatePipe, NgFor } from '@angular/common';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'notification-drop-down',
+  standalone: true,
+  imports: [
+    NgFor,
+    DatePipe,
+    TimePipe,
+    RouterLink,
+    NgIconsModule,
+    MatMenuModule,
+    MatBadgeModule,
+    MatButtonModule,
+    MatDividerModule,
+  ],
+  viewProviders: [provideIcons({ matNotificationsNoneOutline })],
   styles: [
     `
       @import '../../scss/common.scss';

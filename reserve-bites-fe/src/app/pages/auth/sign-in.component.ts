@@ -1,9 +1,27 @@
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { AlertComponent } from 'src/app/components/common/alert.component';
+import { FormInputComponent } from 'src/app/components/common/form-input.component';
+import { LogoComponent } from 'src/app/components/common/logo.component';
 import { AuthService } from 'src/app/services/auth.service';
+import { NgIf } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'sign-in',
+  standalone: true,
+  imports: [
+    NgIf,
+    RouterLink,
+    LogoComponent,
+    AlertComponent,
+    MatButtonModule,
+    FormInputComponent,
+    ReactiveFormsModule,
+    MatProgressSpinnerModule,
+  ],
   styles: [
     `
       @import '../../scss/responsive.scss';

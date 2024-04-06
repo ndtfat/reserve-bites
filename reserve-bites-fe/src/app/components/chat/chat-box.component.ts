@@ -1,11 +1,32 @@
-import { AuthService } from './../../services/auth.service';
-import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { NgIconsModule, provideIcons } from '@ng-icons/core';
+import { heroUserCircleSolid } from '@ng-icons/heroicons/solid';
 import { RealTimeService } from 'src/app/services/realTime.service';
 import { UserService } from 'src/app/services/user.service';
-import { ChatTab, ChatRole, IMessage, IChatBox } from 'src/app/types/chat.type';
+import { ChatRole, ChatTab, IChatBox, IMessage } from 'src/app/types/chat.type';
+import { AuthService } from './../../services/auth.service';
+import { ionArrowRedo } from '@ng-icons/ionicons';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'chat-box',
+  standalone: true,
+  imports: [
+    NgIf,
+    NgFor,
+    NgClass,
+    DatePipe,
+    NgIconsModule,
+    MatIconModule,
+    MatButtonModule,
+    MatDividerModule,
+    MatTooltipModule,
+  ],
+  viewProviders: [provideIcons({ heroUserCircleSolid, ionArrowRedo })],
   styles: [
     `
       @import '../../scss/common.scss';

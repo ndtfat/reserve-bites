@@ -9,6 +9,11 @@ import { RealTimeService } from 'src/app/services/realTime.service';
 import { NotificationType } from 'src/app/types/notification';
 import { RestaurantService } from 'src/app/services/restaurant.service';
 import { IRestaurant, IReview } from 'src/app/types/restaurant.type';
+import { NgIf } from '@angular/common';
+import { MatTabsModule } from '@angular/material/tabs';
+import { RestaurantTabOverviewComponent } from 'src/app/components/restaurant/restaurant-tab-overview.component';
+import { RestaurantTabReviewsComponent } from 'src/app/components/restaurant/restaurant-tab-reviews.component';
+import { FormReservationComponent } from 'src/app/components/restaurant/form-reservation.component';
 
 enum Tabs {
   OVERVIEW = 0,
@@ -17,6 +22,14 @@ enum Tabs {
 
 @Component({
   selector: 'restaurant',
+  standalone: true,
+  imports: [
+    NgIf,
+    MatTabsModule,
+    RestaurantTabOverviewComponent,
+    RestaurantTabReviewsComponent,
+    FormReservationComponent,
+  ],
   styles: [
     `
       @import '../../scss/common.scss';

@@ -1,13 +1,13 @@
-import {
-  Input,
-  Output,
-  Component,
-  EventEmitter,
-  booleanAttribute,
-} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Input, Output, Component, EventEmitter, booleanAttribute } from '@angular/core';
+import { NgIconsModule, provideIcons } from '@ng-icons/core';
+import { ionBugOutline, ionDocumentTextOutline } from '@ng-icons/ionicons';
 
 @Component({
   selector: 'upload-image',
+  standalone: true,
+  imports: [CommonModule, NgIconsModule],
+  viewProviders: [provideIcons({ ionBugOutline, ionDocumentTextOutline })],
   styles: [
     `
       @import '../../scss/common.scss';
@@ -35,17 +35,8 @@ import {
   template: `
     <label class="wrapper" [ngClass]="{ error: errorMessage }">
       <div style="margin-bottom: 10px;">
-        <ng-icon
-          *ngIf="errorMessage"
-          name="ionBugOutline"
-          size="50"
-          color="red"
-        />
-        <ng-icon
-          *ngIf="!errorMessage"
-          name="ionDocumentTextOutline"
-          size="50"
-        />
+        <ng-icon *ngIf="errorMessage" name="ionBugOutline" size="50" color="red" />
+        <ng-icon *ngIf="!errorMessage" name="ionDocumentTextOutline" size="50" />
       </div>
       <input
         type="file"

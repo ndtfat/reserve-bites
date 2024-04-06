@@ -1,17 +1,34 @@
+import { NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
   FormGroup,
+  ReactiveFormsModule,
   ValidationErrors,
   ValidatorFn,
   Validators,
 } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AlertComponent } from 'src/app/components/common/alert.component';
+import { FormInputComponent } from 'src/app/components/common/form-input.component';
+import { LogoComponent } from 'src/app/components/common/logo.component';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'reset-password',
+  standalone: true,
+  imports: [
+    NgIf,
+    LogoComponent,
+    AlertComponent,
+    MatButtonModule,
+    FormInputComponent,
+    ReactiveFormsModule,
+    MatProgressSpinnerModule,
+  ],
   styles: [
     `
       @import '../../scss/responsive.scss';

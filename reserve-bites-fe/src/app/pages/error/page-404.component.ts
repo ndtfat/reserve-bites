@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'page-404',
+  standalone: true,
+  imports: [MatButtonModule],
   styles: [
     `
       @import '../../scss/common.scss';
@@ -48,9 +51,7 @@ import { Component } from '@angular/core';
           <img src="../../../assets/imgs/egg.png" />
           <p>4</p>
         </div>
-        <button mat-raised-button color="primary" routerLink="/">
-          Back to home
-        </button>
+        <button mat-raised-button color="primary" routerLink="/">Back to home</button>
       </div>
     </div>
   `,

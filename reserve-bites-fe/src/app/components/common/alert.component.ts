@@ -1,8 +1,26 @@
+import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { NgIconsModule, provideIcons } from '@ng-icons/core';
 import { AlertType } from 'src/app/types/notification';
+import {
+  ionAlertCircleOutline,
+  ionCheckmarkCircleOutline,
+  ionInformationCircleOutline,
+  ionWarningOutline,
+} from '@ng-icons/ionicons';
 
 @Component({
   selector: 'alert',
+  standalone: true,
+  imports: [CommonModule, NgIconsModule],
+  viewProviders: [
+    provideIcons({
+      ionWarningOutline,
+      ionAlertCircleOutline,
+      ionCheckmarkCircleOutline,
+      ionInformationCircleOutline,
+    }),
+  ],
   styles: [
     `
       @import '../../scss/common.scss';

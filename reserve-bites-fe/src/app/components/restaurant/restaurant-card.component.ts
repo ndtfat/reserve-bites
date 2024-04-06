@@ -1,8 +1,14 @@
+import { NgIf } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { PricePipe } from 'src/app/pipes/price.pipe';
+import { TimePipe } from 'src/app/pipes/time.pipe';
 import { IRestaurantCard } from 'src/app/types/restaurant.type';
 
 @Component({
   selector: 'restaurant-card',
+  standalone: true,
+  imports: [NgIf, RouterLink, PricePipe, TimePipe],
   styles: [
     `
       @import '../../scss/common.scss';

@@ -1,11 +1,20 @@
+import { NgIf, NgClass, NgFor } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
+import { NgIconsModule, provideIcons } from '@ng-icons/core';
+import { ionChatbubblesOutline } from '@ng-icons/ionicons';
 import { AuthService } from 'src/app/services/auth.service';
 import { RealTimeService } from 'src/app/services/realTime.service';
 import { IRestaurant } from 'src/app/types/restaurant.type';
 import { findMaxPrice, findMinPrice } from 'src/app/utils/find';
+import { MenuComponent } from './menu.component';
+import { TimePipe } from 'src/app/pipes/time.pipe';
+import { CarouselModule } from 'ngx-bootstrap/carousel';
 
 @Component({
   selector: 'restaurant-tab-overview',
+  standalone: true,
+  imports: [NgIf, NgFor, NgClass, NgIconsModule, MenuComponent, TimePipe, CarouselModule],
+  viewProviders: [provideIcons({ ionChatbubblesOutline })],
   styles: [
     `
       @import '../../scss/common.scss';

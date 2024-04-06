@@ -1,9 +1,122 @@
 /// <reference types="@angular/localize" />
 
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
+import { AppComponent } from './app/app.component';
+import { importProvidersFrom } from '@angular/core';
+import {
+  PreloadAllModules,
+  RouterModule,
+  provideRouter,
+  withDebugTracing,
+  withPreloading,
+} from '@angular/router';
+import routes from './app/routes';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { AddHeaderInterceptor } from './app/utils/token.interceptor';
+import { NgIconsModule } from '@ng-icons/core';
+import { MatIconModule } from '@angular/material/icon';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { AppModule } from './app/app.module';
+// icons
+import {
+  matStarOutline,
+  matCloseOutline,
+  matCancelOutline,
+  matModeEditOutline,
+  matMoreHorizOutline,
+  matOpenInNewOutline,
+  matMarkEmailReadOutline,
+  matAccountCircleOutline,
+  matNotificationsNoneOutline,
+} from '@ng-icons/material-icons/outline';
+import {
+  heroClock,
+  heroTrash,
+  heroPencil,
+  heroTicket,
+  heroFaceFrown,
+  heroFaceSmile,
+  heroPencilSquare,
+  heroChatBubbleBottomCenterText,
+} from '@ng-icons/heroicons/outline';
+import { heroUserCircleSolid, heroXMarkSolid } from '@ng-icons/heroicons/solid';
+import {
+  ionClose,
+  ionImage,
+  ionArrowRedo,
+  ionBugOutline,
+  ionCashOutline,
+  ionLogInOutline,
+  ionLogOutOutline,
+  ionPersonOutline,
+  ionWarningOutline,
+  ionLocationOutline,
+  ionPricetagOutline,
+  ionSettingsOutline,
+  ionLockClosedOutline,
+  ionCloudUploadOutline,
+  ionAlertCircleOutline,
+  ionChatbubblesOutline,
+  ionDocumentTextOutline,
+  ionCheckmarkCircleOutline,
+  ionInformationCircleOutline,
+  ionChatbubbleEllipsesOutline,
+} from '@ng-icons/ionicons';
 
-platformBrowserDynamic()
-  .bootstrapModule(AppModule)
-  .catch((err) => console.error(err));
+bootstrapApplication(AppComponent, {
+  providers: [
+    importProvidersFrom(
+      BrowserModule,
+      HttpClientModule,
+      BrowserAnimationsModule,
+      NgIconsModule.withIcons({
+        ionClose,
+        ionImage,
+        heroClock,
+        heroTrash,
+        heroPencil,
+        heroTicket,
+        ionArrowRedo,
+        ionBugOutline,
+        heroFaceFrown,
+        heroFaceSmile,
+        ionCashOutline,
+        matStarOutline,
+        heroXMarkSolid,
+        matCloseOutline,
+        ionLogInOutline,
+        ionLogOutOutline,
+        ionPersonOutline,
+        matCancelOutline,
+        heroPencilSquare,
+        ionWarningOutline,
+        matModeEditOutline,
+        ionPricetagOutline,
+        ionSettingsOutline,
+        ionLocationOutline,
+        matOpenInNewOutline,
+        heroUserCircleSolid,
+        matMoreHorizOutline,
+        ionLockClosedOutline,
+        ionCloudUploadOutline,
+        ionAlertCircleOutline,
+        ionChatbubblesOutline,
+        ionDocumentTextOutline,
+        matMarkEmailReadOutline,
+        matAccountCircleOutline,
+        ionCheckmarkCircleOutline,
+        matNotificationsNoneOutline,
+        ionInformationCircleOutline,
+        ionChatbubbleEllipsesOutline,
+        heroChatBubbleBottomCenterText,
+      }),
+    ),
+    provideRouter(routes, withPreloading(PreloadAllModules), withDebugTracing()),
+
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AddHeaderInterceptor,
+      multi: true,
+    },
+  ],
+}).catch((error) => console.log(error));

@@ -1,11 +1,21 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { MatDividerModule } from '@angular/material/divider';
+import { NgIconsModule, provideIcons } from '@ng-icons/core';
+import { ionImage } from '@ng-icons/ionicons';
 import {
   IFormOwnerInformationType,
   IFormRestaurantInformationType,
 } from 'src/app/types/restaurant.type';
+import { MenuComponent } from '../restaurant/menu.component';
+import { TimePipe } from 'src/app/pipes/time.pipe';
+import { NgFor } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'confirmation-restaurant-register',
+  standalone: true,
+  imports: [NgFor, MatDividerModule, NgIconsModule, MenuComponent, TimePipe, MatButtonModule],
+  viewProviders: [provideIcons({ ionImage })],
   styles: [
     `
       @import '../../scss/common.scss';
@@ -157,15 +167,8 @@ import {
 
     <!-- Buttons -->
     <div class="button-wrapper">
-      <button type="button" mat-raised-button (click)="back.emit()">
-        Back
-      </button>
-      <button
-        type="button"
-        mat-raised-button
-        color="primary"
-        (click)="confirm.emit()"
-      >
+      <button type="button" mat-raised-button (click)="back.emit()">Back</button>
+      <button type="button" mat-raised-button color="primary" (click)="confirm.emit()">
         Create restaurant
       </button>
     </div>

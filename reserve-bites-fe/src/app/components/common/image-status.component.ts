@@ -1,14 +1,15 @@
-import {
-  Input,
-  OnInit,
-  Output,
-  Component,
-  EventEmitter,
-  booleanAttribute,
-} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Input, OnInit, Output, Component, EventEmitter, booleanAttribute } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { NgIconsModule, provideIcons } from '@ng-icons/core';
+import { ionCloudUploadOutline } from '@ng-icons/ionicons';
 
 @Component({
   selector: 'image-status',
+  standalone: true,
+  imports: [CommonModule, NgIconsModule, MatProgressBarModule, MatIconModule],
+  viewProviders: [provideIcons({ ionCloudUploadOutline })],
   styles: [
     `
       @import '../../scss/common.scss';
@@ -42,11 +43,7 @@ import {
         <div style="margin: 4px 0 0;">
           <p style="margin-bottom: 2px;">
             {{
-              progress === 100
-                ? error || errorMessage
-                  ? 'Failed'
-                  : 'Finished'
-                : 'Uploading...'
+              progress === 100 ? (error || errorMessage ? 'Failed' : 'Finished') : 'Uploading...'
             }}
           </p>
           <p *ngIf="errorMessage || error" style="color: red">
@@ -72,12 +69,7 @@ import {
       >
         cancel
       </mat-icon>
-      <button
-        mat-icon-button
-        type="button"
-        class="delete-icon"
-        (click)="handleDelete()"
-      >
+      <button mat-icon-button type="button" class="delete-icon" (click)="handleDelete()">
         <mat-icon>close</mat-icon>
       </button>
     </div>

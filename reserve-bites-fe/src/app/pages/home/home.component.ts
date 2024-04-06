@@ -1,3 +1,4 @@
+import { NgFor, NgIf } from '@angular/common';
 import { Router } from '@angular/router';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BehaviorSubject, Subject, Subscription } from 'rxjs';
@@ -5,9 +6,26 @@ import { debounceTime } from 'rxjs/operators';
 import { RestaurantService } from 'src/app/services/restaurant.service';
 import { IRestaurantCard } from 'src/app/types/restaurant.type';
 import { AuthService } from 'src/app/services/auth.service';
+import { AppSelectComponent } from 'src/app/components/common/app-select.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { AlertComponent } from 'src/app/components/common/alert.component';
+import { RestaurantCardComponent } from 'src/app/components/restaurant/restaurant-card.component';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'home',
+  standalone: true,
+  imports: [
+    NgIf,
+    NgFor,
+    AlertComponent,
+    MatInputModule,
+    MatButtonModule,
+    AppSelectComponent,
+    MatFormFieldModule,
+    RestaurantCardComponent,
+  ],
   styles: [
     `
       @import '../../scss/common.scss';

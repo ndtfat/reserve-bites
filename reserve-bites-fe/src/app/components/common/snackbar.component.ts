@@ -1,8 +1,14 @@
+import { NgClass } from '@angular/common';
 import { Component } from '@angular/core';
+import { NgIconsModule, provideIcons } from '@ng-icons/core';
+import { heroXMarkSolid } from '@ng-icons/heroicons/solid';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 
 @Component({
   selector: 'snackbar',
+  standalone: true,
+  imports: [NgClass, NgIconsModule],
+  viewProviders: [provideIcons({ heroXMarkSolid })],
   styles: [
     `
       @import '../../scss/variables.scss';

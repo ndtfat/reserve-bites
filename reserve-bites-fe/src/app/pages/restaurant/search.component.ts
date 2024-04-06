@@ -1,14 +1,40 @@
+import { NgFor, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { PageEvent } from '@angular/material/paginator';
-import { ActivatedRoute } from '@angular/router';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSliderModule } from '@angular/material/slider';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { NgIconsModule } from '@ng-icons/core';
 import { BehaviorSubject, filter } from 'rxjs';
+import { AlertComponent } from 'src/app/components/common/alert.component';
+import { AppSelectComponent } from 'src/app/components/common/app-select.component';
+import { PricePipe } from 'src/app/pipes/price.pipe';
+import { TimePipe } from 'src/app/pipes/time.pipe';
 import { RestaurantService } from 'src/app/services/restaurant.service';
 import { AlertType } from 'src/app/types/notification';
 import { IRestaurantCard } from 'src/app/types/restaurant.type';
 
 @Component({
   selector: 'search',
+  standalone: true,
+  imports: [
+    NgIf,
+    NgFor,
+    TimePipe,
+    PricePipe,
+    RouterLink,
+    MatIconModule,
+    AlertComponent,
+    MatSliderModule,
+    MatDividerModule,
+    MatPaginatorModule,
+    AppSelectComponent,
+    ReactiveFormsModule,
+    MatProgressSpinnerModule,
+  ],
   styles: [
     `
       @import '../../scss/common.scss';
@@ -168,12 +194,7 @@ import { IRestaurantCard } from 'src/app/types/restaurant.type';
 
           <div style="display: flex; gap: 10px; width: 100%;">
             <div style="width: 30%;">
-              <form-input
-                [formGroup]="filterForm"
-                name="size"
-                type="number"
-                label="Size"
-              />
+              <form-input [formGroup]="filterForm" name="size" type="number" label="Size" />
             </div>
             <div style="flex: 1; min-width: 10px;">
               <app-select
@@ -196,15 +217,8 @@ import { IRestaurantCard } from 'src/app/types/restaurant.type';
           <div
             style="margin-top: 30px; width: 100%; display: flex; justify-content: space-between; gap: 20px"
           >
-            <button mat-raised-button style="flex: 1" (click)="handleReset()">
-              Reset
-            </button>
-            <button
-              mat-raised-button
-              style="flex: 1"
-              color="primary"
-              (click)="handleSearch()"
-            >
+            <button mat-raised-button style="flex: 1" (click)="handleReset()">Reset</button>
+            <button mat-raised-button style="flex: 1" color="primary" (click)="handleSearch()">
               Search
             </button>
           </div>
@@ -213,12 +227,7 @@ import { IRestaurantCard } from 'src/app/types/restaurant.type';
         <div class="result">
           <h3 style="margin-bottom: 30px;">Results ({{ totalItems }})</h3>
 
-          
-          <alert 
-            *ngIf="errorMessage" 
-            type="error" 
-            style="margin-bottom: 10px;"
-          >
+          <alert *ngIf="errorMessage" type="error" style="margin-bottom: 10px;">
             {{ errorMessage }}
           </alert>
 
@@ -233,10 +242,7 @@ import { IRestaurantCard } from 'src/app/types/restaurant.type';
           <div *ngIf="!loading && results.length > 0" class="card-wrapper">
             <div *ngFor="let restaurant of results" class="restaurant-card">
               <div class="overview" (click)="handleExpand($event)">
-                <img
-                  [src]="restaurant.mainImage.url"
-                  [alt]="restaurant.mainImage.name"
-                />
+                <img [src]="restaurant.mainImage.url" [alt]="restaurant.mainImage.name" />
                 <div class="restaurant-info">
                   <h5>{{ restaurant.name }}</h5>
                   <span style="flex: 1;"></span>
@@ -244,11 +250,7 @@ import { IRestaurantCard } from 'src/app/types/restaurant.type';
                     Own by <span>{{ restaurant.owner }}</span>
                   </p>
                   <p style="margin-top: 4px;">
-                    {{
-                      restaurant.address.province +
-                        ', ' +
-                        restaurant.address.country
-                    }}
+                    {{ restaurant.address.province + ', ' + restaurant.address.country }}
                   </p>
                 </div>
                 <div
@@ -322,17 +324,11 @@ import { IRestaurantCard } from 'src/app/types/restaurant.type';
   `,
 })
 export class SearchComponent implements OnInit {
-  dayOptions = [
-    'Monday',
-    'Tuesday',
-    'Wendsday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday',
-  ].map((day) => {
-    return { value: day.substring(0, 3), content: day };
-  });
+  dayOptions = ['Monday', 'Tuesday', 'Wendsday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(
+    (day) => {
+      return { value: day.substring(0, 3), content: day };
+    },
+  );
 
   filterForm = this.fb.group({
     name: [''],
@@ -353,7 +349,7 @@ export class SearchComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private restaurantSv: RestaurantService
+    private restaurantSv: RestaurantService,
   ) {
     this.route.queryParams.subscribe((params) => {
       const { name, address } = params;
@@ -369,8 +365,7 @@ export class SearchComponent implements OnInit {
   async ngOnInit() {
     this.$page.subscribe(async (page) => {
       this.loading = true;
-      const { name, address, size, minRate, maxRate, openDay } =
-        this.filterForm.value;
+      const { name, address, size, minRate, maxRate, openDay } = this.filterForm.value;
       const { totalItems, itemsList, error } = await this.restaurantSv.search(
         name || '',
         address || '',
@@ -378,7 +373,7 @@ export class SearchComponent implements OnInit {
         minRate || 0,
         maxRate || 5,
         openDay || '',
-        page
+        page,
       );
       this.errorMessage = error || '';
       this.totalItems = totalItems;
@@ -388,9 +383,7 @@ export class SearchComponent implements OnInit {
   }
 
   handleExpand(event: Event) {
-    const element = (event.target as HTMLButtonElement).closest(
-      '.restaurant-card'
-    );
+    const element = (event.target as HTMLButtonElement).closest('.restaurant-card');
     if (!element?.classList.contains('open')) {
       document.querySelector('.restaurant-card.open')?.classList.remove('open');
     }

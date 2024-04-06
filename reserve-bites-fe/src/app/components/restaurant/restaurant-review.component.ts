@@ -1,14 +1,14 @@
-import {
-  Input,
-  Output,
-  Component,
-  EventEmitter,
-  booleanAttribute,
-} from '@angular/core';
+import { DatePipe, NgClass, NgIf } from '@angular/common';
+import { Input, Output, Component, EventEmitter, booleanAttribute } from '@angular/core';
+import { NgIconsModule, provideIcons } from '@ng-icons/core';
+import { heroUserCircleSolid } from '@ng-icons/heroicons/solid';
 import { IReview } from 'src/app/types/restaurant.type';
 
 @Component({
   selector: 'restaurant-review',
+  standalone: true,
+  imports: [NgIf, NgIconsModule, DatePipe, NgClass],
+  viewProviders: [provideIcons({ heroUserCircleSolid })],
   styles: [
     `
       @import '../../scss/common.scss';

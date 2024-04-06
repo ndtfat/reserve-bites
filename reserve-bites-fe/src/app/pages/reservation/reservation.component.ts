@@ -1,19 +1,48 @@
 import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
+import { MatButton, MatButtonModule } from '@angular/material/button';
 import { TimepickerModule } from 'ngx-bootstrap/timepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogModule,
+  MatDialogRef,
+} from '@angular/material/dialog';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { RestaurantService } from 'src/app/services/restaurant.service';
 import { IReservation, IRestaurant, ReservationStatus } from 'src/app/types/restaurant.type';
 import { RealTimeService } from 'src/app/services/realTime.service';
+import { validReservation } from 'src/app/utils/reservation';
+import { from } from 'rxjs';
+import { AlertComponent } from 'src/app/components/common/alert.component';
+import { CommonModule, DatePipe, NgIf } from '@angular/common';
+import { TimePipe } from 'src/app/pipes/time.pipe';
+import { NgIconsModule, provideIcons } from '@ng-icons/core';
+import { matOpenInNewOutline } from '@ng-icons/material-icons/outline';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @Component({
   selector: 'reservation',
+  standalone: true,
+  imports: [
+    NgIf,
+    DatePipe,
+    TimePipe,
+    RouterLink,
+    NgIconsModule,
+    MatButtonModule,
+    MatDialogModule,
+    MatDividerModule,
+    MatProgressSpinnerModule,
+  ],
+  viewProviders: [provideIcons({ matOpenInNewOutline })],
+
   styles: [
     `
       @import '../../scss/common.scss';
@@ -213,10 +242,9 @@ export class ReservationComponent implements OnInit {
       this.isOwner = !!u?.isOwner;
     });
   }
-  ReservationStatus = ReservationStatus;
   isOwner = false;
-  restaurant!: IRestaurant;
   reservation!: IReservation;
+  ReservationStatus = ReservationStatus;
 
   async ngOnInit() {
     if (this.route.snapshot.paramMap.has('id')) {
@@ -313,12 +341,15 @@ class CancelReservationDialog {
   selector: 'edit-reservation-dialog',
   standalone: true,
   imports: [
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatDatepickerModule,
-    TimepickerModule,
     FormsModule,
+    CommonModule,
+    AlertComponent,
+    MatInputModule,
+    MatButtonModule,
+    TimepickerModule,
+    MatFormFieldModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     ReactiveFormsModule,
   ],
   styles: [
@@ -346,6 +377,10 @@ class CancelReservationDialog {
   template: `
     <div class="wrapper">
       <h2>Edit reservation</h2>
+
+      <alert type="error" *ngIf="alertMessage" style="margin-bottom: 10px;">
+        {{ alertMessage }}
+      </alert>
 
       <form [formGroup]="form">
         <mat-form-field style="width: 100%;" appearance="outline">
@@ -384,17 +419,32 @@ class EditReservationDialog {
     private fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: IReservation,
   ) {}
+
+  alertMessage = '';
   form = this.fb.group({
-    size: [this.data.size],
-    time: [this.data.time],
-    date: [this.data.date],
+    size: [this.data.size, Validators.required],
+    time: [this.data.time, Validators.required],
+    date: [this.data.date, Validators.required],
   });
 
   handleClose() {
     this.dialogRef.close();
   }
   handleEdit() {
-    // this.handleClose();
-    console.log(this.form.value);
+    const size = Number(this.form.get('size')?.value);
+
+    this.alertMessage = validReservation(
+      size,
+      this.form.get('date')?.value as Date,
+      this.form.get('time')?.value as Date,
+      this.data.restaurant.operationTime.openTime,
+      this.data.restaurant.operationTime.closeTime,
+      this.data.restaurant.maxReservationSize,
+      this.data.restaurant.operationTime.openDay,
+    );
+
+    if (this.alertMessage === '') {
+      console.log(this.form.value);
+    }
   }
 }

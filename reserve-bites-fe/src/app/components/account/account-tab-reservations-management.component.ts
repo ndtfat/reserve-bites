@@ -1,12 +1,32 @@
-import { PageEvent } from '@angular/material/paginator';
+import { DatePipe, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatFormFieldControl, MatFormFieldModule } from '@angular/material/form-field';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { RouterLink } from '@angular/router';
 import { BehaviorSubject, Subject, debounceTime } from 'rxjs';
+import { TimePipe } from 'src/app/pipes/time.pipe';
 import { AuthService } from 'src/app/services/auth.service';
 import { UserService } from 'src/app/services/user.service';
+import { AppSelectComponent } from '../common/app-select.component';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'account-tab-reservations-management',
+  standalone: true,
+  imports: [
+    NgIf,
+    DatePipe,
+    TimePipe,
+    RouterLink,
+    MatTableModule,
+    MatInputModule,
+    AppSelectComponent,
+    MatFormFieldModule,
+    MatPaginatorModule,
+    MatProgressSpinnerModule,
+  ],
   styles: [
     `
       @import '../../scss/common.scss';

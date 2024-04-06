@@ -1,11 +1,34 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { AuthService } from 'src/app/services/auth.service';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { MatChipInputEvent } from '@angular/material/chips';
+import { NgFor, NgIf } from '@angular/common';
+import { Component } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatStepperModule } from '@angular/material/stepper';
+import { Router, RouterLink } from '@angular/router';
+import { AlertComponent } from 'src/app/components/common/alert.component';
+import { FormInputComponent } from 'src/app/components/common/form-input.component';
+import { LogoComponent } from 'src/app/components/common/logo.component';
+import { AuthService } from 'src/app/services/auth.service';
 @Component({
   selector: 'sign-up',
+  standalone: true,
+  imports: [
+    NgIf,
+    NgFor,
+    RouterLink,
+    LogoComponent,
+    MatChipsModule,
+    AlertComponent,
+    MatButtonModule,
+    MatStepperModule,
+    MatFormFieldModule,
+    FormInputComponent,
+    ReactiveFormsModule,
+    MatProgressSpinnerModule,
+  ],
   styles: [
     `
       @import '../../scss/responsive.scss';

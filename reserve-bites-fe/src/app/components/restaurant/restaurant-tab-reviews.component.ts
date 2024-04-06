@@ -1,17 +1,31 @@
-import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { NgFor, NgIf } from '@angular/common';
+import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
-import { IReview } from 'src/app/types/restaurant.type';
 import { AuthService } from 'src/app/services/auth.service';
-import { UserService } from 'src/app/services/user.service';
-import { RealTimeService } from 'src/app/services/realTime.service';
 import { IUser, UserType } from 'src/app/types/auth.type';
-import { NotificationType } from 'src/app/types/notification';
-import { RestaurantService } from 'src/app/services/restaurant.service';
 import { SortBy } from 'src/app/types/filter.type';
+import { NotificationType } from 'src/app/types/notification';
+import { IReview } from 'src/app/types/restaurant.type';
+import { FormInputComponent } from '../common/form-input.component';
+import { RestaurantReviewComponent } from './restaurant-review.component';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'restaurant-tab-reviews',
+  standalone: true,
+  imports: [
+    NgIf,
+    NgFor,
+    MatButtonModule,
+    MatDividerModule,
+    FormInputComponent,
+    ReactiveFormsModule,
+    RestaurantReviewComponent,
+    MatProgressSpinnerModule,
+  ],
   styles: [
     `
       @import '../../scss/common.scss';
@@ -119,8 +133,8 @@ import { SortBy } from 'src/app/types/filter.type';
         <div style="display: flex; justify-content: space-between; align-items: center">
           <h6>What other diners said about this restaurant:</h6>
           <select style="margin: 0" (change)="handleSortChange($event)">
-            <option value="newest">Newest</option>
-            <option value="oldest">Oldest</option>
+            <option value="desc">Newest</option>
+            <option value="asc">Oldest</option>
           </select>
         </div>
         <ul>

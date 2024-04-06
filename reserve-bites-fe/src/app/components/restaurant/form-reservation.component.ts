@@ -1,11 +1,32 @@
+import { NgIf } from '@angular/common';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
 import { UserService } from 'src/app/services/user.service';
 import { IRestaurant } from 'src/app/types/restaurant.type';
+import { validReservation } from 'src/app/utils/reservation';
+import { AlertComponent } from '../common/alert.component';
+import { FormInputComponent } from '../common/form-input.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { TimepickerModule } from 'ngx-bootstrap/timepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'form-reservation',
+  standalone: true,
+  imports: [
+    NgIf,
+    MatInputModule,
+    AlertComponent,
+    TimepickerModule,
+    FormInputComponent,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+  ],
   styles: [
     `
       @import '../../scss/common.scss';
@@ -35,7 +56,9 @@ import { IRestaurant } from 'src/app/types/restaurant.type';
     <form [formGroup]="form" (ngSubmit)="handleSubmitReservation()">
       <h5>Make a reservation</h5>
 
-      <alert type="error" *ngIf="alertMessage">{{ alertMessage }}</alert>
+      <alert type="error" *ngIf="alertMessage" style="margin-bottom: 10px;">
+        {{ alertMessage }}
+      </alert>
       <form-input
         [formGroup]="form"
         [label]="'Size - maximum ' + restaurant.maxReservationSize"
@@ -101,61 +124,29 @@ export class FormReservationComponent implements OnInit {
   }
 
   async handleSubmitReservation() {
-    this.alertMessage = '';
     const size = Number(this.form.get('size')?.value);
-    const today = new Date().getTime();
-    const reserveDate = new Date(this.form.get('date')?.value as Date).getTime();
 
-    const reserveHour = new Date(this.form.get('time')?.value as Date).getHours();
-    const reserveMinute = new Date(this.form.get('time')?.value as Date).getMinutes();
-
-    const openHour = new Date(this.restaurant.operationTime.openTime).getHours();
-    const closeHour = new Date(this.restaurant.operationTime.closeTime).getHours();
-    const openMinute = new Date(this.restaurant.operationTime.openTime).getMinutes();
-    const closeMinute = new Date(this.restaurant.operationTime.closeTime).getMinutes();
-
-    // console.table({ openHour, openMinute });
-
-    const isHourInRange =
-      reserveHour > openHour || (reserveHour === openHour && reserveMinute >= openMinute);
-    const isMinuteInRange =
-      reserveHour < closeHour || (reserveHour === closeHour && reserveMinute <= closeMinute);
-
-    const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
-    const reserveDay = daysOfWeek[new Date(this.form.get('date')?.value as Date).getDay()];
-
-    // console.log(
-    //   reserveDay,
-    //   this.restaurant.operationTime.openDay.includes(reserveDay),
-    // );
-
-    if (size > this.restaurant.maxReservationSize) {
-      this.alertMessage = `Max party size is ${this.restaurant.maxReservationSize}`;
-      return;
-    }
-    if (today - reserveDate > 0) {
-      this.alertMessage = `Selected date must the day after today`;
-      return;
-    }
-    if (!this.restaurant.operationTime.openDay.includes(reserveDay)) {
-      this.alertMessage = `Restaurant not open on selected day`;
-      return;
-    }
-    if (!(isHourInRange && isMinuteInRange)) {
-      this.alertMessage = `Restaurant not open on selected time`;
-      return;
-    }
-
-    // pas all conditions
-    const payload = {
-      rid: this.rid,
-      dinerId: this.auth.user.value?.id as string,
+    this.alertMessage = validReservation(
       size,
-      date: this.form.value.date as Date,
-      time: this.form.value.time as Date,
-    };
-    this.reserving = true;
-    await this.userSv.reserve(payload);
-    this.reserving = false;
+      this.form.get('date')?.value as Date,
+      this.form.get('time')?.value as Date,
+      this.restaurant.operationTime.openTime,
+      this.restaurant.operationTime.closeTime,
+      this.restaurant.maxReservationSize,
+      this.restaurant.operationTime.openDay,
+    );
+
+    if (this.alertMessage === '') {
+      const payload = {
+        rid: this.rid,
+        dinerId: this.auth.user.value?.id as string,
+        size,
+        date: this.form.value.date as Date,
+        time: this.form.value.time as Date,
+      };
+      this.reserving = true;
+      await this.userSv.reserve(payload);
+      this.reserving = false;
+    }
   }
 }

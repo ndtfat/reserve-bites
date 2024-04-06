@@ -1,18 +1,15 @@
-import {
-  Input,
-  Output,
-  Component,
-  EventEmitter,
-  booleanAttribute,
-} from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
-import { MatFormFieldAppearance } from '@angular/material/form-field';
-import validationMessages, {
-  ValidationMessages,
-} from 'src/app/utils/validationMessages';
+import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, Output, booleanAttribute } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldAppearance, MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
+import validationMessages, { ValidationMessages } from 'src/app/utils/validationMessages';
 
 @Component({
   selector: 'app-select',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatSelectModule, MatIconModule],
   template: `
     <div [formGroup]="formGroup || form">
       <mat-form-field [appearance]="appearance" style="width: 100%;">

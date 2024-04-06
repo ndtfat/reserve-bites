@@ -1,11 +1,17 @@
+import { NgFor, NgIf } from '@angular/common';
 import { BehaviorSubject } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
 import { UserService } from 'src/app/services/user.service';
 import { INotification } from 'src/app/types/notification';
 import { SortBy } from 'src/app/types/filter.type';
 import { notificationIcon } from 'src/app/utils/notification';
-import { MatCheckboxChange } from '@angular/material/checkbox';
-import { PageEvent } from '@angular/material/paginator';
+import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { NgIconsModule, provideIcons } from '@ng-icons/core';
+import { matMarkEmailReadOutline } from '@ng-icons/material-icons/outline';
+import { MatMenuModule } from '@angular/material/menu';
+import { RouterLink } from '@angular/router';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 enum Action {
   Delete = 'delete',
@@ -14,6 +20,18 @@ enum Action {
 
 @Component({
   selector: 'notification',
+  standalone: true,
+  imports: [
+    NgIf,
+    NgFor,
+    RouterLink,
+    NgIconsModule,
+    MatMenuModule,
+    MatCheckboxModule,
+    MatPaginatorModule,
+    MatProgressSpinnerModule,
+  ],
+  viewProviders: [provideIcons({ matMarkEmailReadOutline })],
   styles: [
     `
       @import '../../scss/common.scss';

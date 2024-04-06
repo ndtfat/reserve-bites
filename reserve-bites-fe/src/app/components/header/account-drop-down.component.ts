@@ -1,9 +1,17 @@
+import { NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
+import { RouterLink } from '@angular/router';
+import { NgIconsModule, provideIcons } from '@ng-icons/core';
+import { matAccountCircleOutline } from '@ng-icons/material-icons/outline';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'account-drop-down',
-  styles: [],
+  standalone: true,
+  imports: [NgIconsModule, MatMenuModule, NgFor, NgIf, MatButtonModule, RouterLink],
+  viewProviders: [provideIcons({ matAccountCircleOutline })],
   template: `
     <button mat-icon-button [matMenuTriggerFor]="menu">
       <ng-icon size="1.8rem" name="matAccountCircleOutline" />

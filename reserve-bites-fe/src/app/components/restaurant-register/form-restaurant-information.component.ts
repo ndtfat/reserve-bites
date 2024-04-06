@@ -1,11 +1,34 @@
 import { HttpEvent, HttpEventType } from '@angular/common/http';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ImageService } from 'src/app/services/image.service';
 import { IFormRestaurantInformationType, IRestaurant } from 'src/app/types/restaurant.type';
+import { FormInputComponent } from '../common/form-input.component';
+import { AppSelectComponent } from '../common/app-select.component';
+import { NgIconsModule, provideIcons } from '@ng-icons/core';
+import { CommonModule } from '@angular/common';
+import { matCloseOutline } from '@ng-icons/material-icons/outline';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { TimepickerModule } from 'ngx-bootstrap/timepicker';
+import { UploadImageComponent } from '../common/upload-image.component';
+import { ImageStatusComponent } from '../common/image-status.component';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'form-restaurant-information',
+  standalone: true,
+  imports: [
+    CommonModule,
+    NgIconsModule,
+    MatButtonModule,
+    TimepickerModule,
+    FormInputComponent,
+    AppSelectComponent,
+    ReactiveFormsModule,
+    UploadImageComponent,
+    ImageStatusComponent,
+  ],
+  viewProviders: [provideIcons({ matCloseOutline })],
   styles: [
     `
       @import '../../scss/common.scss';

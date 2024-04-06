@@ -1,18 +1,23 @@
-import {
-  Input,
-  Output,
-  Component,
-  EventEmitter,
-  booleanAttribute,
-} from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
-import { MatFormFieldAppearance } from '@angular/material/form-field';
-import validationMessages, {
-  ValidationMessages,
-} from '../../utils/validationMessages';
+import { Input, Output, Component, EventEmitter, booleanAttribute } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldAppearance, MatFormFieldModule } from '@angular/material/form-field';
+import validationMessages, { ValidationMessages } from '../../utils/validationMessages';
+import { CommonModule } from '@angular/common';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'form-input',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatIconModule,
+    MatInputModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+  ],
   styles: [
     `
       .suffix-content:not(:empty) {
@@ -23,11 +28,7 @@ import validationMessages, {
   ],
   template: `
     <div [formGroup]="formGroup">
-      <mat-form-field
-        [appearance]="appearance"
-        style="width: 100%;"
-        [style]="style"
-      >
+      <mat-form-field [appearance]="appearance" style="width: 100%;" [style]="style">
         <mat-label *ngIf="label">{{ label }}</mat-label>
         <input
           [min]="min"
@@ -50,13 +51,7 @@ import validationMessages, {
           [type]="type"
           [formControlName]="name || 'name'"
         ></textarea>
-        <button
-          *ngIf="icon"
-          matSuffix
-          mat-icon-button
-          type="button"
-          (click)="handleClickIcon()"
-        >
+        <button *ngIf="icon" matSuffix mat-icon-button type="button" (click)="handleClickIcon()">
           <mat-icon>{{ icon }}</mat-icon>
         </button>
 

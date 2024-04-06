@@ -3,9 +3,29 @@ import { IRestaurant } from 'src/app/types/restaurant.type';
 import { AuthService } from 'src/app/services/auth.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
 import { RestaurantService } from 'src/app/services/restaurant.service';
+import { TimePipe } from 'src/app/pipes/time.pipe';
+import { RouterLink } from '@angular/router';
+import { NgFor, NgIf } from '@angular/common';
+import { NgIconsModule } from '@ng-icons/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MenuComponent } from '../restaurant/menu.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { FormRestaurantInformationComponent } from '../restaurant-register/form-restaurant-information.component';
 
 @Component({
   selector: 'account-tab-restaurant',
+  standalone: true,
+  imports: [
+    NgIf,
+    NgFor,
+    TimePipe,
+    RouterLink,
+    MenuComponent,
+    NgIconsModule,
+    MatButtonModule,
+    MatProgressSpinnerModule,
+    FormRestaurantInformationComponent,
+  ],
   styles: [
     `
       @import '../../scss/common.scss';

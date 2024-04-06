@@ -1,8 +1,12 @@
+import { NgFor } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { IMenuCategory } from 'src/app/types/restaurant.type';
 
 @Component({
   selector: 'menu',
+  standalone: true,
+  imports: [NgFor, MatExpansionModule],
   styles: [
     `
       @import '../../scss/common.scss';

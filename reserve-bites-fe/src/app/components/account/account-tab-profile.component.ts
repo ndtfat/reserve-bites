@@ -1,3 +1,4 @@
+import { DatePipe, NgIf } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import {
   FormGroup,
@@ -7,13 +8,36 @@ import {
   ValidatorFn,
   AbstractControl,
   ValidationErrors,
+  ReactiveFormsModule,
 } from '@angular/forms';
 import { IUser } from 'src/app/types/auth.type';
 import { UserService } from 'src/app/services/user.service';
 import { SnackbarService } from 'src/app/services/snackbar.service';
+import { NgIconsModule, provideIcons } from '@ng-icons/core';
+import { heroUserCircleSolid } from '@ng-icons/heroicons/solid';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatDividerModule } from '@angular/material/divider';
+import { FormInputComponent } from '../common/form-input.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { AlertComponent } from '../common/alert.component';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'account-tab-profile',
+  standalone: true,
+  imports: [
+    NgIf,
+    DatePipe,
+    NgIconsModule,
+    MatMenuModule,
+    AlertComponent,
+    MatButtonModule,
+    MatDividerModule,
+    FormInputComponent,
+    ReactiveFormsModule,
+    MatProgressSpinnerModule,
+  ],
+  viewProviders: [provideIcons({ heroUserCircleSolid })],
   styles: [
     `
       @import '../../scss/common.scss';

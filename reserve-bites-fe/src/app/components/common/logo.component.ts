@@ -6,9 +6,12 @@ import {
   booleanAttribute,
   ViewEncapsulation,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'logo',
+  standalone: true,
+  imports: [RouterLink],
   template: `
     <a routerLink="/">
       <img

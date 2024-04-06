@@ -1,6 +1,11 @@
+import { NgIf } from '@angular/common';
 import { Component } from '@angular/core';
+import { MatStepperModule } from '@angular/material/stepper';
+import { LogoComponent } from 'src/app/components/common/logo.component';
+import { ConfirmationRestaurantRegisterComponent } from 'src/app/components/restaurant-register/confirmation-restaurant-register.component';
+import { FormOwnerInformationComponent } from 'src/app/components/restaurant-register/form-owner-information.component';
+import { FormRestaurantInformationComponent } from 'src/app/components/restaurant-register/form-restaurant-information.component';
 import { RestaurantService } from 'src/app/services/restaurant.service';
-import { SnackbarService } from 'src/app/services/snackbar.service';
 import {
   IFormOwnerInformationType,
   IFormRestaurantInformationType,
@@ -8,6 +13,15 @@ import {
 
 @Component({
   selector: 'restaurant-register',
+  standalone: true,
+  imports: [
+    NgIf,
+    LogoComponent,
+    MatStepperModule,
+    FormOwnerInformationComponent,
+    FormRestaurantInformationComponent,
+    ConfirmationRestaurantRegisterComponent,
+  ],
   styles: [
     `
       @import '../../scss/common.scss';

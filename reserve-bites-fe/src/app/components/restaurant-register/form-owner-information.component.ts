@@ -1,9 +1,13 @@
 import { Component, Output, EventEmitter } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { IFormOwnerInformationType } from 'src/app/types/restaurant.type';
+import { FormInputComponent } from '../common/form-input.component';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'form-owner-information',
+  standalone: true,
+  imports: [ReactiveFormsModule, FormInputComponent, MatButtonModule],
   styles: [
     `
       h4 {
@@ -49,13 +53,8 @@ import { IFormOwnerInformationType } from 'src/app/types/restaurant.type';
         label="Password"
         [errors]="form.controls['password'].errors"
         type="password"
-        [icon]="
-          confirmPassword.type === 'text' ? 'visibility_off' : 'visibility'
-        "
-        (onClickIcon)="
-          confirmPassword.type =
-            confirmPassword.type === 'text' ? 'password' : 'text'
-        "
+        [icon]="confirmPassword.type === 'text' ? 'visibility_off' : 'visibility'"
+        (onClickIcon)="confirmPassword.type = confirmPassword.type === 'text' ? 'password' : 'text'"
       />
 
       <div class="button-wrapper">
@@ -81,9 +80,7 @@ export class FormOwnerInformationComponent {
       validators: [
         Validators.required,
         Validators.minLength(8),
-        Validators.pattern(
-          /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*#?&^_-]).{8,}/,
-        ),
+        Validators.pattern(/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*#?&^_-]).{8,}/),
       ],
     }),
   });

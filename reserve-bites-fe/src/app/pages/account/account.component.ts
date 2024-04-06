@@ -1,10 +1,23 @@
+import { NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
+import { AccountTabProfileComponent } from 'src/app/components/account/account-tab-profile.component';
+import { AccountTabReservationsManagementComponent } from 'src/app/components/account/account-tab-reservations-management.component';
+import { AccountTabRestaurantComponent } from 'src/app/components/account/account-tab-restaurant.component';
 import { AuthService } from 'src/app/services/auth.service';
 import { IUser } from 'src/app/types/auth.type';
 
 @Component({
   selector: 'account',
+  standalone: true,
+  imports: [
+    NgIf,
+    MatTabsModule,
+    AccountTabProfileComponent,
+    AccountTabRestaurantComponent,
+    AccountTabReservationsManagementComponent,
+  ],
   styles: [
     `
       @import '../../scss/variables.scss';
