@@ -35,22 +35,22 @@ import { IMenuCategory } from 'src/app/types/restaurant.type';
     `,
   ],
   template: `
-    <mat-accordion>
-      <mat-expansion-panel *ngFor="let cat of menu">
-        <mat-expansion-panel-header>
-          <mat-panel-title style="font-size: 16px;">
-            {{ cat.category }}
-          </mat-panel-title>
-        </mat-expansion-panel-header>
-        <div class="content">
-          <div *ngFor="let dish of cat.dishes" class="dish">
-            <p>{{ dish.name }}</p>
-            <p style="color: green">{{ dish.price }}</p>
-            <p>{{ currency }}</p>
-          </div>
+    <!-- <mat-accordion> -->
+    <mat-expansion-panel *ngFor="let cat of menu">
+      <mat-expansion-panel-header>
+        <mat-panel-title style="font-size: 16px;">
+          {{ cat.category }}
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="content">
+        <div *ngFor="let dish of cat.dishes" class="dish">
+          <p>{{ dish.name }}</p>
+          <p style="color: green">{{ dish.price }}</p>
+          <p>{{ currency }}</p>
         </div>
-      </mat-expansion-panel>
-    </mat-accordion>
+      </div>
+    </mat-expansion-panel>
+    <!-- </mat-accordion> -->
   `,
 })
 export class MenuComponent {

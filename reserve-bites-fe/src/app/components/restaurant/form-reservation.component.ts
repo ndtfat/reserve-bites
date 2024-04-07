@@ -10,7 +10,6 @@ import { FormInputComponent } from '../common/form-input.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { TimepickerModule } from 'ngx-bootstrap/timepicker';
-import { MatNativeDateModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 
@@ -27,7 +26,6 @@ import { MatButtonModule } from '@angular/material/button';
     MatFormFieldModule,
     ReactiveFormsModule,
     MatDatepickerModule,
-    MatNativeDateModule,
   ],
   styles: [
     `

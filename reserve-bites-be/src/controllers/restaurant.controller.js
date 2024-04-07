@@ -381,7 +381,7 @@ export default {
       res.status(500).send({ message: 'Something wrong with get reservation by id' });
     }
   },
-  async updateReservation(req, res) {
+  async responseReservation(req, res) {
     try {
       const { id } = req.params;
       const { status } = req.body;
@@ -390,7 +390,7 @@ export default {
       if (reservation) {
         reservation.status = status;
         await reservation.save();
-        return res.status(200).send({});
+        return res.status(200).send(reservation.toObject());
       }
 
       res

@@ -108,6 +108,24 @@ export class UserService {
     } catch (error) {}
   }
 
+  async updateReservation(payload: {
+    reservationId: string;
+    size?: number;
+    date?: Date;
+    time?: Date;
+    request: 'update' | 'cancel';
+    cancelMessage?: string;
+  }) {
+    const res = await lastValueFrom(
+      this.http.put<IReservation>(
+        this.SERVER_URL + `/reservation/${payload.reservationId}`,
+        payload,
+      ),
+    );
+    this._snackbar.open('success', 'Your update reservation request was sent');
+    return res;
+  }
+
   async review(payload: {
     rid: string;
     dinerId: string;

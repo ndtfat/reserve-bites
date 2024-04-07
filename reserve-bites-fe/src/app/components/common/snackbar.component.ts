@@ -1,5 +1,6 @@
 import { NgClass } from '@angular/common';
 import { Component } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { NgIconsModule, provideIcons } from '@ng-icons/core';
 import { heroXMarkSolid } from '@ng-icons/heroicons/solid';
 import { SnackbarService } from 'src/app/services/snackbar.service';
@@ -7,7 +8,7 @@ import { SnackbarService } from 'src/app/services/snackbar.service';
 @Component({
   selector: 'snackbar',
   standalone: true,
-  imports: [NgClass, NgIconsModule],
+  imports: [NgClass, NgIconsModule, MatButtonModule],
   viewProviders: [provideIcons({ heroXMarkSolid })],
   styles: [
     `

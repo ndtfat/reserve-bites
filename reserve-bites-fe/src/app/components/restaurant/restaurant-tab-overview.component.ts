@@ -9,11 +9,21 @@ import { findMaxPrice, findMinPrice } from 'src/app/utils/find';
 import { MenuComponent } from './menu.component';
 import { TimePipe } from 'src/app/pipes/time.pipe';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'restaurant-tab-overview',
   standalone: true,
-  imports: [NgIf, NgFor, NgClass, NgIconsModule, MenuComponent, TimePipe, CarouselModule],
+  imports: [
+    NgIf,
+    NgFor,
+    NgClass,
+    TimePipe,
+    NgIconsModule,
+    MenuComponent,
+    CarouselModule,
+    MatButtonModule,
+  ],
   viewProviders: [provideIcons({ ionChatbubblesOutline })],
   styles: [
     `

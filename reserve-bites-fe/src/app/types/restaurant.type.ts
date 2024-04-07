@@ -118,4 +118,12 @@ export type IReservation = {
   time: Date;
   date: Date;
   status: ReservationStatus;
+  versions: {
+    time: Date | string;
+    date: Date | string;
+    size: number;
+    createdAt: Date | string;
+    status: ReservationStatus;
+  }[];
+  cancelMessage: { message: string; createdAt: Date | string };
 };

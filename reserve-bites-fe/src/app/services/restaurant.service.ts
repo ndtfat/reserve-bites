@@ -204,9 +204,8 @@ export class RestaurantService {
 
   async responseReservation(reservation: IReservation, status: 'rejected' | 'confirmed') {
     await lastValueFrom(
-      this.http.put(this.SERVER_URL + `/reservation/${reservation.id}`, { status }),
+      this.http.put(this.SERVER_URL + `/reservation/${reservation.id}/response`, { status }),
     );
-    console.log('updateSuccess');
 
     this._snackbar.open('success', `You have ${status} the reservation`);
     this.realTime.sendNotification({

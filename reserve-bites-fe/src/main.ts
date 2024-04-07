@@ -62,12 +62,14 @@ import {
   ionInformationCircleOutline,
   ionChatbubbleEllipsesOutline,
 } from '@ng-icons/ionicons';
+import { MatNativeDateModule } from '@angular/material/core';
 
 bootstrapApplication(AppComponent, {
   providers: [
     importProvidersFrom(
       BrowserModule,
       HttpClientModule,
+      MatNativeDateModule,
       BrowserAnimationsModule,
       NgIconsModule.withIcons({
         ionClose,

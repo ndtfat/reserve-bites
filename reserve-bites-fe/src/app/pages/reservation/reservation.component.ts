@@ -1,37 +1,37 @@
-import { MatInputModule } from '@angular/material/input';
-import { MatButton, MatButtonModule } from '@angular/material/button';
-import { TimepickerModule } from 'ngx-bootstrap/timepicker';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { Component, Inject, OnInit } from '@angular/core';
-import {
-  MAT_DIALOG_DATA,
-  MatDialog,
-  MatDialogModule,
-  MatDialogRef,
-} from '@angular/material/dialog';
+import { CommonModule, DatePipe, NgFor, NgIf } from '@angular/common';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthService } from 'src/app/services/auth.service';
-import { ActivatedRoute, RouterLink } from '@angular/router';
-import { RestaurantService } from 'src/app/services/restaurant.service';
-import { IReservation, IRestaurant, ReservationStatus } from 'src/app/types/restaurant.type';
-import { RealTimeService } from 'src/app/services/realTime.service';
-import { validReservation } from 'src/app/utils/reservation';
-import { from } from 'rxjs';
-import { AlertComponent } from 'src/app/components/common/alert.component';
-import { CommonModule, DatePipe, NgIf } from '@angular/common';
+import {
+  MatDialog,
+  MatDialogRef,
+  MatDialogModule,
+  MAT_DIALOG_DATA,
+} from '@angular/material/dialog';
 import { TimePipe } from 'src/app/pipes/time.pipe';
-import { NgIconsModule, provideIcons } from '@ng-icons/core';
+import { AuthService } from 'src/app/services/auth.service';
+import { AlertComponent } from 'src/app/components/common/alert.component';
+import { MatInputModule } from '@angular/material/input';
+import { TimepickerModule } from 'ngx-bootstrap/timepicker';
+import { MatDividerModule } from '@angular/material/divider';
+import { validReservation } from 'src/app/utils/reservation';
+import { RestaurantService } from 'src/app/services/restaurant.service';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { matOpenInNewOutline } from '@ng-icons/material-icons/outline';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatNativeDateModule } from '@angular/material/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { NgIconsModule, provideIcons } from '@ng-icons/core';
+import { IReservation, ReservationStatus } from 'src/app/types/restaurant.type';
+import { UserService } from 'src/app/services/user.service';
+import { TableReservationVersionsComponent } from 'src/app/components/reservation/table-reservation-versions.component';
 
 @Component({
   selector: 'reservation',
   standalone: true,
   imports: [
     NgIf,
+    NgFor,
     DatePipe,
     TimePipe,
     RouterLink,
@@ -40,9 +40,9 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatDialogModule,
     MatDividerModule,
     MatProgressSpinnerModule,
+    TableReservationVersionsComponent,
   ],
   viewProviders: [provideIcons({ matOpenInNewOutline })],
-
   styles: [
     `
       @import '../../scss/common.scss';
@@ -210,7 +210,12 @@ import { MatNativeDateModule } from '@angular/material/core';
           </div>
         </div>
 
-        <div *ngIf="reservation.status !== 'confirmed' || !isOwner" class="btns">
+        <div
+          *ngIf="
+            (reservation.status !== 'confirmed' || !isOwner) && reservation.status !== 'canceled'
+          "
+          class="btns"
+        >
           <button
             mat-raised-button
             (click)="isOwner ? responseReservation(ReservationStatus.CONFIRMED) : openEditDialog()"
@@ -224,6 +229,26 @@ import { MatNativeDateModule } from '@angular/material/core';
           >
             {{ isOwner ? 'Reject' : 'Cancel' }}
           </button>
+        </div>
+
+        <mat-divider
+          *ngIf="reservation.status === 'canceled'"
+          style="margin-top: 20px; margin-bottom: 10px;"
+        />
+        <div *ngIf="reservation.status === 'canceled'">
+          <h5 style="margin-bottom: 10px;">Cancel message</h5>
+          <div style="display: flex; justify-content: space-between;">
+            <p>
+              {{ reservation.cancelMessage.message }}
+            </p>
+            <p>{{ reservation.cancelMessage.createdAt | date : 'dd/MM/yyyy' }}</p>
+          </div>
+        </div>
+
+        <mat-divider style="margin-top: 20px; margin-bottom: 10px;" />
+        <div class="versions">
+          <h5 style="margin-bottom: 10px;">Updated verisons</h5>
+          <table-reservation-versions [dataSource]="reservation.versions" />
         </div>
       </span>
 
@@ -257,16 +282,29 @@ export class ReservationComponent implements OnInit {
   }
 
   openCancelDialog() {
-    this.dialog.open(CancelReservationDialog, {
-      enterAnimationDuration: '100ms',
-      exitAnimationDuration: '100ms',
-    });
-  }
-  openEditDialog() {
-    this.dialog.open(EditReservationDialog, {
+    const cancelDialogRef = this.dialog.open(CancelReservationDialog, {
       enterAnimationDuration: '100ms',
       exitAnimationDuration: '100ms',
       data: this.reservation,
+    });
+
+    cancelDialogRef.afterClosed().subscribe((updatedReservation) => {
+      if (updatedReservation) {
+        this.reservation = updatedReservation;
+      }
+    });
+  }
+  openEditDialog() {
+    const editReservationRef = this.dialog.open(EditReservationDialog, {
+      enterAnimationDuration: '100ms',
+      exitAnimationDuration: '100ms',
+      data: this.reservation,
+    });
+
+    editReservationRef.afterClosed().subscribe((updatedReservation) => {
+      if (updatedReservation) {
+        this.reservation = updatedReservation;
+      }
     });
   }
   async responseReservation(status: 'confirmed' | 'rejected') {
@@ -297,7 +335,7 @@ export class ReservationComponent implements OnInit {
       }
       .btns {
         gap: 10px;
-        margin-top: 20px;
+        margin-top: 10px;
         @include flex(row, flex-end, flex-end);
       }
     `,
@@ -305,31 +343,45 @@ export class ReservationComponent implements OnInit {
   template: `
     <div class="wrapper">
       <h2>Cancel reservation</h2>
-      <p>Why you want to cancel this reservation?</p>
+      <p style="margin-bottom: 16px;">Why you want to cancel this reservation?</p>
       <mat-form-field style="width: 100%;" appearance="outline">
         <mat-label>Message to restaurant</mat-label>
         <textarea #textarea matInput rows="3" (input)="message = textarea.value"></textarea>
       </mat-form-field>
       <p style="color: red;">{{ errorMessage }}</p>
       <div class="btns">
-        <button mat-raised-button (click)="handleClose()">Cancel</button>
-        <button mat-raised-button color="warn" (click)="handleSend()">Send</button>
+        <button mat-raised-button (click)="handleClose(null)">Cancel</button>
+        <button mat-raised-button color="warn" (click)="handleSend()" [disabled]="!message">
+          Send
+        </button>
       </div>
     </div>
   `,
 })
 class CancelReservationDialog {
-  constructor(public dialogRef: MatDialogRef<CancelReservationDialog>) {}
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: IReservation,
+    public dialogRef: MatDialogRef<CancelReservationDialog>,
+    private userSv: UserService,
+  ) {}
   message: string = '';
   errorMessage = '';
 
-  handleClose() {
-    this.dialogRef.close();
+  handleClose(data: IReservation | null) {
+    this.dialogRef.close(data);
   }
   handleSend() {
     if (this.message) {
-      this.handleClose();
-      console.log(this.message);
+      // this.handleClose();
+      this.userSv
+        .updateReservation({
+          request: 'cancel',
+          reservationId: this.data.id,
+          cancelMessage: this.message,
+        })
+        .then((res) => {
+          this.handleClose(res);
+        });
     } else {
       this.errorMessage = 'Please type your reason';
     }
@@ -348,9 +400,8 @@ class CancelReservationDialog {
     MatButtonModule,
     TimepickerModule,
     MatFormFieldModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
     ReactiveFormsModule,
+    MatDatepickerModule,
   ],
   styles: [
     `
@@ -378,14 +429,14 @@ class CancelReservationDialog {
     <div class="wrapper">
       <h2>Edit reservation</h2>
 
-      <alert type="error" *ngIf="alertMessage" style="margin-bottom: 10px;">
+      <alert type="error" *ngIf="alertMessage">
         {{ alertMessage }}
       </alert>
 
-      <form [formGroup]="form">
+      <form [formGroup]="form" style="margin-top: 16px;">
         <mat-form-field style="width: 100%;" appearance="outline">
           <mat-label>Size</mat-label>
-          <input matInput formControlName="size" />
+          <input matInput formControlName="size" type="number" />
         </mat-form-field>
 
         <mat-form-field style="width: 100%" appearance="outline">
@@ -407,31 +458,47 @@ class CancelReservationDialog {
       </form>
 
       <div class="btns">
-        <button mat-raised-button (click)="handleClose()">Cancel</button>
-        <button mat-raised-button color="primary" (click)="handleEdit()">Edit</button>
+        <button mat-raised-button (click)="handleClose(null)">Cancel</button>
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="handleEdit()"
+          [disabled]="!isDataChanged"
+        >
+          Edit
+        </button>
       </div>
     </div>
   `,
 })
 class EditReservationDialog {
   constructor(
+    @Inject(MAT_DIALOG_DATA) public data: IReservation,
     public dialogRef: MatDialogRef<EditReservationDialog>,
     private fb: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data: IReservation,
-  ) {}
+    private userSv: UserService,
+  ) {
+    this.form.valueChanges.subscribe((value) => {
+      const root = { size: data.size, time: new Date(data.time), date: new Date(data.date) };
+      this.isDataChanged = JSON.stringify(value) !== JSON.stringify(root);
+    });
+  }
 
+  isDataChanged = false;
   alertMessage = '';
   form = this.fb.group({
     size: [this.data.size, Validators.required],
-    time: [this.data.time, Validators.required],
-    date: [this.data.date, Validators.required],
+    time: [new Date(this.data.time), Validators.required],
+    date: [new Date(this.data.date), Validators.required],
   });
 
-  handleClose() {
-    this.dialogRef.close();
+  handleClose(data: IReservation | null) {
+    this.dialogRef.close(data);
   }
   handleEdit() {
     const size = Number(this.form.get('size')?.value);
+    const date = this.form.get('date')?.value as Date;
+    const time = this.form.get('time')?.value as Date;
 
     this.alertMessage = validReservation(
       size,
@@ -444,7 +511,11 @@ class EditReservationDialog {
     );
 
     if (this.alertMessage === '') {
-      console.log(this.form.value);
+      this.userSv
+        .updateReservation({ reservationId: this.data.id, date, time, size, request: 'update' })
+        .then((res) => {
+          this.handleClose(res);
+        });
     }
   }
 }

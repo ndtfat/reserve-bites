@@ -326,17 +326,41 @@ export default {
     }
   },
 
-  async putReservation(req, res) {
+  async updateReservation(req, res) {
     try {
       const { id } = req.params;
-      const { payload } = req.body;
-
-      const reservation = await Reservation.findById(id);
+      const payload = req.body;
+      let reservation = await Reservation.findById(id).populate('dinerId').populate('rid');
 
       if (!reservation) return res.status(404).send({ message: 'Reservation not found' });
 
+      if (payload.request === 'update') {
+        const { date, time, size } = payload;
+        reservation.versions.unshift({
+          time: reservation.time,
+          date: reservation.date,
+          size: reservation.size,
+          status: reservation.status,
+          createdAt: reservation.updatedAt,
+        });
+
+        reservation.time = time;
+        reservation.date = date;
+        reservation.size = size;
+        reservation.status = 'responding';
+      } else if (payload.request === 'cancel') {
+        reservation.cancelMessage = { message: payload.cancelMessage, createdAt: new Date() };
+        reservation.status = 'canceled';
+      }
+
       await reservation.save();
-      res.status(200).send(reservation.toObject());
+      reservation = reservation.toObject();
+      reservation.diner = reservation.dinerId;
+      reservation.restaurant = reservation.rid;
+      delete reservation.dinerId;
+      delete reservation.rid;
+
+      res.status(200).send(reservation);
     } catch (error) {
       console.log(error);
       res.status(500).send({ message: 'Something wrong with putReservation', error });
