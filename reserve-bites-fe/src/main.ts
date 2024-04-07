@@ -111,7 +111,7 @@ bootstrapApplication(AppComponent, {
         heroChatBubbleBottomCenterText,
       }),
     ),
-    provideRouter(routes, withPreloading(PreloadAllModules), withDebugTracing()),
+    provideRouter(routes, withPreloading(PreloadAllModules)),
 
     {
       provide: HTTP_INTERCEPTORS,

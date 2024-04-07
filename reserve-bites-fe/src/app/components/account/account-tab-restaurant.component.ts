@@ -206,11 +206,6 @@ export class AccountTabRestaurantComponent implements OnInit {
   editting = false;
   restaurant!: IRestaurant;
   editedData: any;
-  dayOptions = ['Monday', 'Tuesday', 'Wendsday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(
-    (day) => {
-      return { value: day, content: day };
-    },
-  );
 
   constructor(
     private auth: AuthService,

@@ -183,19 +183,11 @@ export class RestaurantService {
           },
         ),
       );
-
       itemsList = itemsList.map((item) => ({
-        _id: item._id,
-        name: item.name,
-        address: item.address,
-        currency: item.currency,
+        ...item,
+        owner: item.owner[0].firstName + ' ' + item.owner[0].lastName,
         minPrice: findMinPrice(item.menu),
         maxPrice: findMaxPrice(item.menu),
-        operationTime: {
-          ...item.operationTime,
-        },
-        mainImage: item.mainImage,
-        rate: item.rate,
       }));
       return { page, totalItems, itemsList, error: null };
     } catch (error: any) {

@@ -250,8 +250,6 @@ export class UserService {
   getChatBoxes(): Observable<IChatBox[]> {
     return this.http.get(this.SERVER_URL + '/user/chat-box').pipe(
       map((res: any) => {
-        console.log(res);
-
         res = res.map((item: any) => {
           const userChatWith = item.userChatWith;
           const user = this.auth.user.value;

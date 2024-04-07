@@ -12,6 +12,7 @@ import { AlertComponent } from 'src/app/components/common/alert.component';
 import { RestaurantCardComponent } from 'src/app/components/restaurant/restaurant-card.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'home',
@@ -24,6 +25,7 @@ import { MatInputModule } from '@angular/material/input';
     MatButtonModule,
     AppSelectComponent,
     MatFormFieldModule,
+    ReactiveFormsModule,
     RestaurantCardComponent,
   ],
   styles: [
@@ -196,13 +198,15 @@ import { MatInputModule } from '@angular/material/input';
       <div class="search-body">
         <h1 class="search-slogan">Reserve your bites at the best restaurants</h1>
         <div class="form">
-          <form>
+          <form [formGroup]="searchForm" (ngSubmit)="handleSearch()">
             <mat-form-field class="form-field-size">
               <mat-label>Size</mat-label>
-              <input matInput type="number" /><mat-hint style="display: none;">asdas</mat-hint>
+              <input matInput type="number" name="size" />
             </mat-form-field>
 
             <app-select
+              [formGroup]="searchForm"
+              name="openDay"
               class="form-field-select"
               label="Open day"
               appearance="fill"
@@ -286,11 +290,16 @@ import { MatInputModule } from '@angular/material/input';
 })
 export class HomeComponent implements OnInit {
   constructor(
+    private fb: FormBuilder,
+    private auth: AuthService,
     private router: Router,
     private restaurntSv: RestaurantService,
-    private auth: AuthService,
   ) {}
 
+  searchForm = this.fb.group({
+    size: [1],
+    openDay: [''],
+  });
   isAuthenicated = false;
   errorLocalRestaurants = '';
   errorTopRateRestaurants = '';
@@ -329,10 +338,25 @@ export class HomeComponent implements OnInit {
     this.errorLocalRestaurants = localRestaurantsError || '';
   }
 
-  handleFind(query: string, value: string) {
-    console.log({ query, value });
-    if (value !== '') {
-      this.router.navigateByUrl(`/restaurant/search?${query}=${value}`);
+  handleSearch() {
+    let queryString = '';
+    const size = this.searchForm.value.size;
+    const openDay = this.searchForm.value.openDay;
+
+    if (size) {
+      queryString += `size=${size}`;
+    }
+
+    if (openDay) {
+      if (queryString !== '') {
+        queryString += '&';
+      }
+      queryString += `openDay=${openDay}`;
+    }
+
+    if (queryString !== '') {
+      console.log({ size, openDay });
+      this.router.navigateByUrl(`/restaurant/search?${queryString}`);
     }
   }
 }

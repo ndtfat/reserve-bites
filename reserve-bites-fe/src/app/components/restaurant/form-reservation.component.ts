@@ -12,6 +12,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { TimepickerModule } from 'ngx-bootstrap/timepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'form-reservation',
@@ -20,6 +21,7 @@ import { MatInputModule } from '@angular/material/input';
     NgIf,
     MatInputModule,
     AlertComponent,
+    MatButtonModule,
     TimepickerModule,
     FormInputComponent,
     MatFormFieldModule,

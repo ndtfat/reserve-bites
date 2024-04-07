@@ -1,6 +1,7 @@
 import { NgFor, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButton, MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
@@ -11,6 +12,7 @@ import { NgIconsModule } from '@ng-icons/core';
 import { BehaviorSubject, filter } from 'rxjs';
 import { AlertComponent } from 'src/app/components/common/alert.component';
 import { AppSelectComponent } from 'src/app/components/common/app-select.component';
+import { FormInputComponent } from 'src/app/components/common/form-input.component';
 import { PricePipe } from 'src/app/pipes/price.pipe';
 import { TimePipe } from 'src/app/pipes/time.pipe';
 import { RestaurantService } from 'src/app/services/restaurant.service';
@@ -28,9 +30,11 @@ import { IRestaurantCard } from 'src/app/types/restaurant.type';
     RouterLink,
     MatIconModule,
     AlertComponent,
+    MatButtonModule,
     MatSliderModule,
     MatDividerModule,
     MatPaginatorModule,
+    FormInputComponent,
     AppSelectComponent,
     ReactiveFormsModule,
     MatProgressSpinnerModule,
@@ -43,6 +47,7 @@ import { IRestaurantCard } from 'src/app/types/restaurant.type';
       .wrapper {
         margin: 0 30px;
         padding: 20px 0;
+        width: $body-width;
       }
       .container {
         @include flex(column, flex-start, flex-start);
@@ -142,7 +147,6 @@ import { IRestaurantCard } from 'src/app/types/restaurant.type';
 
       @include desktop {
         .wrapper {
-          max-width: $body-width;
           margin: 0 auto;
         }
         .container {
@@ -352,12 +356,13 @@ export class SearchComponent implements OnInit {
     private restaurantSv: RestaurantService,
   ) {
     this.route.queryParams.subscribe((params) => {
-      const { name, address } = params;
-      if (name) {
-        this.filterForm.controls.name.setValue(name);
+      const { size, openDay } = params;
+      console.log({ size, openDay });
+      if (size) {
+        this.filterForm.controls.size.setValue(Number(size));
       }
-      if (address) {
-        this.filterForm.controls.address.setValue(address);
+      if (openDay) {
+        this.filterForm.controls.openDay.setValue(openDay);
       }
     });
   }

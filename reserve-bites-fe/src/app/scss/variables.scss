@@ -23,4 +23,4 @@ $snackbar-warn-color: #ffca29;
 
 //
 $header-height: 70px;
-$body-width: 1200px;
+$body-width: min(1200px, 80vw);

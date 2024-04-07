@@ -291,7 +291,7 @@ export default {
   async search(req, res) {
     try {
       let { name, address, openDay, rate, size, cuisines, page } = req.query;
-      console.log('search', { name, address, openDay, rate, size });
+      // console.log('search', { name, address, openDay, rate, size });
       page = Number(page) || 1;
       const pageSize = 10;
       const offset = (page - 1) * pageSize;
@@ -303,6 +303,7 @@ export default {
             combinedAddress: {
               $concat: ['$address.detail', ', ', '$address.province', ', ', '$address.country'],
             },
+            ownerId: { $toObjectId: '$ownerId' },
             mainImage: { $toObjectId: '$mainImage' },
           },
         },
@@ -322,6 +323,14 @@ export default {
             localField: 'mainImage',
             foreignField: '_id',
             as: 'mainImage',
+          },
+        },
+        {
+          $lookup: {
+            from: 'users', // Assuming 'owners' is the name of your owners collection
+            localField: 'ownerId', // Field in the 'Restaurant' collection
+            foreignField: '_id', // Field in the 'owners' collection
+            as: 'owner', // New field that will contain the owner information
           },
         },
       ];

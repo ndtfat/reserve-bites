@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, booleanAttribute } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldAppearance, MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
@@ -9,7 +10,14 @@ import validationMessages, { ValidationMessages } from 'src/app/utils/validation
 @Component({
   selector: 'app-select',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatSelectModule, MatIconModule],
+  imports: [
+    CommonModule,
+    MatIconModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+  ],
   template: `
     <div [formGroup]="formGroup || form">
       <mat-form-field [appearance]="appearance" style="width: 100%;">

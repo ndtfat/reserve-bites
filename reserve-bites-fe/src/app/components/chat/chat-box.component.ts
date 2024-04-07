@@ -131,9 +131,9 @@ import { MatButtonModule } from '@angular/material/button';
             }
           }
           .chat-bubble {
-            margin-bottom: 10px;
+            margin-bottom: 14px;
             p {
-              max-width: 80%;
+              max-width: 70%;
               word-wrap: break-word;
             }
           }
