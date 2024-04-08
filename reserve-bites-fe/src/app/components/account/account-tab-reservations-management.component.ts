@@ -65,29 +65,7 @@ import { MatInputModule } from '@angular/material/input';
         border-radius: 3px;
       }
       .status {
-        display: inline-block;
-        padding: 4px 10px;
-        border-radius: 9999px;
-        &:first-letter {
-          text-transform: uppercase;
-        }
-        &.confirmed {
-          color: #1f931e;
-          background-color: #e9f6e9;
-        }
-        &.responding {
-          color: #e69216;
-          background-color: #fff6e8;
-        }
-        &.canceled {
-          color: #c51d1a;
-          background-color: #fbe9e8;
-        }
-        &.expired,
-        &.rejected {
-          color: #333;
-          background-color: #eee;
-        }
+        @include status;
       }
     `,
   ],

@@ -30,7 +30,7 @@ cron.schedule(
     try {
       const reservation = await Reservation.updateMany(
         {
-          status: { $nin: ['complete', 'expired'] },
+          status: 'responding',
           date: { $lt: new Date() },
         },
         { $set: { status: 'expired' } },

@@ -114,6 +114,7 @@ export class UserService {
     date?: Date;
     time?: Date;
     request: 'update' | 'cancel';
+    rid: string;
     cancelMessage?: string;
   }) {
     const res = await lastValueFrom(
@@ -122,6 +123,18 @@ export class UserService {
         payload,
       ),
     );
+    this.realTime.sendNotification({
+      senderId: this.auth.user.value?.id as string,
+      receiver: {
+        type: UserType.CLIENT,
+        rid: payload.rid,
+        reservationId: payload.reservationId,
+      },
+      type:
+        payload.request === 'update'
+          ? NotificationType.UPDATE_RESERVATION
+          : NotificationType.CANCEL_RESERVATION,
+    });
     this._snackbar.open('success', 'Your update reservation request was sent');
     return res;
   }

@@ -25,6 +25,8 @@ import { NgIconsModule, provideIcons } from '@ng-icons/core';
 import { IReservation, ReservationStatus } from 'src/app/types/restaurant.type';
 import { UserService } from 'src/app/services/user.service';
 import { TableReservationVersionsComponent } from 'src/app/components/reservation/table-reservation-versions.component';
+import { RealTimeService } from 'src/app/services/realTime.service';
+import { NotificationType } from 'src/app/types/notification';
 
 @Component({
   selector: 'reservation',
@@ -74,24 +76,10 @@ import { TableReservationVersionsComponent } from 'src/app/components/reservatio
         }
       }
 
-      .confirmed,
-      .completed {
-        color: #1f931e;
-        background-color: #e9f6e9;
+      .value {
+        @include status;
       }
-      .responding {
-        color: #e69216;
-        background-color: #fff6e8;
-      }
-      .canceled {
-        color: #c51d1a;
-        background-color: #fbe9e8;
-      }
-      .expired,
-      .rejected {
-        color: #333;
-        background-color: #eee;
-      }
+
       .btns {
         gap: 10px;
         margin-top: 20px;
@@ -212,7 +200,9 @@ import { TableReservationVersionsComponent } from 'src/app/components/reservatio
 
         <div
           *ngIf="
-            (reservation.status !== 'confirmed' || !isOwner) && reservation.status !== 'canceled'
+            (reservation.status !== 'confirmed' || !isOwner) &&
+            reservation.status !== 'canceled' &&
+            reservation.status !== 'rejected'
           "
           class="btns"
         >
@@ -245,9 +235,12 @@ import { TableReservationVersionsComponent } from 'src/app/components/reservatio
           </div>
         </div>
 
-        <mat-divider style="margin-top: 20px; margin-bottom: 10px;" />
-        <div class="versions">
-          <h5 style="margin-bottom: 10px;">Updated verisons</h5>
+        <mat-divider
+          *ngIf="reservation.versions.length > 0"
+          style="margin-top: 20px; margin-bottom: 10px;"
+        />
+        <div class="versions" *ngIf="reservation.versions.length > 0">
+          <h5 style="margin-bottom: 10px;">Previous verisons</h5>
           <table-reservation-versions [dataSource]="reservation.versions" />
         </div>
       </span>
@@ -261,6 +254,7 @@ export class ReservationComponent implements OnInit {
     public dialog: MatDialog,
     private auth: AuthService,
     private route: ActivatedRoute,
+    private realtime: RealTimeService,
     private restaurantSv: RestaurantService,
   ) {
     this.auth.user.subscribe((u) => {
@@ -271,14 +265,26 @@ export class ReservationComponent implements OnInit {
   reservation!: IReservation;
   ReservationStatus = ReservationStatus;
 
-  async ngOnInit() {
+  ngOnInit() {
     if (this.route.snapshot.paramMap.has('id')) {
-      const id = this.route.snapshot.paramMap.get('id');
-      if (id) {
-        const res = await this.restaurantSv.getReservationById(id);
-        this.reservation = res;
-      }
+      this.route.params.subscribe(({ id }) => {
+        if (id) {
+          this.restaurantSv.getReservationById(id).then((res) => (this.reservation = res));
+        }
+      });
     }
+    this.realtime.receiveNotification().subscribe((notif) => {
+      if (
+        notif.type === NotificationType.UPDATE_RESERVATION ||
+        notif.type === NotificationType.CANCEL_RESERVATION ||
+        notif.type === NotificationType.REJECT_RESERVATION ||
+        notif.type === NotificationType.CONFIRM_RESERVATION
+      ) {
+        this.restaurantSv
+          .getReservationById(notif.additionalInfo.reservationId as string)
+          .then((res) => (this.reservation = res));
+      }
+    });
   }
 
   openCancelDialog() {
@@ -377,6 +383,7 @@ class CancelReservationDialog {
         .updateReservation({
           request: 'cancel',
           reservationId: this.data.id,
+          rid: this.data.restaurant.id,
           cancelMessage: this.message,
         })
         .then((res) => {
@@ -512,7 +519,14 @@ class EditReservationDialog {
 
     if (this.alertMessage === '') {
       this.userSv
-        .updateReservation({ reservationId: this.data.id, date, time, size, request: 'update' })
+        .updateReservation({
+          reservationId: this.data.id,
+          date,
+          time,
+          size,
+          request: 'update',
+          rid: this.data.restaurant.id,
+        })
         .then((res) => {
           this.handleClose(res);
         });
