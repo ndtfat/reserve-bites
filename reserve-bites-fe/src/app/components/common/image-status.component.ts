@@ -1,3 +1,4 @@
+import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { Input, OnInit, Output, Component, EventEmitter, booleanAttribute } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,7 +9,7 @@ import { ionCloudUploadOutline } from '@ng-icons/ionicons';
 @Component({
   selector: 'image-status',
   standalone: true,
-  imports: [CommonModule, NgIconsModule, MatProgressBarModule, MatIconModule],
+  imports: [CommonModule, NgIconsModule, MatProgressBarModule, MatIconModule, MatButtonModule],
   viewProviders: [provideIcons({ ionCloudUploadOutline })],
   styles: [
     `

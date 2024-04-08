@@ -6,7 +6,7 @@ import { environment } from 'src/environments/environment';
 import { IUser, UserType } from '../types/auth.type';
 import { INotification, NotificationType } from '../types/notification';
 import { IReservation, IRestaurant, IReview } from '../types/restaurant.type';
-import { notificationMessage } from '../utils/notification';
+import { notificationMessage } from '../utils/messages';
 import { AuthService } from './auth.service';
 import { SnackbarService } from './snackbar.service';
 import { RealTimeService } from './realTime.service';

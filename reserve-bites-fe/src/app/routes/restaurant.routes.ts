@@ -1,6 +1,6 @@
 import { Route } from '@angular/router';
-import { RestaurantComponent } from '../pages/restaurant/restaurant.component';
-import { SearchComponent } from '../pages/restaurant/search.component';
+import { RestaurantComponent } from '../pages/main/restaurant/restaurant.component';
+import { SearchComponent } from '../pages/main/restaurant/search.component';
 
 export const RESTAURANT_ROUTES: Route[] = [
   {

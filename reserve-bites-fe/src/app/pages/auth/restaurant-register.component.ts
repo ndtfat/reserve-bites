@@ -2,9 +2,9 @@ import { NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatStepperModule } from '@angular/material/stepper';
 import { LogoComponent } from 'src/app/components/common/logo.component';
-import { ConfirmationRestaurantRegisterComponent } from 'src/app/components/restaurant-register/confirmation-restaurant-register.component';
-import { FormOwnerInformationComponent } from 'src/app/components/restaurant-register/form-owner-information.component';
-import { FormRestaurantInformationComponent } from 'src/app/components/restaurant-register/form-restaurant-information.component';
+import { ConfirmationRestaurantRegisterComponent } from 'src/app/pages/auth/components/confirmation-restaurant-register.component';
+import { FormOwnerInformationComponent } from 'src/app/pages/components/forms/form-owner-information.component';
+import { FormRestaurantInformationComponent } from 'src/app/pages/components/forms/form-restaurant-information.component';
 import { RestaurantService } from 'src/app/services/restaurant.service';
 import {
   IFormOwnerInformationType,

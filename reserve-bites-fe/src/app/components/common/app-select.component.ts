@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldAppearance, MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
-import validationMessages, { ValidationMessages } from 'src/app/utils/validationMessages';
+import { ValidationMessages, validationMessages } from 'src/app/utils/messages';
 
 @Component({
   selector: 'app-select',

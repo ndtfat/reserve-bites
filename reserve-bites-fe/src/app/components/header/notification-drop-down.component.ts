@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from 'src/app/services/user.service';
 import { INotification } from 'src/app/types/notification';
 import { RealTimeService } from 'src/app/services/realTime.service';
-import { notificationIcon, notificationMessage } from 'src/app/utils/notification';
 import { IRestaurant } from 'src/app/types/restaurant.type';
 import { IUser } from 'src/app/types/auth.type';
 import { TimePipe } from 'src/app/pipes/time.pipe';
@@ -14,6 +13,7 @@ import { RouterLink } from '@angular/router';
 import { DatePipe, NgFor } from '@angular/common';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
+import { notificationIcon, notificationMessage } from 'src/app/utils/messages';
 
 @Component({
   selector: 'notification-drop-down',

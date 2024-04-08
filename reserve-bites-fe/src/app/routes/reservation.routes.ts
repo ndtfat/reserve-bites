@@ -1,5 +1,5 @@
 import { Route } from '@angular/router';
-import { ReservationComponent } from '../pages/reservation/reservation.component';
+import { ReservationComponent } from '../pages/main/reservation/reservation.component';
 
 export const RESERVATION_ROUTES: Route[] = [
   {

@@ -1,11 +1,11 @@
 import { Input, Output, Component, EventEmitter, booleanAttribute } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldAppearance, MatFormFieldModule } from '@angular/material/form-field';
-import validationMessages, { ValidationMessages } from '../../utils/validationMessages';
 import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { ValidationMessages, validationMessages } from 'src/app/utils/messages';
 
 @Component({
   selector: 'form-input',

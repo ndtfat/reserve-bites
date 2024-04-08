@@ -30,7 +30,8 @@ const routes: Routes = [
         path: '',
         pathMatch: 'full',
         canActivate: [DinerGuard],
-        loadComponent: () => import('../pages/home/home.component').then((m) => m.HomeComponent),
+        loadComponent: () =>
+          import('../pages/main/home/home.component').then((m) => m.HomeComponent),
       },
 
       {
@@ -49,7 +50,7 @@ const routes: Routes = [
       {
         path: 'notification',
         loadComponent: () =>
-          import('../pages/notification/notification.component').then(
+          import('../pages/main/notification/notification.component').then(
             (m) => m.NotificationComponent,
           ),
       },
