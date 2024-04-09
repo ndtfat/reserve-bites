@@ -28,18 +28,8 @@ import { FormSearchFilterComponent } from '../../components/forms/form-search-fi
   imports: [
     NgIf,
     NgFor,
-    TimePipe,
-    PricePipe,
-    RouterLink,
-    MatIconModule,
     AlertComponent,
-    MatButtonModule,
-    MatSliderModule,
-    MatDividerModule,
     MatPaginatorModule,
-    FormInputComponent,
-    AppSelectComponent,
-    ReactiveFormsModule,
     MatProgressSpinnerModule,
     FormSearchFilterComponent,
     SearchResultItemComponent,
@@ -169,7 +159,6 @@ export class SearchComponent implements OnInit {
   ) {
     this.route.queryParams.subscribe((params) => {
       const { size, openDay } = params;
-      console.log({ size, openDay });
       if (size) {
         this.filterForm.controls.size.setValue(Number(size));
       }

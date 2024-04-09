@@ -1,46 +1,33 @@
-import { NgFor, NgIf } from '@angular/common';
+import { CommonModule, NgFor, NgIf } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { BehaviorSubject, Subject, Subscription } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
+import { AuthService } from 'src/app/services/auth.service';
 import { RestaurantService } from 'src/app/services/restaurant.service';
 import { IRestaurantCard } from 'src/app/types/restaurant.type';
-import { AuthService } from 'src/app/services/auth.service';
-import { AppSelectComponent } from 'src/app/components/common/app-select.component';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { AlertComponent } from 'src/app/components/common/alert.component';
-import { RestaurantCardComponent } from 'src/app/pages/main/restaurant/components/restaurant-card.component';
-import { MatButtonModule } from '@angular/material/button';
-import { MatInputModule } from '@angular/material/input';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { dayOptions } from 'src/app/utils/form';
 import { FormHomeSearchComponent } from '../../components/forms/form-home-search.component';
+import { HomeSectionSuggestComponent } from './components/home-section-suggest.component';
+import { HomeSectionOwnerComponent } from './components/home-section-owner.component';
+import { HomeSectionEventsComponent } from './components/home-section-events.component';
 
 @Component({
   selector: 'home',
   standalone: true,
   imports: [
-    NgIf,
-    NgFor,
-    AlertComponent,
-    MatInputModule,
+    CommonModule,
     MatButtonModule,
-    AppSelectComponent,
-    MatFormFieldModule,
-    ReactiveFormsModule,
-    RestaurantCardComponent,
     FormHomeSearchComponent,
+    HomeSectionOwnerComponent,
+    HomeSectionEventsComponent,
+    HomeSectionSuggestComponent,
   ],
   styles: [
     `
       @import '../../../scss/common.scss';
       @import '../../../scss/variables.scss';
       @import '../../../scss/responsive.scss';
-
-      h3 {
-        font-weight: 600;
-        margin-bottom: 10px;
-      }
       .search {
         position: relative;
         height: 412px;
@@ -50,8 +37,7 @@ import { FormHomeSearchComponent } from '../../components/forms/form-home-search
           height: 100%;
           background: url('../../../../assets/backgrounds/search-2.jpeg') no-repeat 0% 60%;
           background-size: cover;
-          background-position: right 40%;
-          // filter: blur(2px);
+          background-position: right 50%;
         }
 
         .search-body {
@@ -77,62 +63,21 @@ import { FormHomeSearchComponent } from '../../components/forms/form-home-search
       }
       .body {
         padding: 30px;
-        .card-wrapper {
-          width: 100%;
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-        }
-        .locations {
-          column-count: 2;
-          li {
-            break-inside: avoid;
-            margin-bottom: 10px;
-            @include cursor;
-            transition: 0.2s;
-          }
-          li:hover {
-            color: $primary;
-          }
-        }
-      }
-      .footer {
-        background: #000;
-        & > div {
-          min-height: 250px;
-          padding: 20px 50px;
-          gap: 30px;
-          @include flex(column, center, flex-start);
-          .logo-lg {
-            display: none;
-          }
-          .logo-sm {
-            display: block;
-          }
-          .content {
-            flex: 1;
-          }
-          .content p {
-            width: 100%;
-            color: #fff;
-            margin-bottom: 6px;
-            text-align: justify;
-          }
-          .content span {
-            color: $primary;
-          }
-        }
+        display: flex;
+        flex-direction: column;
+        gap: 50px;
       }
 
       @include mobile {
         .search-body {
           min-width: 100%;
+          .form {
+            padding: 16px;
+          }
         }
         .search-slogan {
           font-size: 30px;
           margin-bottom: 10px;
-        }
-        .search-body .form {
-          padding: 16px;
         }
       }
       @include tablet {
@@ -148,30 +93,9 @@ import { FormHomeSearchComponent } from '../../components/forms/form-home-search
         }
       }
       @include desktop {
-        .body,
-        .footer > div {
+        .body {
           width: $body-width;
           margin: 0 auto;
-        }
-        .body {
-          .card-wrapper {
-            grid-template-columns: repeat(4, 1fr);
-          }
-          .locations {
-            column-count: 4;
-          }
-        }
-        .footer {
-          & > div {
-            @include flex(row, center, flex-start);
-            padding: 0;
-            .logo-sm {
-              display: none;
-            }
-            .logo-lg {
-              display: block;
-            }
-          }
         }
       }
     `,
@@ -188,47 +112,19 @@ import { FormHomeSearchComponent } from '../../components/forms/form-home-search
       </div>
     </div>
 
-    <div class="body-wrapper">
-      <div class="body">
-        <div>
-          <h3>Restaurants most people like</h3>
-          <alert *ngIf="errorTopRateRestaurants" type="error">
-            {{ errorTopRateRestaurants }}
-          </alert>
-          <div class="card-wrapper" *ngIf="topRateRestaurants">
-            <restaurant-card
-              *ngFor="let restaurant of topRateRestaurants"
-              [restaurant]="restaurant"
-            />
-          </div>
-        </div>
+    <div class="body">
+      <home-section-events />
 
-        <div *ngIf="isAuthenicated" style="margin-top: 50px;">
-          <h3>Maybe you will like</h3>
-          <alert *ngIf="errorSuggestRestaurants" type="error">
-            {{ errorSuggestRestaurants }}
-          </alert>
-          <div class="card-wrapper" *ngIf="suggestRestaurants">
-            <restaurant-card
-              *ngFor="let restaurant of suggestRestaurants"
-              [restaurant]="restaurant"
-            />
-          </div>
-        </div>
+      <home-section-suggest
+        [localRestaurants]="localRestaurants"
+        [topRateRestaurants]="topRateRestaurants"
+        [suggestRestaurants]="suggestRestaurants"
+        [errorLocalRestaurants]="errorLocalRestaurants"
+        [errorTopRateRestaurants]="errorTopRateRestaurants"
+        [errorSuggestRestaurants]="errorSuggestRestaurants"
+      />
 
-        <div *ngIf="isAuthenicated" style="margin-top: 50px;">
-          <h3>Explore more in your place</h3>
-          <alert *ngIf="errorLocalRestaurants" type="error">
-            {{ errorLocalRestaurants }}
-          </alert>
-          <div class="card-wrapper" *ngIf="localRestaurants">
-            <restaurant-card
-              *ngFor="let restaurant of localRestaurants"
-              [restaurant]="restaurant"
-            />
-          </div>
-        </div>
-      </div>
+      <home-section-owner />
     </div>
   `,
 })
