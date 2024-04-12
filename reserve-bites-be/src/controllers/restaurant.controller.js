@@ -13,17 +13,17 @@ export default {
 
       const { owner, restaurant } = req.body;
       const imageIds = [restaurant.mainImage, ...restaurant.gallery];
-      const neWUser = new User({
+      const newUser = new User({
         ...owner,
         password: await bcrypt.hash(owner.password, 10),
         isOwner: true,
       });
       const newRestaurant = new Restaurant({
         ...restaurant,
-        ownerId: neWUser.id,
+        owner: newUser.id,
       });
 
-      await neWUser.save();
+      await newUser.save();
       await newRestaurant.save();
       await Image.updateMany({ _id: { $in: imageIds } }, { $set: { state: 1 } });
 
@@ -44,19 +44,16 @@ export default {
 
       console.log(restaurant);
 
-      let updatedRestaurant = await Restaurant.findOneAndUpdate({ ownerId: owner.id }, restaurant, {
+      let updatedRestaurant = await Restaurant.findOneAndUpdate({ owner: owner.id }, restaurant, {
         new: true,
       })
-        .populate('ownerId')
+        .populate('owner')
         .populate('gallery', 'url name')
         .populate('mainImage', 'url name');
 
       console.log('update restaurant');
       if (updatedRestaurant) {
-        updatedRestaurant = updatedRestaurant.toObject();
-        updatedRestaurant.owner = updatedRestaurant.ownerId;
-        delete updatedRestaurant.ownerId;
-        return res.status(200).send(updatedRestaurant);
+        return res.status(200).send(updatedRestaurant.toObject());
       } else {
         return res.status(404).send({ message: 'Restaurant Not found' });
       }
@@ -71,7 +68,7 @@ export default {
 
       // find restaurant by id
       let restaurant = await Restaurant.findById(id)
-        .populate('ownerId')
+        .populate('owner')
         .populate('gallery', 'url name')
         .populate('mainImage', 'url name');
 
@@ -80,10 +77,7 @@ export default {
       }
 
       if (restaurant) {
-        restaurant = restaurant.toObject();
-        restaurant.owner = restaurant.ownerId;
-        delete restaurant.ownerId;
-        return res.status(200).send(restaurant);
+        return res.status(200).send(restaurant.toObject());
       } else {
         return res.status(404).send({ message: 'Restaurant Not found' });
       }
@@ -191,30 +185,28 @@ export default {
       const { uid } = req.query;
       const { page, sortBy, pageSize, offset } = req.paginator;
 
-      const totalItems = await Review.countDocuments({ rid });
+      const totalItems = await Review.countDocuments({ restaurant: rid });
       const totalPages = Math.ceil(totalItems / pageSize);
       if (page > totalPages && totalPages !== 0) {
         return res.status(404).send({ message: 'Page not found', totalPages });
       }
 
-      let userReview = (await Review.find({ rid, dinerId: uid }).populate('dinerId'))[0] || null;
+      let userReview =
+        (await Review.find({ restaurant: rid, diner: uid }).populate('diner'))[0] || null;
       if (userReview) {
         userReview = userReview.toObject();
-        userReview.diner = userReview.dinerId;
-        delete userReview.dinerId;
       }
 
-      const reviews = await Review.find({ rid, dinerId: { $ne: uid } })
+      const reviews = await Review.find({ restaurant: rid, diner: { $ne: uid } })
         .sort({ createdAt: sortBy })
         .skip(offset)
         .limit(pageSize)
-        .populate('dinerId');
+        .populate('diner');
+
+      console.log(reviews);
 
       const formattedreviewsList = reviews.map((r) => {
-        r = r.toObject();
-        r.diner = r.dinerId;
-        delete r.dinerId;
-        return r;
+        return r.toObject();
       });
 
       console.log('Get reviews');
@@ -244,12 +236,12 @@ export default {
     }).select('id');
     const userIds = users.map((user) => user.id);
     const countConditions = {
-      rid,
-      dinerId: { $in: userIds },
+      restaurant: rid,
+      diner: { $in: userIds },
     };
     const listConditions = {
-      rid,
-      dinerId: { $in: userIds },
+      restaurant: rid,
+      diner: { $in: userIds },
       ...(status ? { status } : {}),
     };
     const totalItems = await Reservation.countDocuments(countConditions);
@@ -262,13 +254,10 @@ export default {
       .sort({ createdAt: sortBy })
       .skip(offset)
       .limit(pageSize)
-      .populate('dinerId');
+      .populate('diner');
 
     const formattedReservationsList = reservationsList.map((reservation) => {
-      reservation = reservation.toObject();
-      reservation.diner = reservation.dinerId;
-      delete reservation.dinerId;
-      return reservation;
+      return reservation.toObject();
     });
 
     return res.status(200).send({
@@ -303,7 +292,7 @@ export default {
             combinedAddress: {
               $concat: ['$address.detail', ', ', '$address.province', ', ', '$address.country'],
             },
-            ownerId: { $toObjectId: '$ownerId' },
+            owner: { $toObjectId: '$owner' },
             mainImage: { $toObjectId: '$mainImage' },
           },
         },
@@ -328,7 +317,7 @@ export default {
         {
           $lookup: {
             from: 'users', // Assuming 'owners' is the name of your owners collection
-            localField: 'ownerId', // Field in the 'Restaurant' collection
+            localField: 'owner', // Field in the 'Restaurant' collection
             foreignField: '_id', // Field in the 'owners' collection
             as: 'owner', // New field that will contain the owner information
           },
@@ -363,14 +352,10 @@ export default {
     try {
       const { id } = req.params;
       console.log(id);
-      let reservation = await Reservation.findById(id).populate('rid').populate('dinerId');
+      let reservation = await Reservation.findById(id).populate('restaurant').populate('diner');
 
       if (reservation) {
         reservation = reservation.toObject();
-        reservation.restaurant = reservation.rid;
-        reservation.diner = reservation.dinerId;
-        delete reservation.rid;
-        delete reservation.dinerId;
 
         res.status(200).send(reservation);
       } else {

@@ -15,7 +15,7 @@ export default {
       let rid = undefined;
 
       if (user.isOwner) {
-        const restaurant = await Restaurant.findOne({ ownerId: user.id });
+        const restaurant = await Restaurant.findOne({ owner: user.id });
         rid = restaurant.id;
       }
       const { password, ...safeInfo } = user.toObject();
@@ -68,8 +68,8 @@ export default {
   },
   async postReservation(req, res) {
     try {
-      const payload = req.body;
-      const newReservation = new Reservation(payload);
+      const { rid, dinerId, size, date, time } = req.body;
+      const newReservation = new Reservation({ restaurant: rid, diner: dinerId, size, date, time });
       await newReservation.save();
       return res.status(200).send({ reservationId: newReservation.id });
     } catch (error) {
@@ -84,26 +84,21 @@ export default {
       const user = req.user;
       const { page, sortBy, pageSize, offset } = req.paginator;
 
-      const totalItems = await Reservation.countDocuments({ dinerId: user.id });
+      const totalItems = await Reservation.countDocuments({ diner: user.id });
       const totalPages = Math.ceil(totalItems / pageSize);
       if (page > totalPages && totalPages !== 0) {
         return res.status(404).send({ message: 'Page not found', totalPages });
       }
 
-      let reservations = await Reservation.find({ dinerId: user.id })
+      let reservations = await Reservation.find({ diner: user.id })
         .sort({ createdAt: sortBy })
         .skip(offset)
         .limit(pageSize)
-        .populate('rid');
-
-      console.log('get reservations[]');
+        .populate('restaurant');
 
       if (reservations) {
         reservations = reservations.map((item) => {
-          item = item.toObject();
-          item.restaurant = item.rid.name;
-          delete item.rid;
-          return item;
+          return item.toObject();
         });
 
         return res.status(200).send({
@@ -125,7 +120,7 @@ export default {
     try {
       const { rid, food, service, ambiance, content, dinerId } = req.body;
       const restaurant = await Restaurant.findById(rid);
-      const numberOfReviewsOfRestaurant = await Review.countDocuments({ rid });
+      const numberOfReviewsOfRestaurant = await Review.countDocuments({ restaurant: rid });
 
       const userAvarageRate = (food + service + ambiance) / 3;
 
@@ -135,8 +130,8 @@ export default {
       ).toFixed(2);
 
       const newReview = new Review({
-        rid,
-        dinerId,
+        restaurant: rid,
+        diner: dinerId,
         food,
         service,
         ambiance,
@@ -145,13 +140,11 @@ export default {
       await newReview.save();
       await restaurant.save();
 
-      let resData = await newReview.populate('dinerId');
-      resData = resData.toObject();
-      resData.diner = resData.dinerId;
-      delete resData.dinerId;
+      let resData = await newReview.populate('diner');
 
-      return res.status(200).send(resData);
+      return res.status(200).send(resData.toObject());
     } catch (error) {
+      console.log(error);
       res.status(500).send({ message: 'Something wrong with review restaurant', error });
     }
   },
@@ -161,7 +154,7 @@ export default {
       const { rid, food, service, ambiance, content, dinerId } = req.body;
       const review = await Review.findById(id);
       const restaurant = await Restaurant.findById(rid);
-      const numberOfReviewsOfRestaurant = await Review.countDocuments({ rid });
+      const numberOfReviewsOfRestaurant = await Review.countDocuments({ restaurant: rid });
 
       const prevAvarageRate = (review.food + review.service + review.ambiance) / 3;
       const userAvarageRate = (food + service + ambiance) / 3;
@@ -179,12 +172,9 @@ export default {
       await restaurant.save();
       console.log('Review updated');
 
-      let resData = await review.populate('dinerId');
-      resData = resData.toObject();
-      resData.diner = resData.dinerId;
-      delete resData.dinerId;
+      let resData = await review.populate('diner');
 
-      return res.status(200).send(resData);
+      return res.status(200).send(resData.toObject());
     } catch (error) {}
   },
   async deleteReview(req, res) {
@@ -192,7 +182,7 @@ export default {
       const user = req.user;
       const { id } = req.params;
 
-      await Review.findOneAndDelete({ _id: id, dinerId: user.id });
+      await Review.findOneAndDelete({ _id: id, diner: user.id });
       res.status(200).send({ message: 'Review is deleted successfully' });
     } catch (error) {
       res.status(500).send({ message: 'Something wrong with review restaurant', error });
@@ -211,21 +201,18 @@ export default {
         return res.status(404).send({ message: 'Page not found', totalPages });
       }
 
-      let notifications = await Notification.find({ receiverId: user.id })
+      let notifications = await Notification.find({ receiver: user.id })
         .sort({ createdAt: sortBy })
         .skip(offset)
         .limit(pageSize)
-        .populate('senderId');
+        .populate('sender');
 
       notifications = await Promise.all(
         notifications.map(async (item) => {
           item = item.toObject();
-          if (item.senderId.isOwner) {
-            item.sender = await Restaurant.findOne({ ownerId: item.senderId.id });
-          } else {
-            item.sender = item.senderId;
+          if (item.sender.isOwner) {
+            item.sender = await Restaurant.findOne({ owner: item.sender.id });
           }
-          delete item.senderId;
           return item;
         }),
       );
@@ -271,7 +258,7 @@ export default {
     try {
       const { senderId, receiverId } = req.body;
       const newConversation = new Conversation({
-        uids: [senderId, receiverId],
+        users: [senderId, receiverId],
         messages: [],
         usersReaded: [senderId],
       });
@@ -288,15 +275,15 @@ export default {
     try {
       const user = req.user;
 
-      let chatBoxes = await Conversation.find({ uids: { $in: [user.id] } });
+      let chatBoxes = await Conversation.find({ users: { $in: [user.id] } });
       chatBoxes = await Promise.all(
         chatBoxes.map(async (item) => {
-          const chatWithUserId = item.uids.filter((id) => id !== user.id);
+          const chatWithUserId = item.users.filter((id) => id !== user.id);
           let userChatWith;
           if (user.isOwner) {
             userChatWith = await User.findById(chatWithUserId);
           } else {
-            userChatWith = await Restaurant.findOne({ ownerId: chatWithUserId }).populate(
+            userChatWith = await Restaurant.findOne({ owner: chatWithUserId }).populate(
               'mainImage',
               'url name',
             );
@@ -330,7 +317,7 @@ export default {
     try {
       const { id } = req.params;
       const payload = req.body;
-      let reservation = await Reservation.findById(id).populate('dinerId').populate('rid');
+      let reservation = await Reservation.findById(id).populate('diner').populate('restaurant');
 
       if (!reservation) return res.status(404).send({ message: 'Reservation not found' });
 
@@ -354,13 +341,8 @@ export default {
       }
 
       await reservation.save();
-      reservation = reservation.toObject();
-      reservation.diner = reservation.dinerId;
-      reservation.restaurant = reservation.rid;
-      delete reservation.dinerId;
-      delete reservation.rid;
 
-      res.status(200).send(reservation);
+      res.status(200).send(reservation.toObject());
     } catch (error) {
       console.log(error);
       res.status(500).send({ message: 'Something wrong with putReservation', error });

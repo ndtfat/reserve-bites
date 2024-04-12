@@ -4,8 +4,8 @@ const Schema = mongoose.Schema;
 
 const ReviewSchema = new Schema(
   {
-    rid: { type: String, required: true, ref: 'restaurant' },
-    dinerId: { type: String, required: true, ref: 'user' },
+    restaurant: { type: String, required: true, ref: 'restaurant' },
+    diner: { type: String, required: true, ref: 'user' },
     food: { type: Number, required: true },
     content: { type: String, required: true },
     service: { type: Number, required: true },

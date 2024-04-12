@@ -3,8 +3,8 @@ import mongoose from '../config/mongoose.config.js';
 const Schema = mongoose.Schema;
 const NotificationSchema = new Schema(
   {
-    senderId: { type: String, required: true, ref: 'user' },
-    receiverId: { type: String, required: true, ref: 'user' },
+    sender: { type: String, required: true, ref: 'user' },
+    receiver: { type: String, required: true, ref: 'user' },
     type: {
       type: String,
       enum: [

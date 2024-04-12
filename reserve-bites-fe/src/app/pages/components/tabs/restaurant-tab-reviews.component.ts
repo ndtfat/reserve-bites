@@ -70,7 +70,7 @@ import { MatButtonModule } from '@angular/material/button';
         }}
       </h6>
       <div class="review-box">
-        <form (ngSubmit)="handleSubmit()" *ngIf="!userReview || editting">
+        <form *ngIf="!userReview || editting">
           <div [formGroup]="form" class="point">
             <form-input
               label="Food"
@@ -110,7 +110,13 @@ import { MatButtonModule } from '@angular/material/button';
             >
               Cancel
             </button>
-            <button mat-raised-button color="primary" [disabled]="submitting">
+            <button
+              mat-raised-button
+              color="primary"
+              type="button"
+              (click)="handleSubmit()"
+              [disabled]="submitting"
+            >
               {{ editting ? 'Update' : 'Post' }}
             </button>
           </div>

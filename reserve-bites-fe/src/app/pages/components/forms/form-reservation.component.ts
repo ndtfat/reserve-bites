@@ -80,7 +80,7 @@ import { Router } from '@angular/router';
         Reserve
       </button>
 
-      <div class="edit-btns">
+      <div class="edit-btns" *ngIf="mode === 'update'">
         <button type="button" mat-raised-button (click)="afterSubmitted.emit(null)">Cancel</button>
         <button mat-raised-button color="primary" [disabled]="!isDataChanged">Edit</button>
       </div>

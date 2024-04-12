@@ -38,7 +38,7 @@ const OperationTimeSchema = new Schema(
 
 const RestaurantShcema = new Schema(
   {
-    ownerId: { type: String, required: true, ref: 'user' },
+    owner: { type: String, required: true, ref: 'user' },
     name: { type: String, required: true },
     description: { type: String, required: true },
     address: { type: AddressSchema, required: true },

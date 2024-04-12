@@ -3,7 +3,7 @@ import mongoose, { mongo, version } from 'mongoose';
 const Schema = mongoose.Schema;
 const ConversationSchema = new Schema(
   {
-    uids: [{ type: String, required: true, ref: 'user' }],
+    users: [{ type: String, required: true, ref: 'user' }],
     messages: [
       {
         type: {
