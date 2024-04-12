@@ -221,4 +221,6 @@ export class RestaurantService {
           : NotificationType.REJECT_RESERVATION,
     });
   }
+
+  async createEvent() {}
 }

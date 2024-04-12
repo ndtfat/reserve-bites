@@ -1,36 +1,21 @@
+import { DatePipe, NgFor, NgIf } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { Component, Inject, OnInit } from '@angular/core';
-import { CommonModule, DatePipe, NgFor, NgIf } from '@angular/common';
-import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import {
-  MatDialog,
-  MatDialogRef,
-  MatDialogModule,
-  MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
-import { TimePipe } from 'src/app/pipes/time.pipe';
-import { AuthService } from 'src/app/services/auth.service';
-import { AlertComponent } from 'src/app/components/common/alert.component';
-import { MatInputModule } from '@angular/material/input';
-import { TimepickerModule } from 'ngx-bootstrap/timepicker';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
-import { validReservation } from 'src/app/utils/form';
-import { RestaurantService } from 'src/app/services/restaurant.service';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { matOpenInNewOutline } from '@ng-icons/material-icons/outline';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { NgIconsModule, provideIcons } from '@ng-icons/core';
-import { IReservation, ReservationStatus } from 'src/app/types/restaurant.type';
-import { UserService } from 'src/app/services/user.service';
+import { NgIconsModule } from '@ng-icons/core';
 import { TableReservationVersionsComponent } from 'src/app/pages/components/tables/table-reservation-versions.component';
+import { TimePipe } from 'src/app/pipes/time.pipe';
+import { AuthService } from 'src/app/services/auth.service';
 import { RealTimeService } from 'src/app/services/realTime.service';
+import { RestaurantService } from 'src/app/services/restaurant.service';
 import { NotificationType } from 'src/app/types/notification';
+import { IReservation, ReservationStatus } from 'src/app/types/restaurant.type';
 import { DialogReservationCancelComponent } from '../../components/dialogs/dialog-reservation-cancel.component';
-import { FormReservationComponent } from '../../components/forms/form-reservation.component';
 import { DialogReservationEditComponent } from '../../components/dialogs/dialog-reservation-edit.component';
-import { ReservationMetadataComponent } from './components/reservation-metadata.component';
+import { MetadataReservationComponent } from '../../components/metadata/metadata-reservation.component';
 
 @Component({
   selector: 'reservation',
@@ -47,7 +32,7 @@ import { ReservationMetadataComponent } from './components/reservation-metadata.
     MatDividerModule,
     MatProgressSpinnerModule,
     TableReservationVersionsComponent,
-    ReservationMetadataComponent,
+    MetadataReservationComponent,
   ],
   styles: [
     `
@@ -96,7 +81,7 @@ import { ReservationMetadataComponent } from './components/reservation-metadata.
     <img src="../../../assets/backgrounds/reservation.png" alt="reservation-bg" />
     <div class="body">
       <span *ngIf="reservation">
-        <reservation-metadata [reservation]="reservation" />
+        <metadata-reservation [reservation]="reservation" />
 
         <div
           *ngIf="

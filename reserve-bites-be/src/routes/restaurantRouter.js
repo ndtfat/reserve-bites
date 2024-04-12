@@ -7,6 +7,7 @@ import restaurantController from '../controllers/restaurant.controller.js';
 const router = express.Router();
 
 router.post('/register', restaurantController.postRegister);
+router.post('/event', verifyAccessToken, verifyOwner, restaurantController.postRestaurantEvent);
 
 router.get('/locations', restaurantController.getLocations);
 router.get('/top-rate', restaurantController.getTopRestaurant);

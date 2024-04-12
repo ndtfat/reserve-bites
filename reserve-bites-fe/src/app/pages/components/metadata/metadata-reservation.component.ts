@@ -8,7 +8,7 @@ import { TimePipe } from 'src/app/pipes/time.pipe';
 import { IReservation } from 'src/app/types/restaurant.type';
 
 @Component({
-  selector: 'reservation-metadata',
+  selector: 'metadata-reservation',
   standalone: true,
   imports: [NgIconsModule, RouterLink, MatDividerModule, DatePipe, TimePipe],
   viewProviders: [provideIcons({ matOpenInNewOutline })],
@@ -78,8 +78,8 @@ import { IReservation } from 'src/app/types/restaurant.type';
     </div>`,
   styles: [
     `
-      @import '../../../../scss/common.scss';
-      @import '../../../../scss/responsive.scss';
+      @import '../../../scss/common.scss';
+      @import '../../../scss/responsive.scss';
 
       .fields-wrapper {
         flex: 1;
@@ -137,6 +137,6 @@ import { IReservation } from 'src/app/types/restaurant.type';
     `,
   ],
 })
-export class ReservationMetadataComponent {
+export class MetadataReservationComponent {
   @Input() reservation!: IReservation;
 }

@@ -15,6 +15,8 @@ import { ionCloudUploadOutline } from '@ng-icons/ionicons';
     `
       @import '../../scss/common.scss';
       .wrapper {
+        background: #cccccc12;
+        padding: 10px 0 10px 10px;
         @include flex(row, center, flex-start);
       }
       .upload-icon {
@@ -30,9 +32,9 @@ import { ionCloudUploadOutline } from '@ng-icons/ionicons';
           color: #aaa;
           font-size: 14px;
         }
-        .progress-bar {
-          width: 160px;
-        }
+        // .progress-bar {
+        //   width: 160px;
+        // }
       }
     `,
   ],
@@ -51,12 +53,6 @@ import { ionCloudUploadOutline } from '@ng-icons/ionicons';
             {{ errorMessage ? errorMessage : 'Upload file failed' }}
           </p>
         </div>
-        <mat-progress-bar
-          *ngIf="!errorMessage && !error"
-          class="progress-bar"
-          mode="determinate"
-          [value]="errorMessage ? 100 : progress"
-        />
       </div>
       <mat-icon
         *ngIf="progress === 100 && !error && !errorMessage"
@@ -74,6 +70,12 @@ import { ionCloudUploadOutline } from '@ng-icons/ionicons';
         <mat-icon>close</mat-icon>
       </button>
     </div>
+    <mat-progress-bar
+      *ngIf="!errorMessage && !error && progress < 100"
+      class="progress-bar"
+      mode="determinate"
+      [value]="errorMessage ? 100 : progress"
+    />
   `,
 })
 export class ImageStatusComponent implements OnInit {

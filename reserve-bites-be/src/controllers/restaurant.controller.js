@@ -386,4 +386,11 @@ export default {
       res.status(200).send({ message: 'Something wrong with responseReservation', error });
     }
   },
+  async postRestaurantEvent(req, res) {
+    try {
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({ message: 'Something wrong with postRestaurantEvent', error });
+    }
+  },
 };

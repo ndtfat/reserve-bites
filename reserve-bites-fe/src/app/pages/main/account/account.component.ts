@@ -1,7 +1,7 @@
 import { NgIf } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { MatTabsModule } from '@angular/material/tabs';
-import { ActivatedRoute } from '@angular/router';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { MatTabChangeEvent, MatTabGroup, MatTabsModule } from '@angular/material/tabs';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AccountTabProfileComponent } from 'src/app/pages/components/tabs/account-tab-profile.component';
 import { AccountTabReservationsManagementComponent } from 'src/app/pages/components/tabs/account-tab-reservations-management.component';
 import { AccountTabRestaurantComponent } from 'src/app/pages/components/tabs/account-tab-restaurant.component';
@@ -34,7 +34,7 @@ import { IUser } from 'src/app/types/auth.type';
   ],
   template: `
     <div *ngIf="user" class="wrapper">
-      <mat-tab-group [style]="{ width: '100%' }">
+      <mat-tab-group [style]="{ width: '100%' }" (selectedTabChange)="handleTabChange($event)">
         <mat-tab label="My Profile">
           <account-tab-profile *ngIf="user" [user]="user" />
         </mat-tab>
@@ -48,10 +48,11 @@ import { IUser } from 'src/app/types/auth.type';
     </div>
   `,
 })
-export class AccountComponent implements OnInit {
+export class AccountComponent implements AfterViewInit {
   user!: IUser;
+  @ViewChild(MatTabGroup) tabGroup!: MatTabGroup;
 
-  constructor(private route: ActivatedRoute, private auth: AuthService) {
+  constructor(private route: ActivatedRoute, private auth: AuthService, private router: Router) {
     if (this.route.snapshot.paramMap.has('id')) {
       const id = route.snapshot.paramMap.get('id');
       if (id === 'me') {
@@ -60,5 +61,14 @@ export class AccountComponent implements OnInit {
     }
   }
 
-  ngOnInit() {}
+  ngAfterViewInit() {
+    if (this.route.snapshot.paramMap.has('tab')) {
+      this.tabGroup.selectedIndex = Number(this.route.snapshot.paramMap.get('tab'));
+    }
+  }
+
+  handleTabChange(event: MatTabChangeEvent) {
+    this.tabGroup.selectedIndex = event.index;
+    this.router.navigateByUrl(`/account/${this.route.snapshot.paramMap.get('id')}/${event.index}`);
+  }
 }
