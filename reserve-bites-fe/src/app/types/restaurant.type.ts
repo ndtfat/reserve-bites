@@ -37,6 +37,7 @@ export type IRestaurant = {
   mainImage: IImageType;
   gallery: IImageType[];
   rate: number;
+  events: IRestaurantEvent[];
 };
 
 export type IFormOwnerInformationType = {
@@ -126,4 +127,12 @@ export type IReservation = {
     status: ReservationStatus;
   }[];
   cancelMessage: { message: string; createdAt: Date | string };
+};
+
+export type IRestaurantEvent = {
+  id: string;
+  name: string;
+  endDate: Date | string;
+  desc: string;
+  poster: IImageType;
 };

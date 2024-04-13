@@ -5,11 +5,12 @@ import { MenuComponent } from '../../main/restaurant/components/menu.component';
 import { NgIconsModule, provideIcons } from '@ng-icons/core';
 import { ionImage } from '@ng-icons/ionicons';
 import { TimePipe } from 'src/app/pipes/time.pipe';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'metadata-restaurant',
   standalone: true,
-  imports: [CommonModule, MenuComponent, NgIconsModule, TimePipe],
+  imports: [CommonModule, MenuComponent, NgIconsModule, TimePipe, MatButtonModule],
   viewProviders: [provideIcons({ ionImage })],
   template: `
     <div>
@@ -91,11 +92,28 @@ import { TimePipe } from 'src/app/pipes/time.pipe';
           </div>
         </div>
       </div>
+
+      <div class="row">
+        <div style="margin-top: 10px;">
+          <p class="field">Events</p>
+          <div class="event" *ngFor="let e of restaurant.events">
+            <img [src]="e.poster.url" [alt]="e.poster.name" />
+            <div class="event-infor">
+              <div>
+                <h5 style="margin-bottom: 20px;">{{ e.name }}</h5>
+                <p style="margin-bottom: 10px;"><b>Description:</b> {{ e.desc }}</p>
+                <p><b>End date:</b> {{ e.endDate | date : 'dd/MM/yyyy' }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   `,
   styles: [
     `
       @import '../../../scss/common.scss';
+      @import '../../../scss/variables.scss';
       .row {
         @include flex(row, flex-start, space-between);
         margin: 0 0 16px;
@@ -124,6 +142,24 @@ import { TimePipe } from 'src/app/pipes/time.pipe';
         }
         .image-icon {
           margin-right: 4px;
+        }
+      }
+
+      .event {
+        display: flex;
+        gap: 20px;
+        margin-top: 10px;
+
+        img {
+          @include img-fit(500px);
+        }
+
+        .event-infor {
+          @include flex(column, flex-start, space-between);
+
+          p {
+            @include ellipsis(4);
+          }
         }
       }
     `,

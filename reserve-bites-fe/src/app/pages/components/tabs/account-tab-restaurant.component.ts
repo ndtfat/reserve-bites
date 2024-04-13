@@ -120,7 +120,10 @@ enum Mode {
       <div *ngIf="restaurant">
         <metadata-restaurant *ngIf="mode === Mode.View" [restaurant]="restaurant" />
 
-        <form-create-event *ngIf="mode === Mode.Create_Event" />
+        <form-create-event
+          *ngIf="mode === Mode.Create_Event"
+          (submit)="handleCreateEvent($event)"
+        />
 
         <form-restaurant-information
           *ngIf="mode === Mode.Edit"
@@ -146,13 +149,16 @@ export class AccountTabRestaurantComponent implements OnInit {
     private _snackbar: SnackbarService,
   ) {}
 
-  ngOnInit() {
+  getRestaurantAPI() {
     const rid = this.auth.user.value?.rid;
     if (rid) {
       this.restaurantSv.getRestaurant(rid).subscribe((response) => {
         this.restaurant = response;
       });
     }
+  }
+  ngOnInit() {
+    this.getRestaurantAPI();
   }
 
   async handleSaveEdit(payload: any) {
@@ -162,5 +168,12 @@ export class AccountTabRestaurantComponent implements OnInit {
       this.mode = Mode.View;
       this._snackbar.open('success', 'You have updated restaurant successfully!');
     }
+  }
+
+  handleCreateEvent(payload: any) {
+    this.restaurantSv.createEvent(payload).then(() => {
+      this.mode = Mode.View;
+      this.getRestaurantAPI();
+    });
   }
 }

@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 
 import User from '../models/User.js';
 import Image from '../models/Image.js';
+import Event from '../models/Event.js';
 import Review from '../models/Review.js';
 import Restaurant from '../models/Restaurant.js';
 import Reservation from '../models/Reservation.js';
@@ -76,8 +77,12 @@ export default {
         return res.status(404).send({ message: 'Restaurant not found' });
       }
 
+      const events = await Event.find({ restaurant: id }).populate('poster', 'url name');
+
       if (restaurant) {
-        return res.status(200).send(restaurant.toObject());
+        return res
+          .status(200)
+          .send({ ...restaurant.toObject(), events: events.map((item) => item.toObject()) });
       } else {
         return res.status(404).send({ message: 'Restaurant Not found' });
       }
@@ -388,6 +393,11 @@ export default {
   },
   async postRestaurantEvent(req, res) {
     try {
+      const { name, desc, endDate, poster, rid } = req.body.payload;
+      const event = new Event({ name, desc, endDate, poster, restaurant: rid });
+      await Image.updateMany({ _id: poster }, { $set: { state: 1 } });
+      await event.save();
+      res.status(200).send(event.toObject());
     } catch (error) {
       console.log(error);
       res.status(500).send({ message: 'Something wrong with postRestaurantEvent', error });

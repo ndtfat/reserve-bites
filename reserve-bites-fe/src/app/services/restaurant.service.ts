@@ -6,7 +6,13 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { AuthService } from './auth.service';
 import { SnackbarService } from './snackbar.service';
 import { findMaxPrice, findMinPrice } from '../utils/find';
-import { IReservation, IRestaurant, IRestaurantCard, IReview } from '../types/restaurant.type';
+import {
+  IReservation,
+  IRestaurant,
+  IRestaurantCard,
+  IRestaurantEvent,
+  IReview,
+} from '../types/restaurant.type';
 import {
   IFormOwnerInformationType,
   IFormRestaurantInformationType,
@@ -222,5 +228,17 @@ export class RestaurantService {
     });
   }
 
-  async createEvent() {}
+  async createEvent(payload: {
+    name: string;
+    desc: string;
+    poster: string[];
+    endDate: Date;
+    rid: string;
+  }) {
+    await lastValueFrom(
+      this.http.post<IRestaurantEvent>(this.SERVER_URL + '/restaurant/event', { payload }),
+    );
+
+    this._snackbar.open('success', 'You have created event successfully');
+  }
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormInputComponent } from 'src/app/components/common/form-input.component';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -11,6 +11,7 @@ import { ImageService } from 'src/app/services/image.service';
 import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { MatButtonModule } from '@angular/material/button';
 import { RestaurantService } from 'src/app/services/restaurant.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'form-create-event',
@@ -28,7 +29,7 @@ import { RestaurantService } from 'src/app/services/restaurant.service';
   ],
   styles: [],
   template: `
-    <form [formGroup]="form" (ngSubmit)="handleSubmit()">
+    <form [formGroup]="form">
       <form-input
         [formGroup]="form"
         name="name"
@@ -50,103 +51,87 @@ import { RestaurantService } from 'src/app/services/restaurant.service';
       </mat-form-field>
 
       <h4 style="margin-bottom: 14px;">Event images</h4>
-      <upload-image multiple (onUploadFiles)="handleUploadImg($event)" />
+      <upload-image *ngIf="!form.get('poster')?.value" (onUploadFile)="handleUploadImg($event)" />
       <div style="margin-top: 20px;"></div>
-      <div *ngFor="let item of form.get('imgs')?.value" style="margin-bottom: 16px;">
-        <image-status
-          [error]="item?.error"
-          [file]="item.file"
-          [progress]="item.progress"
-          (onDelete)="handleDeleteImg(item.file)"
-        />
-      </div>
+      <image-status
+        *ngIf="form.get('poster')?.value"
+        [error]="form.get('poster')?.value?.error"
+        [file]="form.get('poster')?.value.file"
+        [progress]="form.get('poster')?.value.progress"
+        (onDelete)="handleDeletePoster()"
+      />
 
       <div style="text-align: right;">
-        <button mat-raised-button color="primary">Create</button>
+        <button mat-raised-button color="primary" type="button" (click)="handleSubmit()">
+          Create
+        </button>
       </div>
     </form>
   `,
 })
 export class FormCreateEventComponent {
-  constructor(
-    private fb: FormBuilder,
-    private imageSv: ImageService,
-    private restaurantSv: RestaurantService,
-  ) {}
+  @Output() submit = new EventEmitter();
+
+  constructor(private fb: FormBuilder, private imageSv: ImageService, private auth: AuthService) {}
 
   minDate = new Date(new Date().setUTCDate(new Date().getUTCDate() + 1));
-  initialImgs: any = [];
+  initialPoster: any = null;
   deletedImageIds: string[] = [];
   form = this.fb.group({
     name: ['', Validators.required],
-    imgs: [this.initialImgs, Validators.min(1)],
+    poster: [this.initialPoster, Validators.min(1)],
     endDate: [new Date(this.minDate), Validators.required],
     description: ['', Validators.required],
   });
 
-  handleUploadImg(files: File[]) {
-    console.log(files);
-
-    const imgs = this.form.controls.imgs;
-    const formatedFiles = files.map((file) => {
-      return { file, progress: 0 };
-    });
-    imgs.setValue([...formatedFiles, ...imgs.value]);
-
-    for (let item of imgs.value) {
-      if (item.file.type.includes('image')) {
-        this.imageSv.uploadSingle(item.file).subscribe(
-          (event: HttpEvent<any>) => {
-            switch (event.type) {
-              case HttpEventType.UploadProgress:
-                imgs.setValue(
-                  imgs.value.map((el: any) => {
-                    if (el.file.name === item.file.name && event.total) {
-                      el.progress = Math.round((event.loaded / event.total) * 100) - 10;
-                    }
-                    return { ...el };
-                  }),
-                );
-                break;
-              case HttpEventType.Response:
-                imgs.setValue(
-                  imgs.value.map((el: any) => {
-                    if (el.file.name === item.file.name) {
-                      el.progress = 100;
-                      el.file = event.body;
-                    }
-                    return { ...el };
-                  }),
-                );
-            }
-          },
-          (error) => {
-            imgs.value.map((el: any) => {
-              if (el.file.name === item.file.name) {
-                el.progress = 100;
-                el.file = item.file;
-                el.error = error;
-              }
-              return { ...el };
+  handleUploadImg(file: File) {
+    const mainImageControl = this.form.controls.poster;
+    mainImageControl.setValue({ progress: 0, file });
+    this.imageSv.uploadSingle(file).subscribe(
+      (event: HttpEvent<any>) => {
+        switch (event.type) {
+          case HttpEventType.UploadProgress:
+            if (event.total)
+              mainImageControl.setValue({
+                progress: Math.round((event.loaded / event.total) * 100) - 10,
+                file,
+              });
+            break;
+          case HttpEventType.Response:
+            mainImageControl.setValue({
+              progress: 100,
+              file: event.body,
             });
-          },
-        );
-      }
-    }
+            break;
+        }
+      },
+      (error) => {
+        console.log(error);
+        mainImageControl.setValue({
+          progress: 100,
+          file,
+          error,
+        });
+      },
+    );
   }
 
-  handleDeleteImg(deletedFile: any) {
-    const imgs = this.form.controls.imgs;
-    const newimgsValue = imgs.value.filter((item: any) => item.file.name !== deletedFile.name);
-    this.deletedImageIds.push(deletedFile.id);
-    imgs.setValue(newimgsValue);
+  handleDeletePoster() {
+    this.form.controls.poster.setValue(null);
   }
 
   handleSubmit() {
     this.form.markAllAsTouched();
-    if (this.form.valid) {
-      console.log(this.form.value);
-      this.restaurantSv.createEvent();
+    if (this.form.valid && this.auth.user.value?.rid) {
+      const formValue = this.form.value;
+      const payload = {
+        rid: this.auth.user.value.rid,
+        name: formValue.name || '',
+        poster: formValue.poster.file.id,
+        desc: formValue.description || '',
+        endDate: formValue.endDate as Date,
+      };
+      this.submit.emit(payload);
     }
   }
 }

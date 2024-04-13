@@ -1,4 +1,4 @@
-import mongoose, { mongo, version } from 'mongoose';
+import mongoose from '../config/mongoose.config.js';
 
 const Schema = mongoose.Schema;
 const ConversationSchema = new Schema(

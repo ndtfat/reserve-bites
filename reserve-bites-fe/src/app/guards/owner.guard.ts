@@ -15,7 +15,7 @@ export class OwnerGuard implements CanActivate {
       return true;
     } else {
       // IUser is not authenticated, redirect to login or handle as needed
-      this.router.navigate(['/account/me//1']);
+      this.router.navigate(['/account/me/0']);
       return false;
     }
   }
