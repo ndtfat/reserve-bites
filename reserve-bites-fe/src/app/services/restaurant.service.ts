@@ -241,4 +241,10 @@ export class RestaurantService {
 
     this._snackbar.open('success', 'You have created event successfully');
   }
+
+  async getEvents() {
+    return await lastValueFrom(
+      this.http.get<IRestaurantEvent[]>(this.SERVER_URL + '/restaurant/events'),
+    );
+  }
 }

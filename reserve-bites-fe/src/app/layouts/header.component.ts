@@ -55,7 +55,7 @@ import { MatButtonModule } from '@angular/material/button';
       .outlet-wrapper {
         min-height: calc(100vh - $header-height);
         width: 100vw;
-        background: #f5f6f8;
+        background: $light-background;
         margin-top: $header-height;
         display: flex;
         justify-content: center;

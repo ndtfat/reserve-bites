@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'home-section-owner',
+  selector: 'home-section-restaurant-owner',
   standalone: true,
-  imports: [MatButtonModule],
+  imports: [MatButtonModule, RouterLink],
   styles: [
     `
       @import '../../../../scss/common.scss';
@@ -46,16 +47,16 @@ import { MatButtonModule } from '@angular/material/button';
             Fill nessesary informmation about your restaurant to register restaurant. And create
             events to attract more client to visit your restaurant.
           </p>
-          <button mat-raised-button>Register now</button>
+          <button mat-raised-button routerLink="/restaurant-register">Register now</button>
         </div>
 
         <div style="margin-top: 30px">
           <h5>Already a client</h5>
           <p class="sub-text">Login and manage your restaurant</p>
-          <button mat-raised-button>Log in now</button>
+          <button mat-raised-button routerLink="/auth/sign-in">Sign in now</button>
         </div>
       </div>
     </div>
   `,
 })
-export class HomeSectionOwnerComponent {}
+export class HomeSectionRestaurantOwnerComponent {}

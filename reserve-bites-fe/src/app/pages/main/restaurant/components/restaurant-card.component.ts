@@ -19,7 +19,7 @@ import { IRestaurantCard } from 'src/app/types/restaurant.type';
         border-radius: 4px;
         @include cursor;
         transition: 0.2s;
-        background: #fff;
+        background: $light-background;
         &:hover {
           transform: translateY(-4px);
           @include shadow;

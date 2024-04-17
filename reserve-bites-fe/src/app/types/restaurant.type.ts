@@ -132,6 +132,7 @@ export type IReservation = {
 export type IRestaurantEvent = {
   id: string;
   name: string;
+  restaurant: IRestaurant;
   endDate: Date | string;
   desc: string;
   poster: IImageType;

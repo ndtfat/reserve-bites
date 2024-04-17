@@ -12,6 +12,7 @@ import { matMarkEmailReadOutline } from '@ng-icons/material-icons/outline';
 import { MatMenuModule } from '@angular/material/menu';
 import { RouterLink } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatButtonModule } from '@angular/material/button';
 
 enum Action {
   Delete = 'delete',
@@ -27,6 +28,7 @@ enum Action {
     RouterLink,
     NgIconsModule,
     MatMenuModule,
+    MatButtonModule,
     MatCheckboxModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,

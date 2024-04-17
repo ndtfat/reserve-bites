@@ -5,11 +5,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { RestaurantService } from 'src/app/services/restaurant.service';
-import { IRestaurantCard } from 'src/app/types/restaurant.type';
+import { IRestaurantCard, IRestaurantEvent } from 'src/app/types/restaurant.type';
 import { dayOptions } from 'src/app/utils/form';
 import { FormHomeSearchComponent } from '../../components/forms/form-home-search.component';
 import { HomeSectionSuggestComponent } from './components/home-section-suggest.component';
-import { HomeSectionOwnerComponent } from './components/home-section-owner.component';
+import { HomeSectionRestaurantOwnerComponent } from './components/home-section-restaurant-owner.component';
 import { HomeSectionEventsComponent } from './components/home-section-events.component';
 
 @Component({
@@ -19,7 +19,7 @@ import { HomeSectionEventsComponent } from './components/home-section-events.com
     CommonModule,
     MatButtonModule,
     FormHomeSearchComponent,
-    HomeSectionOwnerComponent,
+    HomeSectionRestaurantOwnerComponent,
     HomeSectionEventsComponent,
     HomeSectionSuggestComponent,
   ],
@@ -30,7 +30,7 @@ import { HomeSectionEventsComponent } from './components/home-section-events.com
       @import '../../../scss/responsive.scss';
       .search {
         position: relative;
-        height: 412px;
+        height: 420px;
 
         .search-bg {
           width: 100vw;
@@ -113,7 +113,7 @@ import { HomeSectionEventsComponent } from './components/home-section-events.com
     </div>
 
     <div class="body">
-      <home-section-events />
+      <home-section-events [events]="events" />
 
       <home-section-suggest
         [localRestaurants]="localRestaurants"
@@ -124,7 +124,7 @@ import { HomeSectionEventsComponent } from './components/home-section-events.com
         [errorSuggestRestaurants]="errorSuggestRestaurants"
       />
 
-      <home-section-owner />
+      <home-section-restaurant-owner />
     </div>
   `,
 })
@@ -133,7 +133,7 @@ export class HomeComponent implements OnInit {
     private fb: FormBuilder,
     private auth: AuthService,
     private router: Router,
-    private restaurntSv: RestaurantService,
+    private restaurantSv: RestaurantService,
   ) {}
 
   searchForm = this.fb.group({
@@ -147,19 +147,23 @@ export class HomeComponent implements OnInit {
   localRestaurants!: IRestaurantCard[];
   topRateRestaurants!: IRestaurantCard[];
   suggestRestaurants!: IRestaurantCard[];
+  events: IRestaurantEvent[] = [];
 
   dayOptions = dayOptions;
 
   async ngOnInit() {
     this.auth.isAuthenticated.subscribe((value) => (this.isAuthenicated = value));
 
-    const [topRateRes, suggestRes, localRes] = await Promise.all([
-      this.restaurntSv.getTopRateRestaurants(),
-      this.restaurntSv.getSuggestRestaurants(),
-      this.restaurntSv.getLocalRestaurants(),
+    const [topRateRes, suggestRes, localRes, events] = await Promise.all([
+      this.restaurantSv.getTopRateRestaurants(),
+      this.restaurantSv.getSuggestRestaurants(),
+      this.restaurantSv.getLocalRestaurants(),
+      this.restaurantSv.getEvents(),
     ]);
 
     // console.log({ topRateRes, suggestRes, localRes });
+
+    this.events = events;
 
     const { itemsList: topRateRestaurants, error: topRateRestaurantsError } = topRateRes;
     this.topRateRestaurants = topRateRestaurants;

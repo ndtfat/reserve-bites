@@ -96,7 +96,6 @@ import { MatButtonModule } from '@angular/material/button';
         <button
           *ngIf="!isOwner"
           mat-raised-button
-          color="main"
           matTooltip="Chat with restaurant"
           (click)="handleClickChatButton()"
         >

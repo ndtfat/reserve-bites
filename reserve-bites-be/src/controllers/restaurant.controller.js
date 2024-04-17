@@ -403,4 +403,18 @@ export default {
       res.status(500).send({ message: 'Something wrong with postRestaurantEvent', error });
     }
   },
+  async getEvents(req, res) {
+    try {
+      const events = await Event.find({})
+        .sort({ createdAt: 'desc' })
+        .limit(5)
+        .populate('restaurant')
+        .populate('poster', 'url name');
+
+      res.status(200).send(events);
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({ message: 'Something wrong with getEvents', error });
+    }
+  },
 };

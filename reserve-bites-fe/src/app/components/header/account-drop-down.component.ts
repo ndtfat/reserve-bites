@@ -18,7 +18,7 @@ import { AuthService } from 'src/app/services/auth.service';
     </button>
     <mat-menu #menu="matMenu" xPosition="before">
       <span *ngIf="isAuthenticated">
-        <button mat-menu-item routerLink="/account/me/1">
+        <button mat-menu-item routerLink="/account/me/0">
           <span>My Account</span>
         </button>
         <button mat-menu-item style="border-top: 1px solid #ccc;" (click)="signOut()">

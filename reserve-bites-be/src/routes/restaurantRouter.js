@@ -9,6 +9,7 @@ const router = express.Router();
 router.post('/register', restaurantController.postRegister);
 router.post('/event', verifyAccessToken, verifyOwner, restaurantController.postRestaurantEvent);
 
+router.get('/events', restaurantController.getEvents);
 router.get('/locations', restaurantController.getLocations);
 router.get('/top-rate', restaurantController.getTopRestaurant);
 router.get('/suggest-for-user', verifyAccessToken, restaurantController.getSuggestForUser);
