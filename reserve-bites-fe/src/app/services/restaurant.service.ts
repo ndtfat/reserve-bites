@@ -247,4 +247,15 @@ export class RestaurantService {
       this.http.get<IRestaurantEvent[]>(this.SERVER_URL + '/restaurant/events'),
     );
   }
+
+  async deleteEvent(id: string) {
+    try {
+      await lastValueFrom(
+        this.http.delete(this.SERVER_URL + '/restaurant/event', { body: { id } }),
+      );
+      this._snackbar.open('success', 'You have deleted event success');
+    } catch (error) {
+      this._snackbar.open('error', 'Delete event failed');
+    }
+  }
 }

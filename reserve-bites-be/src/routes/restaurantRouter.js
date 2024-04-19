@@ -27,4 +27,6 @@ router.get('/:id', restaurantController.getInfo);
 
 router.put('', verifyAccessToken, verifyOwner, restaurantController.putUpdateRestaurant);
 
+router.delete('/event', verifyAccessToken, verifyOwner, restaurantController.deleteEvent);
+
 export default router;

@@ -52,7 +52,6 @@ import { AuthService } from 'src/app/services/auth.service';
 
       <h4 style="margin-bottom: 14px;">Event images</h4>
       <upload-image *ngIf="!form.get('poster')?.value" (onUploadFile)="handleUploadImg($event)" />
-      <div style="margin-top: 20px;"></div>
       <image-status
         *ngIf="form.get('poster')?.value"
         [error]="form.get('poster')?.value?.error"
@@ -61,6 +60,7 @@ import { AuthService } from 'src/app/services/auth.service';
         (onDelete)="handleDeletePoster()"
       />
 
+      <div style="margin-top: 20px;"></div>
       <div style="text-align: right;">
         <button mat-raised-button color="primary" type="button" (click)="handleSubmit()">
           Create

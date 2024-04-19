@@ -6,6 +6,7 @@ import { NgIconsModule, provideIcons } from '@ng-icons/core';
 import { ionImage } from '@ng-icons/ionicons';
 import { TimePipe } from 'src/app/pipes/time.pipe';
 import { MatButtonModule } from '@angular/material/button';
+import { RestaurantService } from 'src/app/services/restaurant.service';
 
 @Component({
   selector: 'metadata-restaurant',
@@ -99,10 +100,16 @@ import { MatButtonModule } from '@angular/material/button';
           <div class="event" *ngFor="let e of restaurant.events">
             <img [src]="e.poster.url" [alt]="e.poster.name" />
             <div class="event-infor">
-              <div>
-                <h5 style="margin-bottom: 20px;">{{ e.name }}</h5>
-                <p style="margin-bottom: 10px;"><b>Description:</b> {{ e.desc }}</p>
+              <div
+                style="display: flex; flex-direction: column; gap: 10px; align-items: flex-start;"
+              >
+                <h5>{{ e.name }}</h5>
+                <p><b>Description:</b> {{ e.desc }}</p>
                 <p><b>End date:</b> {{ e.endDate | date : 'dd/MM/yyyy' }}</p>
+                <div style="flex: 1;"></div>
+                <button mat-raised-button color="warn" (click)="handleDeleteEvent(e.id)">
+                  Delete
+                </button>
               </div>
             </div>
           </div>
@@ -167,4 +174,10 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class MetadataRestaurantComponent {
   @Input() restaurant!: IRestaurant;
+  constructor(private restaurantSv: RestaurantService) {}
+
+  handleDeleteEvent(id: string) {
+    this.restaurantSv.deleteEvent(id);
+    this.restaurant.events = this.restaurant.events.filter((e) => e.id !== id);
+  }
 }

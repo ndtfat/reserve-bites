@@ -417,4 +417,14 @@ export default {
       res.status(500).send({ message: 'Something wrong with getEvents', error });
     }
   },
+  async deleteEvent(req, res) {
+    try {
+      const { id } = req.body;
+      await Event.findByIdAndDelete(id);
+      res.status(200).send({ message: 'delete event successfully' });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({ message: 'Something wrong with delete event', error });
+    }
+  },
 };
