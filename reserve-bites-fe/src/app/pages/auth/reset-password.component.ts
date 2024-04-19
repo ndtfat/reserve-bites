@@ -122,7 +122,7 @@ import { AuthService } from 'src/app/services/auth.service';
         mat-raised-button
         *ngIf="!sentMail"
         type="submit"
-        color="primary"
+        color="black"
         style="margin-top: 6px;"
         [disabled]="fetching"
       >

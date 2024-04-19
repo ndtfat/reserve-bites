@@ -181,7 +181,7 @@ import { AuthService } from 'src/app/services/auth.service';
 
           <div style="display: flex; gap: 10px">
             <button type="button" mat-button (click)="handleBack()">Back</button>
-            <button mat-raised-button color="primary" [disabled]="loading" (click)="handleSubmit()">
+            <button mat-raised-button color="black" [disabled]="loading" (click)="handleSubmit()">
               <mat-spinner *ngIf="loading" [diameter]="30" />
               <span *ngIf="!loading">Create account</span>
             </button>

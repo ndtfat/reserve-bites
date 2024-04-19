@@ -20,18 +20,13 @@
   justify-content: center !important;
 }
 
-.mdc-button.mdc-button--raised.mat-mdc-raised-button.mat-main {
-  background-color: $primary;
-  color: #fff;
-}
-
 .mdc-button.mdc-button--raised.mat-mdc-raised-button.mat-success {
   background-color: $success;
   color: #fff;
 }
 
-.mdc-button.mdc-button--raised.mat-mdc-raised-button.mat-main {
-  background-color: $primary;
+.mdc-button.mdc-button--raised.mat-mdc-raised-button.mat-black {
+  background-color: #333;
   color: #fff;
 }
 

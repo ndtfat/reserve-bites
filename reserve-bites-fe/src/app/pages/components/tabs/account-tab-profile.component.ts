@@ -151,7 +151,7 @@ import { MatButtonModule } from '@angular/material/button';
         />
 
         <div style="display: flex; justify-content: flex-end;">
-          <button mat-raised-button color="main" type="submit" [disabled]="loading">
+          <button mat-raised-button color="black" type="submit" [disabled]="loading">
             <mat-spinner *ngIf="loading" [diameter]="30" />
             <span *ngIf="!loading">Save change</span>
           </button>
@@ -204,7 +204,7 @@ import { MatButtonModule } from '@angular/material/button';
         />
 
         <div style="display: flex; justify-content: flex-end;">
-          <button mat-raised-button color="main" type="submit" [disabled]="loading">
+          <button mat-raised-button color="black" type="submit" [disabled]="loading">
             <mat-spinner *ngIf="loading" [diameter]="30" />
             <span *ngIf="!loading">Save change</span>
           </button>

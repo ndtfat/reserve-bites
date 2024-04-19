@@ -90,7 +90,7 @@ import { MatButtonModule } from '@angular/material/button';
         >Forgot password?
       </a>
 
-      <button mat-raised-button color="primary" [disabled]="loading">
+      <button mat-raised-button color="black" [disabled]="loading">
         <mat-spinner *ngIf="loading" [diameter]="30" />
         <span *ngIf="!loading">Sign in</span>
       </button>

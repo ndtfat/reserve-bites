@@ -73,7 +73,7 @@ import { Router } from '@angular/router';
       <button
         *ngIf="mode === 'create'"
         mat-raised-button
-        color="primary"
+        color="black"
         style="width:100%; margin-top: 10px"
         [disabled]="reserving"
       >
@@ -82,7 +82,7 @@ import { Router } from '@angular/router';
 
       <div class="edit-btns" *ngIf="mode === 'update'">
         <button type="button" mat-raised-button (click)="afterSubmitted.emit(null)">Cancel</button>
-        <button mat-raised-button color="primary" [disabled]="!isDataChanged">Edit</button>
+        <button mat-raised-button color="black" [disabled]="!isDataChanged">Edit</button>
       </div>
     </form>
   `,

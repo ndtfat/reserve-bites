@@ -112,7 +112,7 @@ import { MatButtonModule } from '@angular/material/button';
             </button>
             <button
               mat-raised-button
-              color="primary"
+              color="black"
               type="button"
               (click)="handleSubmit()"
               [disabled]="submitting"

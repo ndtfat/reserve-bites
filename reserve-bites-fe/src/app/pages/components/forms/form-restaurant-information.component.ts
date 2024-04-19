@@ -292,7 +292,7 @@ import { dayOptions } from 'src/app/utils/form';
         <button
           type="button"
           mat-raised-button
-          color="main"
+          color="black"
           [disabled]="loading"
           (click)="handleSubmit()"
         >

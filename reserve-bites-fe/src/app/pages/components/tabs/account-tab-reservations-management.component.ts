@@ -122,7 +122,7 @@ import { MatInputModule } from '@angular/material/input';
             <th mat-header-cell *matHeaderCellDef>Restaurant</th>
             <td mat-cell *matCellDef="let element">
               <p>
-                {{ element.restaurant }}
+                {{ element.restaurant.name }}
               </p>
             </td>
           </ng-container>
