@@ -1,4 +1,4 @@
-import { NgIf, NgClass, NgFor } from '@angular/common';
+import { NgIf, NgClass, NgFor, DatePipe } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { NgIconsModule, provideIcons } from '@ng-icons/core';
 import { ionChatbubblesOutline } from '@ng-icons/ionicons';
@@ -18,6 +18,7 @@ import { MatButtonModule } from '@angular/material/button';
     NgIf,
     NgFor,
     NgClass,
+    DatePipe,
     TimePipe,
     NgIconsModule,
     MenuComponent,
@@ -79,6 +80,30 @@ import { MatButtonModule } from '@angular/material/button';
         img {
           @include img-fit(100%, 300px);
           border-radius: 4px;
+        }
+      }
+      .event-wrapper {
+        width: 100%;
+        height: 150px;
+        display: flex;
+        gap: 20px;
+        margin-bottom: 10px;
+        img {
+          @include img-fit(50%, 100%);
+          transition: 0.3s;
+          &.expand {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            width: auto;
+            height: 70vh;
+          }
+        }
+        .desc {
+          @include ellipsis(3);
+          margin-bottom: 20px;
         }
       }
     `,
@@ -164,6 +189,25 @@ import { MatButtonModule } from '@angular/material/button';
             <img [src]="item.url" [alt]="item.name" />
           </slide>
         </carousel>
+      </div>
+
+      <!-- Event -->
+      <div *ngIf="restaurant.events.length > 0" style="margin-bottom: 20px;">
+        <h5>Events ({{ restaurant.events.length }})</h5>
+        <div class="event-wrapper" *ngFor="let item of restaurant.events">
+          <img
+            [src]="item.poster.url"
+            [alt]="item.name"
+            #img
+            style="cursor: pointer;"
+            (click)="img.classList.toggle('expand')"
+          />
+          <div style="flex: 1;">
+            <h5 style="font-weight: 600; margin-bottom: 10px;">{{ item.name }}</h5>
+            <p class="desc">{{ item.desc }}</p>
+            <p>End at {{ item.endDate | date : 'dd/MM/yyyy' }}</p>
+          </div>
+        </div>
       </div>
 
       <!-- Menu -->

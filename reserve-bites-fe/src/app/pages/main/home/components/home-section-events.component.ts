@@ -38,6 +38,7 @@ import { RouterLink } from '@angular/router';
             <div style="flex: 1;">
               <h3 style="font-weight: 600; margin-bottom: 10px;">{{ item.name }}</h3>
               <p class="desc">{{ item.desc }}</p>
+              <p class="desc">End at {{ item.endDate | date : 'dd/MM/yyyy' }}</p>
               <button mat-raised-button [routerLink]="'/restaurant/' + item.restaurant.id">
                 Go to restaurant
               </button>
