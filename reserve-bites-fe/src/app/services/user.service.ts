@@ -30,6 +30,7 @@ export class UserService {
     firstName?: string;
     lastName?: string;
     email?: string;
+    favoriteCuisines?: string[];
   }): Promise<IUser> {
     const newUserInfo = await lastValueFrom(
       this.http.put<IUser>(this.SERVER_URL + '/user/edit', data),

@@ -1,4 +1,4 @@
-import { DatePipe, NgIf } from '@angular/common';
+import { CommonModule, DatePipe, NgIf } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import {
   FormGroup,
@@ -21,17 +21,22 @@ import { FormInputComponent } from '../../../components/common/form-input.compon
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AlertComponent } from '../../../components/common/alert.component';
 import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
 
 @Component({
   selector: 'account-tab-profile',
   standalone: true,
   imports: [
-    NgIf,
+    CommonModule,
     DatePipe,
     NgIconsModule,
     MatMenuModule,
     AlertComponent,
     MatButtonModule,
+    MatFormFieldModule,
+    MatChipsModule,
     MatDividerModule,
     FormInputComponent,
     ReactiveFormsModule,
@@ -62,7 +67,7 @@ import { MatButtonModule } from '@angular/material/button';
         }
         span {
           display: inline-block;
-          min-width: 114px;
+          min-width: 170px;
           color: $text-color;
         }
         .greeting {
@@ -119,6 +124,7 @@ import { MatButtonModule } from '@angular/material/button';
           <p><span>First name</span> {{ user.firstName }}</p>
           <p><span>Last name</span> {{ user.lastName }}</p>
           <p><span>Email</span> {{ user.email }}</p>
+          <p><span>Favorite cuisines</span> {{ user.favoriteCuisines?.join(', ') }}</p>
         </div>
       </div>
       <mat-divider />
@@ -149,6 +155,22 @@ import { MatButtonModule } from '@angular/material/button';
           label="Email address"
           [errors]="editProfileForm.controls['email'].errors"
         />
+
+        <mat-form-field style="width: 100%;" appearance="outline">
+          <mat-label>Favorite Cuisines</mat-label>
+          <mat-chip-grid #chipGrid>
+            <mat-chip-row *ngFor="let cuisine of cuisines" (click)="removeCuisine(cuisine)">
+              {{ cuisine }}
+            </mat-chip-row>
+          </mat-chip-grid>
+          <input
+            #favoriteInput
+            placeholder="New cuisine..."
+            [matChipInputFor]="chipGrid"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+            (matChipInputTokenEnd)="addCuisine($event)"
+          />
+        </mat-form-field>
 
         <div style="display: flex; justify-content: flex-end;">
           <button mat-raised-button color="black" type="submit" [disabled]="loading">
@@ -217,12 +239,14 @@ export class AccountTabProfileComponent implements OnInit {
   @Input() user!: IUser;
 
   loading: boolean = false;
-  openEditProfile: boolean = false;
+  openEditProfile: boolean = true;
   openChangePassword: boolean = false;
   changePasswordError: string = '';
 
   editProfileForm!: FormGroup;
   changePasswordForm: FormGroup;
+  separatorKeysCodes: number[] = [ENTER, COMMA];
+  cuisines: string[] = [];
 
   constructor(
     private _snackbar: SnackbarService,
@@ -272,6 +296,22 @@ export class AccountTabProfileComponent implements OnInit {
         }),
       });
     }
+
+    if (this.user.favoriteCuisines) {
+      this.cuisines = this.user.favoriteCuisines;
+    }
+  }
+
+  addCuisine(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+    if (value) {
+      this.cuisines.push(value);
+    }
+    event.chipInput!.clear();
+  }
+
+  removeCuisine(cuisine: string) {
+    this.cuisines = this.cuisines.filter((c) => c !== cuisine);
   }
 
   handleToogleForm(form: 'editProfile' | 'changePassword') {
@@ -284,7 +324,10 @@ export class AccountTabProfileComponent implements OnInit {
     try {
       this.editProfileForm.markAllAsTouched();
       if (this.editProfileForm.valid) {
-        const newInfo = await this.userSv.editProfile(this.editProfileForm.value);
+        const newInfo = await this.userSv.editProfile({
+          ...this.editProfileForm.value,
+          favoriteCuisines: this.cuisines,
+        });
 
         this.editProfileForm.setValue({
           firstName: newInfo.firstName,

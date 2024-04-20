@@ -6,6 +6,7 @@ export type IUser = {
   firstName: string;
   isOwner: boolean;
   createdAt?: string;
+  favoriteCuisines?: string[];
   updatedAt?: string;
 };
 
