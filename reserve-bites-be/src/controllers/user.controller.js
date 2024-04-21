@@ -82,15 +82,37 @@ export default {
   async getUserReservations(req, res) {
     try {
       const user = req.user;
+      let { text, status, date } = req.query;
       const { page, sortBy, pageSize, offset } = req.paginator;
 
-      const totalItems = await Reservation.countDocuments({ diner: user.id });
+      let endDate = '';
+      if (date) {
+        date = new Date(date);
+        date.setHours(0, 0, 0, 0);
+        endDate = new Date(date);
+        endDate.setHours(23, 59, 59, 999);
+      }
+
+      const restaurants = await Restaurant.find({ name: { $regex: text, $options: 'i' } });
+      const resIds = restaurants.map((r) => r.id);
+
+      console.log(text, resIds);
+
+      const totalItems = await Reservation.countDocuments({
+        diner: user.id,
+        restaurant: { $in: resIds },
+      });
       const totalPages = Math.ceil(totalItems / pageSize);
       if (page > totalPages && totalPages !== 0) {
         return res.status(404).send({ message: 'Page not found', totalPages });
       }
 
-      let reservations = await Reservation.find({ diner: user.id })
+      let reservations = await Reservation.find({
+        diner: user.id,
+        restaurant: { $in: resIds },
+        ...(date ? { date: { $gte: date, $lt: endDate } } : {}),
+        ...(status ? { status } : {}),
+      })
         .sort({ createdAt: sortBy })
         .skip(offset)
         .limit(pageSize)

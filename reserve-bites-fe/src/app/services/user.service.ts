@@ -49,43 +49,56 @@ export class UserService {
     );
   }
 
-  async getReservations(filterOptions: { text: string; status: string; page: number }) {
-    const isOwner = this.auth.user.value?.isOwner;
-    const path = isOwner
-      ? `/restaurant/${this.auth.user.value?.rid}/reservations`
-      : `/user/reservations`;
+  async getReservations(filterOptions: {
+    text: string;
+    status: string;
+    date: Date | null;
+    page: number;
+  }) {
+    try {
+      const isOwner = this.auth.user.value?.isOwner;
+      const path = isOwner
+        ? `/restaurant/${this.auth.user.value?.rid}/reservations`
+        : `/user/reservations`;
 
-    const { status, text, page } = filterOptions;
-    const params = new HttpParams().set('status', status).set('text', text).set('page', page);
+      const { status, text, page, date } = filterOptions;
+      const params = new HttpParams()
+        .set('status', status)
+        .set('text', text)
+        .set('page', page)
+        .set('date', date ? date.toISOString() : '');
 
-    const response = await lastValueFrom(
-      this.http
-        .get<{ page: number; totalItems: number; itemsList: any[] }>(this.SERVER_URL + path, {
-          params,
-        })
-        .pipe(
-          map((res) => {
-            let { page, totalItems, itemsList } = res;
-            if (isOwner) {
-              itemsList = itemsList.map((item: IReservation) => {
-                return {
-                  id: item.id,
-                  diner: item.diner.firstName + ' ' + item.diner.lastName,
-                  email: item.diner.email,
-                  size: item.size,
-                  date: item.date,
-                  time: item.time,
-                  status: item.status,
-                };
-              });
-            }
+      const response = await lastValueFrom(
+        this.http
+          .get<{ page: number; totalItems: number; itemsList: any[] }>(this.SERVER_URL + path, {
+            params,
+          })
+          .pipe(
+            map((res) => {
+              let { page, totalItems, itemsList } = res;
+              if (isOwner) {
+                itemsList = itemsList.map((item: IReservation) => {
+                  return {
+                    id: item.id,
+                    diner: item.diner.firstName + ' ' + item.diner.lastName,
+                    email: item.diner.email,
+                    size: item.size,
+                    date: item.date,
+                    time: item.time,
+                    status: item.status,
+                  };
+                });
+              }
 
-            return { page, totalItems, itemsList };
-          }),
-        ),
-    );
+              return { page, totalItems, itemsList };
+            }),
+          ),
+      );
 
-    return response;
+      return response;
+    } catch (error) {
+      return null;
+    }
   }
 
   async reserve(payload: { rid: string; dinerId: string; size: number; date: Date; time: Date }) {

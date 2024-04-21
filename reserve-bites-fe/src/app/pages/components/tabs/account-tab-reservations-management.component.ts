@@ -1,16 +1,18 @@
 import { DatePipe, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { MatFormFieldControl, MatFormFieldModule } from '@angular/material/form-field';
+import { MatDatepickerInputEvent, MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatTableDataSource } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
 import { BehaviorSubject, Subject, debounceTime } from 'rxjs';
 import { TimePipe } from 'src/app/pipes/time.pipe';
 import { AuthService } from 'src/app/services/auth.service';
 import { UserService } from 'src/app/services/user.service';
 import { AppSelectComponent } from '../../../components/common/app-select.component';
-import { MatInputModule } from '@angular/material/input';
+import { TableReservationManagementComponent } from '../tables/table-reservation-management.component';
 
 @Component({
   selector: 'account-tab-reservations-management',
@@ -20,12 +22,13 @@ import { MatInputModule } from '@angular/material/input';
     DatePipe,
     TimePipe,
     RouterLink,
-    MatTableModule,
     MatInputModule,
+    MatDatepickerModule,
     AppSelectComponent,
     MatFormFieldModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
+    TableReservationManagementComponent,
   ],
   styles: [
     `
@@ -40,32 +43,7 @@ import { MatInputModule } from '@angular/material/input';
       .filter {
         display: flex;
         margin-top: 16px;
-        .input {
-          min-width: 300px;
-          margin-right: 20px;
-        }
-      }
-      .element-row:hover {
-        cursor: pointer;
-        background: whitesmoke;
-      }
-      .mat-column-restaurant {
-        flex: 0 0 28% !important;
-        width: 40% !important;
-        padding: 10px 20px 10px 0;
-        p {
-          font-size: 16px;
-          @include ellipsis(1);
-        }
-      }
-      .restaurant-img {
-        width: 100px;
-        height: 60px;
-        object-fit: cover;
-        border-radius: 3px;
-      }
-      .status {
-        @include status;
+        gap: 10px;
       }
     `,
   ],
@@ -74,8 +52,21 @@ import { MatInputModule } from '@angular/material/input';
       <div class="filter">
         <mat-form-field class="input" appearance="outline">
           <mat-label>Filter</mat-label>
-          <input autocomplete="off" matInput (input)="handleSearch($event)" />
+          <input
+            autocomplete="off"
+            matInput
+            (input)="handleSearch($event)"
+            placeholder="Name or email"
+          />
         </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Date</mat-label>
+          <input matInput [matDatepicker]="picker" (dateChange)="handleSelectDate($event)" />
+          <mat-datepicker-toggle matIconSuffix [for]="picker" />
+          <mat-datepicker #picker />
+        </mat-form-field>
+
         <app-select
           label="State"
           (selectionChange)="handleStatusChange($event)"
@@ -91,71 +82,7 @@ import { MatInputModule } from '@angular/material/input';
       </div>
 
       <div *ngIf="dataSource && !fetching">
-        <table mat-table class="mat-elevation-z8" [dataSource]="dataSource">
-          <tr mat-header-row *matHeaderRowDef="columns"></tr>
-          <tr
-            mat-row
-            *matRowDef="let row; columns: columns"
-            class="element-row"
-            [routerLink]="'/reservation/' + row.id"
-          ></tr>
-
-          <ng-container *ngIf="isOwner" matColumnDef="diner">
-            <th mat-header-cell *matHeaderCellDef>Diner</th>
-            <td mat-cell *matCellDef="let element">
-              <p>
-                {{ element.diner }}
-              </p>
-            </td>
-          </ng-container>
-
-          <ng-container *ngIf="isOwner" matColumnDef="email">
-            <th mat-header-cell *matHeaderCellDef>Email</th>
-            <td mat-cell *matCellDef="let element">
-              <p>
-                {{ element.email }}
-              </p>
-            </td>
-          </ng-container>
-
-          <ng-container *ngIf="!isOwner" matColumnDef="restaurant">
-            <th mat-header-cell *matHeaderCellDef>Restaurant</th>
-            <td mat-cell *matCellDef="let element">
-              <p>
-                {{ element.restaurant.name }}
-              </p>
-            </td>
-          </ng-container>
-
-          <ng-container matColumnDef="size">
-            <th mat-header-cell *matHeaderCellDef>Party size</th>
-            <td mat-cell *matCellDef="let element">{{ element.size }}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="date">
-            <th mat-header-cell *matHeaderCellDef>Date</th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.date | date : 'MMM dd, yyyy' }}
-            </td>
-          </ng-container>
-
-          <!-- Symbol Column -->
-          <ng-container matColumnDef="time">
-            <th mat-header-cell *matHeaderCellDef>Time</th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.time | time }}
-            </td>
-          </ng-container>
-
-          <ng-container matColumnDef="status">
-            <th mat-header-cell *matHeaderCellDef>Status</th>
-            <td mat-cell *matCellDef="let element">
-              <p [class]="'status ' + element.status">
-                {{ element.status }}
-              </p>
-            </td>
-          </ng-container>
-        </table>
+        <table-reservation-management [fetching]="fetching" [dataSource]="dataSource" />
       </div>
 
       <div *ngIf="!dataSource && !fetching">There aren't any reservations.</div>
@@ -171,24 +98,21 @@ import { MatInputModule } from '@angular/material/input';
   `,
 })
 export class AccountTabReservationsManagementComponent implements OnInit {
-  isOwner = false;
   columns: string[] = ['restaurant', 'size', 'date', 'time', 'status'];
   fetching = false;
   dataSource: MatTableDataSource<any> | null = null;
   totalItems = 100;
   $searchText = new Subject<string>();
-  $filterOptions = new BehaviorSubject({ text: '', status: '', page: 1 });
+  $filterOptions = new BehaviorSubject<{
+    text: string;
+    status: string;
+    page: number;
+    date: Date | null;
+  }>({ text: '', status: '', page: 1, date: null });
 
   constructor(private auth: AuthService, private userSv: UserService) {}
 
   ngOnInit() {
-    this.auth.user.subscribe((u) => {
-      this.isOwner = u?.isOwner as boolean;
-      if (u?.isOwner) {
-        this.columns = ['diner', 'email', 'size', 'date', 'time', 'status'];
-      }
-    });
-
     this.$searchText
       .pipe(debounceTime(500))
       .subscribe((value) =>
@@ -196,9 +120,11 @@ export class AccountTabReservationsManagementComponent implements OnInit {
       );
     this.$filterOptions.subscribe(async (options) => {
       this.fetching = true;
-      const { page, totalItems, itemsList } = await this.userSv.getReservations(options);
-      this.totalItems = totalItems;
-      this.dataSource = itemsList.length > 0 ? new MatTableDataSource(itemsList) : null;
+      const res = await this.userSv.getReservations(options);
+      if (res) {
+        this.totalItems = res.totalItems;
+        this.dataSource = res.itemsList.length > 0 ? new MatTableDataSource(res.itemsList) : null;
+      }
       this.fetching = false;
     });
   }
@@ -211,6 +137,13 @@ export class AccountTabReservationsManagementComponent implements OnInit {
     this.$filterOptions.next({
       ...this.$filterOptions.value,
       status: status as string,
+    });
+  }
+
+  handleSelectDate(e: MatDatepickerInputEvent<Date>) {
+    this.$filterOptions.next({
+      ...this.$filterOptions.value,
+      date: e.value as Date,
     });
   }
 

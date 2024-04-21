@@ -229,8 +229,16 @@ export default {
   },
   async getRestaurantReservations(req, res) {
     const rid = req.params.id;
-    const { text, status } = req.query;
+    let { text, status, date } = req.query;
     const { page, sortBy, pageSize, offset } = req.paginator;
+
+    let endDate = '';
+    if (date) {
+      date = new Date(date);
+      date.setHours(0, 0, 0, 0);
+      endDate = new Date(date);
+      endDate.setHours(23, 59, 59, 999);
+    }
 
     const users = await User.find({
       $or: [
@@ -247,6 +255,7 @@ export default {
     const listConditions = {
       restaurant: rid,
       diner: { $in: userIds },
+      ...(date ? { date: { $gte: date, $lt: endDate } } : {}),
       ...(status ? { status } : {}),
     };
     const totalItems = await Reservation.countDocuments(countConditions);
