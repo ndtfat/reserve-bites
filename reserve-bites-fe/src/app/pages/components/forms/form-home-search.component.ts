@@ -33,7 +33,7 @@ import { MatInputModule } from '@angular/material/input';
         appearance="fill"
         [options]="dayOptions"
       />
-      <button class="form-button" mat-raised-button color="primary" style="height: 56px;">
+      <button class="form-button" mat-raised-button style="height: 56px;" color="black">
         Find a table
       </button>
     </form>

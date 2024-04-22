@@ -57,7 +57,7 @@ import { RestaurantCardComponent } from '../../restaurant/components/restaurant-
       </p>
     </div>
     <mat-tab-group>
-      <mat-tab label="Popular" *ngIf="topRateRestaurants">
+      <mat-tab label="Popular" *ngIf="!errorTopRateRestaurants">
         <div style="margin-top: 10px;">
           <alert *ngIf="errorTopRateRestaurants" type="error">
             {{ errorTopRateRestaurants }}
@@ -70,7 +70,7 @@ import { RestaurantCardComponent } from '../../restaurant/components/restaurant-
           </div>
         </div>
       </mat-tab>
-      <mat-tab label="Your cuisines" *ngIf="suggestRestaurants">
+      <mat-tab label="Your cuisines" *ngIf="!errorSuggestRestaurants">
         <div style="margin-top: 10px;">
           <alert *ngIf="errorSuggestRestaurants" type="error">
             {{ errorSuggestRestaurants }}
@@ -83,7 +83,7 @@ import { RestaurantCardComponent } from '../../restaurant/components/restaurant-
           </div>
         </div>
       </mat-tab>
-      <mat-tab label="Local" *ngIf="localRestaurants">
+      <mat-tab label="Local" *ngIf="!errorLocalRestaurants">
         <div style="margin-top: 10px;">
           <alert *ngIf="errorLocalRestaurants" type="error">
             {{ errorLocalRestaurants }}

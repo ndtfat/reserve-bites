@@ -2,7 +2,7 @@ import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { RestaurantService } from 'src/app/services/restaurant.service';
 import { IRestaurantCard, IRestaurantEvent } from 'src/app/types/restaurant.type';
@@ -153,6 +153,10 @@ export class HomeComponent implements OnInit {
 
   async ngOnInit() {
     this.auth.isAuthenticated.subscribe((value) => (this.isAuthenicated = value));
+
+    if (this.auth.user.value?.isOwner) {
+      this.router.navigateByUrl('/account/me');
+    }
 
     const [topRateRes, suggestRes, localRes, events] = await Promise.all([
       this.restaurantSv.getTopRateRestaurants(),

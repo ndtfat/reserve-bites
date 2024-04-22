@@ -5,7 +5,7 @@ import { LogoComponent } from '../components/common/logo.component';
 import { NotificationDropDownComponent } from '../components/header/notification-drop-down.component';
 import { AccountDropDownComponent } from '../components/header/account-drop-down.component';
 import { NgIconsModule, provideIcons } from '@ng-icons/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterLink, RouterOutlet } from '@angular/router';
 import { ionChatbubbleEllipsesOutline, ionClose } from '@ng-icons/ionicons';
 import { MatBadgeModule } from '@angular/material/badge';
 import { ChatBoxComponent } from '../components/chat/chat-box.component';
@@ -18,6 +18,7 @@ import { MatButtonModule } from '@angular/material/button';
   imports: [
     NgIf,
     NgClass,
+    RouterLink,
     RouterOutlet,
     NgIconsModule,
     LogoComponent,
@@ -144,7 +145,7 @@ import { MatButtonModule } from '@angular/material/button';
           <button mat-raised-button routerLink="/auth/sign-in">
             <span>SIGN IN</span>
           </button>
-          <button mat-raised-button color="primary" routerLink="/auth/sign-up">
+          <button mat-raised-button color="black" routerLink="/auth/sign-up">
             <span>SIGN UP</span>
           </button>
         </div>

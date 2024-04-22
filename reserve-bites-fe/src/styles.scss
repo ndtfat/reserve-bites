@@ -1,9 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;800;900&display=swap');
 //
-@import '/src/app/scss/material.scss';
-@import '/src/app/scss/variables.scss';
-@import '/src/app/scss/common.scss';
 
 /* Importing Bootstrap SCSS file. */
 @import './node_modules/bootstrap/scss/bootstrap';
@@ -12,6 +9,10 @@
 
 /* Importing Datepicker SCSS file. */
 @import 'node_modules/ngx-bootstrap/datepicker/bs-datepicker';
+
+@import '/src/app/scss/material.scss';
+@import '/src/app/scss/variables.scss';
+@import '/src/app/scss/common.scss';
 
 * {
   margin: 0;

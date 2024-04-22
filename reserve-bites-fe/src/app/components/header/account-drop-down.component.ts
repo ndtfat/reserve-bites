@@ -25,18 +25,6 @@ import { AuthService } from 'src/app/services/auth.service';
           <span>Sign out</span>
         </button>
       </span>
-
-      <span *ngIf="!isAuthenticated">
-        <button mat-menu-item routerLink="/auth/sign-in">
-          <span>Sign in</span>
-        </button>
-        <button mat-menu-item routerLink="/auth/sign-up">
-          <span>Sign up</span>
-        </button>
-        <button mat-menu-item routerLink="/register-restaurant">
-          <span>Regist restaurant</span>
-        </button>
-      </span>
     </mat-menu>
   `,
 })

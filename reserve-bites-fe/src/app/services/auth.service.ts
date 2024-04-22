@@ -1,4 +1,4 @@
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, lastValueFrom } from 'rxjs';
@@ -26,7 +26,7 @@ export class AuthService {
     } catch (error) {
       // console.log(error);
       this.isAuthenticated.next(false);
-      this.router.navigateByUrl('/auth/sign-in');
+      // this.router.navigateByUrl('/auth/sign-in');
     }
   }
 

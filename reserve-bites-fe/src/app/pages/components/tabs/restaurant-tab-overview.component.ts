@@ -119,7 +119,7 @@ import { MatButtonModule } from '@angular/material/button';
           </span>
         </div>
         <button
-          *ngIf="!isOwner"
+          *ngIf="!isOwner && isAuthenticated"
           mat-raised-button
           matTooltip="Chat with restaurant"
           (click)="handleClickChatButton()"
@@ -224,6 +224,7 @@ import { MatButtonModule } from '@angular/material/button';
 export class RestaurantTabOverviewComponent implements OnInit {
   constructor(private realTime: RealTimeService, private auth: AuthService) {
     auth.user.subscribe((u) => (this.isOwner = !!u?.isOwner));
+    auth.isAuthenticated.subscribe((u) => (this.isAuthenticated = u));
   }
 
   @Input() restaurant!: IRestaurant;
@@ -231,6 +232,7 @@ export class RestaurantTabOverviewComponent implements OnInit {
   minPrice: string = '';
   maxPrice: string = '';
   isOwner = false;
+  isAuthenticated = false;
 
   ngOnInit() {
     this.minPrice = findMinPrice(this.restaurant.menu).toLocaleString('en-US');

@@ -29,7 +29,6 @@ const routes: Routes = [
       {
         path: '',
         pathMatch: 'full',
-        canActivate: [DinerGuard],
         loadComponent: () =>
           import('../pages/main/home/home.component').then((m) => m.HomeComponent),
       },
