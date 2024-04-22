@@ -1,11 +1,6 @@
 // auth.guard.ts
 import { Injectable } from '@angular/core';
-import {
-  CanActivate,
-  ActivatedRouteSnapshot,
-  RouterStateSnapshot,
-  Router,
-} from '@angular/router';
+import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
 @Injectable({
@@ -14,11 +9,8 @@ import { AuthService } from '../services/auth.service';
 export class DinerGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
 
-  async canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot,
-  ): Promise<boolean> {
-    if (!this.authService.user.value?.isOwner) {
+  async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> {
+    if (!this.authService?.user?.value?.isOwner) {
       // IUser is authenticated, allow navigation
       return true;
     } else {
