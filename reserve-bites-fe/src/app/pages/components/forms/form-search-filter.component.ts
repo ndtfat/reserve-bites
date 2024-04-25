@@ -56,7 +56,7 @@ import { dayOptions } from 'src/app/utils/form';
         style="margin-top: 30px; width: 100%; display: flex; justify-content: space-between; gap: 20px"
       >
         <button mat-raised-button style="flex: 1" (click)="reset.emit()">Reset</button>
-        <button mat-raised-button style="flex: 1" color="primary" (click)="search.emit()">
+        <button mat-raised-button style="flex: 1" color="black" (click)="search.emit()">
           Search
         </button>
       </div>
