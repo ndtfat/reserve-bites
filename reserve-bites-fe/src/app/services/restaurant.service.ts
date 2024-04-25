@@ -38,11 +38,20 @@ export class RestaurantService {
     owner: IFormOwnerInformationType;
     restaurant: IFormRestaurantInformationType;
   }) {
-    this.http.post(this.SERVER_URL + '/restaurant/register', payload).subscribe((response) => {
-      console.log(response);
-      this._snackbar.open('success', 'You have register restaurant successfully');
-      this.router.navigateByUrl('/');
-    });
+    this.http
+      .post(this.SERVER_URL + '/restaurant/register', {
+        ...payload,
+        restaurant: {
+          ...payload.restaurant,
+          mainImage: payload.restaurant.mainImage.id,
+          gallery: payload.restaurant.gallery.map((i) => i.id),
+        },
+      })
+      .subscribe((response) => {
+        console.log(response);
+        this._snackbar.open('success', 'You have register restaurant successfully');
+        this.router.navigateByUrl('/');
+      });
   }
 
   getRestaurant(id: string) {
