@@ -14,12 +14,6 @@ import { RestaurantCardComponent } from '../../restaurant/components/restaurant-
     `
       @import '../../../../scss/responsive.scss';
 
-      .header {
-        gap: 6px;
-        display: flex;
-        flex-direction: column;
-      }
-
       .card-wrapper {
         gap: 10px;
         width: 100%;
@@ -43,21 +37,9 @@ import { RestaurantCardComponent } from '../../restaurant/components/restaurant-
     `,
   ],
   template: `
-    <div class="header">
-      <h4 style="font-weight: 600;">Restaurants chosen for you</h4>
-      <p
-        routerLink="/restaurant/search"
-        [style]="{
-                gap: '4px',
-                color: '#ee7421',
-                cursor: 'pointer',
-              }"
-      >
-        Find more
-      </p>
-    </div>
+    <h4 style="font-weight: 600;">Restaurants chosen for you</h4>
     <mat-tab-group>
-      <mat-tab label="Popular" *ngIf="!errorTopRateRestaurants">
+      <mat-tab label="Popular" *ngIf="topRateRestaurants && topRateRestaurants.length > 0">
         <div style="margin-top: 10px;">
           <alert *ngIf="errorTopRateRestaurants" type="error">
             {{ errorTopRateRestaurants }}
@@ -70,7 +52,7 @@ import { RestaurantCardComponent } from '../../restaurant/components/restaurant-
           </div>
         </div>
       </mat-tab>
-      <mat-tab label="Your cuisines" *ngIf="!errorSuggestRestaurants">
+      <mat-tab label="Your cuisines" *ngIf="suggestRestaurants && suggestRestaurants.length > 0">
         <div style="margin-top: 10px;">
           <alert *ngIf="errorSuggestRestaurants" type="error">
             {{ errorSuggestRestaurants }}
@@ -83,7 +65,7 @@ import { RestaurantCardComponent } from '../../restaurant/components/restaurant-
           </div>
         </div>
       </mat-tab>
-      <mat-tab label="Local" *ngIf="!errorLocalRestaurants">
+      <mat-tab label="Local" *ngIf="localRestaurants && localRestaurants.length > 0">
         <div style="margin-top: 10px;">
           <alert *ngIf="errorLocalRestaurants" type="error">
             {{ errorLocalRestaurants }}

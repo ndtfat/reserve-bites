@@ -158,14 +158,10 @@ export class HomeComponent implements OnInit {
       this.router.navigateByUrl('/account/me');
     }
 
-    const [topRateRes, suggestRes, localRes, events] = await Promise.all([
+    const [topRateRes, events] = await Promise.all([
       this.restaurantSv.getTopRateRestaurants(),
-      this.restaurantSv.getSuggestRestaurants(),
-      this.restaurantSv.getLocalRestaurants(),
       this.restaurantSv.getEvents(),
     ]);
-
-    // console.log({ topRateRes, suggestRes, localRes });
 
     this.events = events;
 
@@ -173,13 +169,19 @@ export class HomeComponent implements OnInit {
     this.topRateRestaurants = topRateRestaurants;
     this.errorTopRateRestaurants = topRateRestaurantsError || '';
 
-    const { itemsList: suggestRestaurants, error: suggestRestaurantsError } = suggestRes;
-    this.suggestRestaurants = suggestRestaurants;
-    this.errorSuggestRestaurants = suggestRestaurantsError || '';
+    if (this.isAuthenicated && !this.auth.user.value?.isOwner) {
+      const [suggestRes, localRes] = await Promise.all([
+        this.restaurantSv.getSuggestRestaurants(),
+        this.restaurantSv.getLocalRestaurants(),
+      ]);
+      const { itemsList: suggestRestaurants, error: suggestRestaurantsError } = suggestRes;
+      this.suggestRestaurants = suggestRestaurants;
+      this.errorSuggestRestaurants = suggestRestaurantsError || '';
 
-    const { itemsList: localRestaurants, error: localRestaurantsError } = localRes;
-    this.localRestaurants = localRestaurants;
-    this.errorLocalRestaurants = localRestaurantsError || '';
+      const { itemsList: localRestaurants, error: localRestaurantsError } = localRes;
+      this.localRestaurants = localRestaurants;
+      this.errorLocalRestaurants = localRestaurantsError || '';
+    }
   }
 
   handleSearch(filter: { size: number | undefined; openDay: string | undefined }) {
