@@ -94,7 +94,7 @@ import { RestaurantService } from 'src/app/services/restaurant.service';
         </div>
       </div>
 
-      <div class="row">
+      <div class="row" *ngIf="restaurant.events.length > 0">
         <div style="margin-top: 10px;">
           <p class="field">Events</p>
           <div class="event" *ngFor="let e of restaurant.events">

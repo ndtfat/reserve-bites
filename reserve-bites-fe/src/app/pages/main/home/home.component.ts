@@ -113,7 +113,7 @@ import { HomeSectionEventsComponent } from './components/home-section-events.com
     </div>
 
     <div class="body">
-      <home-section-events [events]="events" />
+      <home-section-events *ngIf="events.length > 0" [events]="events" />
 
       <home-section-suggest
         [localRestaurants]="localRestaurants"
