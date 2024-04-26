@@ -34,7 +34,7 @@ const soketController = (io, socket) => {
     });
     await notification.save();
 
-    const receiverSocketId = (await Token.findOne({ uid: receiver.id })).toObject().socketId;
+    const receiverSocketId = (await Token.findOne({ uid: receiver.id }))?.toObject().socketId;
 
     // trigger receive-notification for receiver
     if (receiverSocketId) {

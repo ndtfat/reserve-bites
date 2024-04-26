@@ -153,7 +153,7 @@ import { MatButtonModule } from '@angular/material/button';
     </div>
     <div class="outlet-wrapper">
       <div class="outlet-content">
-        <router-outlet />
+        <router-outlet (activate)="handleActivate()" />
       </div>
     </div>
     <div class="chat" *ngIf="isAuthenticated">
@@ -189,6 +189,10 @@ export class HeaderComponent {
       if (this.openChatBox) this.realTime.numUnReadChatBox.next(0);
       else this.numUnReadChatBox = num;
     });
+  }
+
+  handleActivate() {
+    window.scroll(0, 0);
   }
 
   handleToggleChat() {

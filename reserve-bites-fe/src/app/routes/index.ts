@@ -17,7 +17,7 @@ const routes: Routes = [
   {
     path: 'restaurant-register',
     loadComponent: () =>
-      import('../pages/auth/restaurant-register.component').then(
+      import('../pages/main/auth/restaurant-register.component').then(
         (m) => m.RestaurantRegisterComponent,
       ),
   },

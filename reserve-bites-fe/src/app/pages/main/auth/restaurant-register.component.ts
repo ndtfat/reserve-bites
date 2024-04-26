@@ -2,7 +2,7 @@ import { NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatStepperModule } from '@angular/material/stepper';
 import { LogoComponent } from 'src/app/components/common/logo.component';
-import { ConfirmationRestaurantRegisterComponent } from 'src/app/pages/auth/components/confirmation-restaurant-register.component';
+import { ConfirmationRestaurantRegisterComponent } from 'src/app/pages/main/auth/components/confirmation-restaurant-register.component';
 import { FormOwnerInformationComponent } from 'src/app/pages/components/forms/form-owner-information.component';
 import { FormRestaurantInformationComponent } from 'src/app/pages/components/forms/form-restaurant-information.component';
 import { RestaurantService } from 'src/app/services/restaurant.service';
@@ -24,9 +24,9 @@ import {
   ],
   styles: [
     `
-      @import '../../scss/common.scss';
-      @import '../../scss/variables.scss';
-      @import '../../scss/responsive.scss';
+      @import '../../../scss/common.scss';
+      @import '../../../scss/variables.scss';
+      @import '../../../scss/responsive.scss';
 
       .wrapper {
         padding: 30px 20px 0;

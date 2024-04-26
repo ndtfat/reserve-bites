@@ -9,13 +9,14 @@ import { RouterOutlet } from '@angular/router';
   standalone: true,
   imports: [SnackbarComponent, RouterOutlet],
   template: `
-    <router-outlet></router-outlet>
+    <router-outlet (activate)="handleActivate()"></router-outlet>
     <snackbar />
   `,
 })
 export class AppComponent {
   constructor(private socket: RealTimeService, private _snackbar: SnackbarService) {}
-  // openSnackbar() {
-  //   this._snackbar.open('success', 'Message of snackbar');
-  // }
+
+  handleActivate() {
+    window.scroll(0, 0);
+  }
 }

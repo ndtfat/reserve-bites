@@ -24,7 +24,7 @@ import { MatButtonModule } from '@angular/material/button';
   ],
   styles: [
     `
-      @import '../../scss/responsive.scss';
+      @import '../../../scss/responsive.scss';
 
       form {
         background: #fff;

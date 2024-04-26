@@ -1,8 +1,8 @@
 import { Route } from '@angular/router';
 import { AuthComponent as AuthLayout } from '../layouts/auth.component';
-import { SignInComponent } from '../pages/auth/sign-in.component';
-import { SignUpComponent } from '../pages/auth/sign-up.component';
-import { ResetPasswordComponent } from '../pages/auth/reset-password.component';
+import { SignInComponent } from '../pages/main/auth/sign-in.component';
+import { SignUpComponent } from '../pages/main/auth/sign-up.component';
+import { ResetPasswordComponent } from '../pages/main/auth/reset-password.component';
 
 export const AUTH_ROUTES: Route[] = [
   {

@@ -31,7 +31,7 @@ import { AuthService } from 'src/app/services/auth.service';
   ],
   styles: [
     `
-      @import '../../scss/responsive.scss';
+      @import '../../../scss/responsive.scss';
 
       form {
         width: 100%;

@@ -39,15 +39,11 @@ enum Action {
       @import '../../../scss/common.scss';
       @import '../../../scss/variables.scss';
       @import '../../../scss/responsive.scss';
-      .wrapper {
-        margin: 0 30px;
-        padding: 20px 0;
-        // height: calc(100vh - 40px);
-      }
       .container {
         @include flex(column, flex-start, flex-start);
         gap: 20px;
-        height: 100%;
+        margin-top: 20px;
+        width: $body-width;
       }
       .list {
         width: 100%;
@@ -91,95 +87,93 @@ enum Action {
     `,
   ],
   template: `
-    <div class="wrapper">
-      <div class="container">
-        <h3 style="margin-bottom: 10px;">Notifications</h3>
+    <div class="container">
+      <h3 style="margin-bottom: 10px;">Notifications</h3>
 
-        <div [style]="{ display: 'flex', gap: '10px', alignItems: 'center' }">
-          <mat-checkbox
-            [style]="{ marginRight: '10px' }"
-            color="primary"
-            [checked]="selectedNotifIds.length === notificationsList.length"
-            (change)="handleSelecAll($event)"
-          >
-            Select all item in this page
-          </mat-checkbox>
+      <div [style]="{ display: 'flex', gap: '10px', alignItems: 'center' }">
+        <mat-checkbox
+          [style]="{ marginRight: '10px' }"
+          color="primary"
+          [checked]="selectedNotifIds.length === notificationsList.length"
+          (change)="handleSelecAll($event)"
+        >
+          Select all item in this page
+        </mat-checkbox>
 
-          <button
-            *ngIf="selectedNotifIds.length > 0"
-            mat-icon-button
-            matTooltip="Mark as readed"
-            (click)="handleActionForSelectedItems(Action.MarkAsReaded)"
-          >
-            <ng-icon size="1.6rem" name="matMarkEmailReadOutline" />
-          </button>
-          <button
-            *ngIf="selectedNotifIds.length > 0"
-            mat-icon-button
-            matTooltip="Delete selected item"
-            (click)="handleActionForSelectedItems(Action.Delete)"
-          >
-            <ng-icon size="1.6rem" name="heroTrash" />
-          </button>
-        </div>
-
-        <!-- <p>{{del}}</p> -->
-
-        <ul *ngIf="!loading" class="list">
-          <li *ngFor="let notif of notificationsList" [class]="notif.readed ? 'readed' : ''">
-            <mat-checkbox
-              color="primary"
-              [checked]="selectedNotifIds.includes(notif.id)"
-              (change)="handleSelectitem($event, notif.id)"
-            />
-            <ng-icon [class]="'icon ' + notif.type" [name]="notifIcon[notif.type]" size="2.8rem" />
-            <div style="flex: 1">
-              <p class="title">{{ notif.title }}</p>
-              <p class="message">{{ notif.message }}</p>
-            </div>
-            <span *ngIf="!notif.readed" class="dot"></span>
-            <ng-icon
-              class="action-icon"
-              name="matMoreHorizOutline"
-              size="3rem"
-              (click)="$event.stopPropagation()"
-              [matMenuTriggerFor]="actionMenu"
-            />
-            <mat-menu #actionMenu="matMenu" xPosition="before">
-              <button
-                mat-menu-item
-                [routerLink]="
-                  notif.additionalInfo.rid
-                    ? '/restaurant/' + notif.additionalInfo.rid
-                    : '/reservation/' + notif.additionalInfo.reservationId
-                "
-                [queryParams]="notif.additionalInfo.rid ? { tab: 'reviews' } : {}"
-              >
-                View
-              </button>
-              <button
-                *ngIf="!notif.readed"
-                mat-menu-item
-                (click)="handleActionForOneItem(notif.id, Action.MarkAsReaded)"
-              >
-                Mark as readed
-              </button>
-              <button mat-menu-item (click)="handleActionForOneItem(notif.id, Action.Delete)">
-                Delete
-              </button>
-            </mat-menu>
-          </li>
-        </ul>
-
-        <mat-spinner *ngIf="loading" />
-        <mat-paginator
-          *ngIf="totalItems / 10 > 1"
-          showFirstLastButtons
-          [length]="totalItems"
-          [pageSize]="10"
-          (page)="handlePageChange($event)"
-        />
+        <button
+          *ngIf="selectedNotifIds.length > 0"
+          mat-icon-button
+          matTooltip="Mark as readed"
+          (click)="handleActionForSelectedItems(Action.MarkAsReaded)"
+        >
+          <ng-icon size="1.6rem" name="matMarkEmailReadOutline" />
+        </button>
+        <button
+          *ngIf="selectedNotifIds.length > 0"
+          mat-icon-button
+          matTooltip="Delete selected item"
+          (click)="handleActionForSelectedItems(Action.Delete)"
+        >
+          <ng-icon size="1.6rem" name="heroTrash" />
+        </button>
       </div>
+
+      <!-- <p>{{del}}</p> -->
+
+      <ul *ngIf="!loading" class="list">
+        <li *ngFor="let notif of notificationsList" [class]="notif.readed ? 'readed' : ''">
+          <mat-checkbox
+            color="primary"
+            [checked]="selectedNotifIds.includes(notif.id)"
+            (change)="handleSelectitem($event, notif.id)"
+          />
+          <ng-icon [class]="'icon ' + notif.type" [name]="notifIcon[notif.type]" size="2.8rem" />
+          <div style="flex: 1">
+            <p class="title">{{ notif.title }}</p>
+            <p class="message">{{ notif.message }}</p>
+          </div>
+          <span *ngIf="!notif.readed" class="dot"></span>
+          <ng-icon
+            class="action-icon"
+            name="matMoreHorizOutline"
+            size="3rem"
+            (click)="$event.stopPropagation()"
+            [matMenuTriggerFor]="actionMenu"
+          />
+          <mat-menu #actionMenu="matMenu" xPosition="before">
+            <button
+              mat-menu-item
+              [routerLink]="
+                notif.additionalInfo.rid
+                  ? '/restaurant/' + notif.additionalInfo.rid
+                  : '/reservation/' + notif.additionalInfo.reservationId
+              "
+              [queryParams]="notif.additionalInfo.rid ? { tab: 'reviews' } : {}"
+            >
+              View
+            </button>
+            <button
+              *ngIf="!notif.readed"
+              mat-menu-item
+              (click)="handleActionForOneItem(notif.id, Action.MarkAsReaded)"
+            >
+              Mark as readed
+            </button>
+            <button mat-menu-item (click)="handleActionForOneItem(notif.id, Action.Delete)">
+              Delete
+            </button>
+          </mat-menu>
+        </li>
+      </ul>
+
+      <mat-spinner *ngIf="loading" />
+      <mat-paginator
+        *ngIf="totalItems / 10 > 1"
+        showFirstLastButtons
+        [length]="totalItems"
+        [pageSize]="10"
+        (page)="handlePageChange($event)"
+      />
     </div>
   `,
 })

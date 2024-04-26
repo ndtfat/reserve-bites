@@ -6,7 +6,7 @@ import {
   IFormOwnerInformationType,
   IFormRestaurantInformationType,
 } from 'src/app/types/restaurant.type';
-import { MenuComponent } from '../../main/restaurant/components/menu.component';
+import { MenuComponent } from '../../restaurant/components/menu.component';
 import { TimePipe } from 'src/app/pipes/time.pipe';
 import { NgFor } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -18,7 +18,7 @@ import { MatButtonModule } from '@angular/material/button';
   viewProviders: [provideIcons({ ionImage })],
   styles: [
     `
-      @import '../../../scss/common.scss';
+      @import '../../../../scss/common.scss';
       .title {
         @include flex(row, flex-end, flex-start);
         margin-top: 20px;
