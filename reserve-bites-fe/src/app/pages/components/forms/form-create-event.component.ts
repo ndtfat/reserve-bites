@@ -62,7 +62,7 @@ import { AuthService } from 'src/app/services/auth.service';
 
       <div style="margin-top: 20px;"></div>
       <div style="text-align: right;">
-        <button mat-raised-button color="primary" type="button" (click)="handleSubmit()">
+        <button mat-raised-button color="black" type="button" (click)="handleSubmit()">
           Create
         </button>
       </div>

@@ -30,8 +30,12 @@ export default {
 
       return res.status(200).send({ message: 'Restaurant is registed successfully' });
     } catch (error) {
-      console.log(error);
-      res.status(500).send({ message: 'Something wrong with restaurant register', error });
+      if (error.code === 11000) {
+        return res.status(409).send({ message: 'User email is registered' });
+      } else {
+        console.log({ message: 'Something wrong with sign up', error });
+        return res.status(500).send({ message: 'Something wrong with restaurant register', error });
+      }
     }
   },
   async putUpdateRestaurant(req, res) {

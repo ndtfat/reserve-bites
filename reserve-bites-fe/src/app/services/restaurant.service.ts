@@ -47,10 +47,16 @@ export class RestaurantService {
           gallery: payload.restaurant.gallery.map((i) => i.id),
         },
       })
-      .subscribe((response) => {
-        console.log(response);
-        this._snackbar.open('success', 'You have register restaurant successfully');
-        this.router.navigateByUrl('/');
+      .subscribe({
+        next: (response) => {
+          console.log(response);
+          this._snackbar.open('success', 'You have register restaurant successfully');
+          this.router.navigateByUrl('/');
+        },
+        error: (err) => {
+          console.log(err);
+          this._snackbar.open('error', err.error.message);
+        },
       });
   }
 
