@@ -104,7 +104,7 @@ export class SignInComponent {
     email: new FormControl('', {
       validators: [Validators.max(255), Validators.email, Validators.required],
     }),
-    password: new FormControl('', {
+    password: new FormControl('123456789x@X', {
       validators: [Validators.required],
     }),
   });

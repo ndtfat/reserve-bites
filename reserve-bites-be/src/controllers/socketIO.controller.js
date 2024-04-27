@@ -54,7 +54,7 @@ const soketController = (io, socket) => {
 
   socket.on('send-message', async (payload) => {
     const { conversationId, senderId, receiverId, message } = payload;
-    const receiverSocketId = (await Token.findOne({ uid: receiverId })).toObject().socketId;
+    const receiverSocketId = (await Token.findOne({ uid: receiverId }))?.toObject().socketId;
     let sender = await User.findById(senderId);
 
     const createdAt = new Date();

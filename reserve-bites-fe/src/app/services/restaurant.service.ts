@@ -206,6 +206,7 @@ export class RestaurantService {
       );
       itemsList = itemsList.map((item) => ({
         ...item,
+        id: item._id,
         owner: item.owner[0].firstName + ' ' + item.owner[0].lastName,
         minPrice: findMinPrice(item.menu),
         maxPrice: findMaxPrice(item.menu),

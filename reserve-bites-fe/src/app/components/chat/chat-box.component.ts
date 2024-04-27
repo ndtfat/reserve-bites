@@ -316,7 +316,10 @@ export class ChatBoxComponent implements AfterViewInit {
   }
 
   refetchGetChatBoxes() {
-    this.userSv.getChatBoxes().subscribe((res) => (this.chatBoxes = res));
+    this.userSv.getChatBoxes().subscribe((res) => {
+      this.chatBoxes = res;
+      console.log(this.chatBoxes);
+    });
   }
 
   // chat list handlers-------------------------------------------------------------------------------------------
@@ -346,7 +349,7 @@ export class ChatBoxComponent implements AfterViewInit {
     }
   }
   adjustTextareaHeight(textarea: HTMLTextAreaElement): void {
-    const line = 4;
+    const line = textarea.value ? 4 : 1;
 
     const lineHeight = getComputedStyle(textarea).lineHeight;
     const maxHeight = line * parseFloat(lineHeight);
